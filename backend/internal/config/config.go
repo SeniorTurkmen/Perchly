@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
+	"unicode"
 
 	"github.com/joho/godotenv"
 )
@@ -137,7 +139,7 @@ func Load() (*Config, error) {
 		SMTPHost:     getEnv("SMTP_HOST", "smtp.gmail.com"),
 		SMTPPort:     smtpPort,
 		SMTPUsername: getEnv("SMTP_USERNAME", ""),
-		SMTPPassword: getEnv("SMTP_PASSWORD", ""),
+		SMTPPassword: normalizeSMTPPassword(getEnv("SMTP_PASSWORD", "")),
 		SMTPFromName: getEnv("SMTP_FROM_NAME", "Perchly"),
 
 		DefaultDailyMessageLimit: dailyLimit,
@@ -162,4 +164,22 @@ func getEnv(key, fallback string) string {
 		return v
 	}
 	return fallback
+}
+
+// normalizeSMTPPassword accepts Google's display form of an App Password
+// ("xxxx xxxx xxxx xxxx", often copied with NBSP) and returns the 16-char
+// secret Gmail actually authenticates with.
+func normalizeSMTPPassword(raw string) string {
+	s := strings.TrimSpace(raw)
+	if len(s) >= 2 {
+		if q := s[0]; (q == '"' || q == '\'') && s[len(s)-1] == q {
+			s = s[1 : len(s)-1]
+		}
+	}
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return -1
+		}
+		return r
+	}, s)
 }

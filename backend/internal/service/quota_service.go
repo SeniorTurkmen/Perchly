@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"perchly-backend/internal/model"
 )
@@ -9,11 +10,26 @@ import (
 type QuotaRepo interface {
 	GetOrCreate(ctx context.Context, userID, personaID string, defaultDailyLimit int) (model.UserQuota, error)
 	IncrementMessageCount(ctx context.Context, userID, personaID string) error
+	GetExisting(ctx context.Context, userID, personaID string) (model.UserQuota, bool, error)
 }
 
 type CreditRepo interface {
 	GetBalance(ctx context.Context, userID string) (int, error)
 	SpendOne(ctx context.Context, userID string) (bool, error)
+}
+
+// ChatEnergyPersonaLister is the subset of PersonaRepository ChatEnergy
+// needs — every active persona counts toward the "Günün sohbet
+// enerjisi" figure, not just ones the user has already messaged.
+type ChatEnergyPersonaLister interface {
+	List(ctx context.Context) ([]model.Persona, error)
+}
+
+// ChatEnergyUserGetter is the subset of UserRepository ChatEnergy
+// needs — only the user's IANA timezone, to judge whether a quota
+// row's last_reset_at is from today or a previous local day.
+type ChatEnergyUserGetter interface {
+	GetByID(ctx context.Context, id string) (model.User, error)
 }
 
 type QuotaCheckResult struct {
@@ -36,11 +52,13 @@ type QuotaCheckResult struct {
 type QuotaService struct {
 	quotas            QuotaRepo
 	credits           CreditRepo
+	personas          ChatEnergyPersonaLister
+	users             ChatEnergyUserGetter
 	defaultDailyLimit int
 }
 
-func NewQuotaService(quotas QuotaRepo, credits CreditRepo, defaultDailyLimit int) *QuotaService {
-	return &QuotaService{quotas: quotas, credits: credits, defaultDailyLimit: defaultDailyLimit}
+func NewQuotaService(quotas QuotaRepo, credits CreditRepo, personas ChatEnergyPersonaLister, users ChatEnergyUserGetter, defaultDailyLimit int) *QuotaService {
+	return &QuotaService{quotas: quotas, credits: credits, personas: personas, users: users, defaultDailyLimit: defaultDailyLimit}
 }
 
 // Check reports whether userID may send another message to personaID
@@ -89,4 +107,97 @@ func (s *QuotaService) RecordUsage(ctx context.Context, userID, personaID string
 		return err
 	}
 	return s.quotas.IncrementMessageCount(ctx, userID, personaID)
+}
+
+// ChatEnergy is the read-only "Günün sohbet enerjisi" figure Keşfet
+// shows as a single number, even though quota is tracked per persona.
+type ChatEnergy struct {
+	Remaining int
+	Limit     int
+	Used      int
+	MoodLabel string
+}
+
+// ChatEnergy reports min(remaining) across every active persona — the
+// persona closest to running out drives the number Keşfet shows, since
+// showing anything more optimistic would misrepresent how soon the
+// user will actually get rate-limited. It never creates or resets a
+// quota row (unlike Check/GetOrCreate): a persona with no row yet is
+// simply full, and a row from a previous local day is treated as
+// unused without writing that reset back.
+func (s *QuotaService) ChatEnergy(ctx context.Context, userID string) (ChatEnergy, error) {
+	user, err := s.users.GetByID(ctx, userID)
+	if err != nil {
+		return ChatEnergy{}, err
+	}
+	loc, err := time.LoadLocation(user.Timezone)
+	if err != nil {
+		loc = time.UTC
+	}
+	now := time.Now().In(loc)
+
+	personas, err := s.personas.List(ctx)
+	if err != nil {
+		return ChatEnergy{}, err
+	}
+
+	best := ChatEnergy{Remaining: -1}
+	for _, p := range personas {
+		if !p.IsActive {
+			continue
+		}
+
+		limit := s.defaultDailyLimit
+		used := 0
+
+		quota, ok, err := s.quotas.GetExisting(ctx, userID, p.ID)
+		if err != nil {
+			return ChatEnergy{}, err
+		}
+		if ok {
+			limit = quota.DailyLimit
+			if isSameLocalDay(quota.LastResetAt, now, loc) {
+				used = quota.MessageCountToday
+			}
+		}
+
+		remaining := limit - used
+		if remaining < 0 {
+			remaining = 0
+		}
+
+		if best.Remaining == -1 || remaining < best.Remaining {
+			best = ChatEnergy{Remaining: remaining, Limit: limit, Used: used}
+		}
+	}
+
+	if best.Remaining == -1 {
+		// No active personas at all — nothing to be low on.
+		best = ChatEnergy{Remaining: s.defaultDailyLimit, Limit: s.defaultDailyLimit, Used: 0}
+	}
+
+	best.MoodLabel = chatEnergyMoodLabel(best.Remaining, best.Limit)
+	return best, nil
+}
+
+func isSameLocalDay(t, now time.Time, loc *time.Location) bool {
+	t = t.In(loc)
+	ty, tm, td := t.Date()
+	ny, nm, nd := now.Date()
+	return ty == ny && tm == nm && td == nd
+}
+
+func chatEnergyMoodLabel(remaining, limit int) string {
+	if limit <= 0 {
+		return "Yorgun"
+	}
+	ratio := float64(remaining) / float64(limit)
+	switch {
+	case ratio >= 0.7:
+		return "Huzurlu"
+	case ratio >= 0.3:
+		return "Dengeli"
+	default:
+		return "Yorgun"
+	}
 }

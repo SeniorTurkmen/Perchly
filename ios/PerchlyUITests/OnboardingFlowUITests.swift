@@ -26,7 +26,12 @@ final class OnboardingFlowUITests: XCTestCase {
 
         app.launch()
 
-        // --- Screen 1: age range (mandatory) ---
+        // --- Screen 1: preferred name, or skip hitap entirely ---
+        let anonymousContinue = app.buttons["skipNameAnonymousButton"]
+        XCTAssertTrue(anonymousContinue.waitForExistence(timeout: 10))
+        anonymousContinue.tap()
+
+        // --- Screen 2: age range (mandatory) ---
         let continueButton = app.buttons["ageContinueButton"]
         XCTAssertTrue(continueButton.waitForExistence(timeout: 10))
         XCTAssertFalse(continueButton.isEnabled, "Continue should be disabled with nothing selected yet")
@@ -50,7 +55,7 @@ final class OnboardingFlowUITests: XCTestCase {
         // flow to move past the alert on its own.
         app.tap()
 
-        // --- Screen 4: persona pick, prioritized by mood -> should
+        // --- Screen 5: persona match, prioritized by mood -> should
         // show the motivational-coach persona first (Ada, per the
         // seed data) since we picked "Motive Olmak" above. ---
         let personaButtons = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "personaOption_"))

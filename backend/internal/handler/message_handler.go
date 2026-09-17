@@ -48,20 +48,27 @@ type doneEventPayload struct {
 	AssistantMessageID string `json:"assistant_message_id,omitempty"`
 }
 
-// Create handles POST /conversations/{id}/messages. On success it
-// switches the response to Server-Sent Events and streams the assistant's
-// reply back as one "message" event per chunk as it arrives from the LLM,
-// followed by a final "done" event carrying doneEventPayload — or an
-// "error" event if the stream fails partway through. If the persona
-// reacted to the user's message (see ChatService.SendMessage), a single
-// "reaction" event carrying the emoji is sent before "done" — with no
-// "message" events at all if the persona reacted only.
+// Create godoc
+// @Summary Mesaj gönder (SSE stream)
+// @Description Başarılı olursa cevap Server-Sent Events'e döner: her LLM chunk'ı için bir "message" event'i, persona kullanıcı mesajına tepki verdiyse tek bir "reaction" event'i, ve sonunda gerçek/persisted id'leri taşıyan bir "done" event'i (doneEventPayload); akış sırasında hata olursa "error" event'i gelir. Kota QuotaMiddleware tarafından bu uçtan önce kontrol edilir; günlük limit dolmuşsa ve kredi de yoksa 429 döner.
+// @Tags conversations
+// @Accept json
+// @Produce text/event-stream
+// @Security BearerAuth
+// @Param id path string true "Conversation ID (UUID)"
+// @Param body body createMessageRequest true "content"
+// @Success 200 {string} string "text/event-stream: message/reaction/done/error event'leri"
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 429 {object} errorResponse "günlük kota doldu ve kredi yok"
+// @Failure 500 {object} errorResponse
+// @Router /conversations/{id}/messages [post]
 func (h *MessageHandler) Create(w http.ResponseWriter, r *http.Request) {
 	conversation, ok := ConversationFromContext(r.Context())
 	if !ok {
 		// QuotaMiddleware guarantees this on every route that mounts this
 		// handler; a miss means the route is wired up wrong, not a client error.
-		writeError(w, http.StatusInternalServerError, "konuşma bağlamı bulunamadı")
+		writeError(w, http.StatusInternalServerError, ErrCodeConversationContextMissing, "konuşma bağlamı bulunamadı")
 		return
 	}
 	userID, _ := auth.UserIDFromContext(r.Context())
@@ -69,13 +76,13 @@ func (h *MessageHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	var req createMessageRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || strings.TrimSpace(req.Content) == "" {
-		writeError(w, http.StatusBadRequest, "content alanı zorunludur")
+		writeError(w, http.StatusBadRequest, ErrCodeMessageContentRequired, "content alanı zorunludur")
 		return
 	}
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
-		writeError(w, http.StatusInternalServerError, "streaming desteklenmiyor")
+		writeError(w, http.StatusInternalServerError, ErrCodeStreamingUnsupported, "streaming desteklenmiyor")
 		return
 	}
 

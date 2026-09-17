@@ -16,6 +16,7 @@ final class PersonaListViewModel: ObservableObject {
     @Published private(set) var selectedCategory: String?
     @Published private(set) var conversations: [ConversationSummary] = []
     @Published private(set) var conversationsState: LoadState = .idle
+    @Published private(set) var chatEnergy: ChatEnergy?
 
     private let apiClient: APIClient
     private static let categoryOrder = [
@@ -43,29 +44,53 @@ final class PersonaListViewModel: ObservableObject {
         self.apiClient = apiClient
     }
 
-    /// Loads personas. When `prioritizedCategory` is given (see
-    /// OnboardingProfile.MoodPreference.personaCategory), personas in
-    /// that category are moved to the front, each group keeping its own
-    /// relative `sortOrder` — used by the onboarding persona-pick screen
-    /// to surface e.g. the motivational-coach category first when the
-    /// user said they're looking for motivation. `nil` (the default, and
-    /// what every other caller uses) keeps the backend's own order.
+    /// Loads personas. Keşfet uses `GET /personas?recommend=true` so the
+    /// backend can flag exactly one recommended match from the saved
+    /// onboarding mood. Onboarding persona-pick still uses plain
+    /// `GET /personas` plus a local category reorder — the profile
+    /// (and therefore the mood) hasn't been POSTed yet, so recommend
+    /// would have nothing to go on.
     func load(prioritizedCategory: String? = nil) async {
         state = .loading
         do {
-            var loaded: [Persona] = try await apiClient.send(APIRequest(path: "/personas"))
             if let prioritizedCategory {
+                var loaded: [Persona] = try await apiClient.send(APIRequest(path: "/personas"))
                 loaded.sort { lhs, rhs in
                     let lhsMatches = lhs.category == prioritizedCategory
                     let rhsMatches = rhs.category == prioritizedCategory
                     if lhsMatches != rhsMatches { return lhsMatches }
                     return lhs.sortOrder < rhs.sortOrder
                 }
+                personas = loaded
+            } else {
+                personas = try await loadRecommended()
             }
-            personas = loaded
             state = .loaded
         } catch {
             state = .failed((error as? LocalizedError)?.errorDescription ?? error.localizedDescription)
+        }
+    }
+
+    private func loadRecommended() async throws -> [Persona] {
+        do {
+            var loaded: [Persona] = try await apiClient.send(APIRequest(path: "/personas?recommend=true"))
+            loaded.sort { lhs, rhs in
+                let lhsRec = lhs.recommended == true
+                let rhsRec = rhs.recommended == true
+                if lhsRec != rhsRec { return lhsRec }
+                return lhs.sortOrder < rhs.sortOrder
+            }
+            return loaded
+        } catch {
+            return try await apiClient.send(APIRequest(path: "/personas"))
+        }
+    }
+
+    func loadChatEnergy() async {
+        do {
+            chatEnergy = try await apiClient.send(APIRequest(path: "/users/chat-energy"))
+        } catch {
+            chatEnergy = nil
         }
     }
 

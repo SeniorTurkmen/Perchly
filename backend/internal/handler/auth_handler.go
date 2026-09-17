@@ -85,13 +85,23 @@ type createAnonymousSessionResponse struct {
 	IsAnonymous bool   `json:"is_anonymous"`
 }
 
+// CreateAnonymousSession godoc
+// @Summary Anonim oturum oluştur
+// @Description device_id'ye göre yeni bir anonim kullanıcı oluşturur veya var olanı döner. Gövde opsiyoneldir.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param body body createAnonymousSessionRequest false "device_id ve opsiyonel IANA timezone"
+// @Success 201 {object} createAnonymousSessionResponse
+// @Failure 500 {object} errorResponse
+// @Router /auth/anonymous [post]
 func (h *AuthHandler) CreateAnonymousSession(w http.ResponseWriter, r *http.Request) {
 	var req createAnonymousSessionRequest
 	_ = json.NewDecoder(r.Body).Decode(&req) // body is optional; zero value just means "no device id, UTC"
 
 	tokens, user, err := h.anonymous.CreateAnonymousSession(r.Context(), req.DeviceID, req.Timezone)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "oturum oluşturulamadı")
+		writeError(w, http.StatusInternalServerError, ErrCodeSessionCreateFailed, "oturum oluşturulamadı")
 		return
 	}
 
@@ -117,10 +127,21 @@ type requestEmailCodeRequest struct {
 // or a code was actually sent — see AuthService.RequestEmailCode's doc
 // for why that's the whole point, not an oversight. Only a malformed
 // email or a genuine infrastructure failure get a different response.
+// RequestEmailCode godoc
+// @Summary E-posta doğrulama kodu isteği
+// @Description E-postaya bir doğrulama kodu gönderir. Kayıtlı olup olmadığına bakılmaksızın her zaman aynı genel başarı cevabını döner.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param body body requestEmailCodeRequest true "email"
+// @Success 200 {object} map[string]bool
+// @Failure 400 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /auth/email/request-code [post]
 func (h *AuthHandler) RequestEmailCode(w http.ResponseWriter, r *http.Request) {
 	var req requestEmailCodeRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz istek gövdesi")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -129,9 +150,9 @@ func (h *AuthHandler) RequestEmailCode(w http.ResponseWriter, r *http.Request) {
 	case err == nil:
 		writeJSON(w, http.StatusOK, map[string]bool{"success": true})
 	case errors.Is(err, service.ErrInvalidEmail):
-		writeError(w, http.StatusBadRequest, "geçersiz e-posta adresi")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidEmail, "geçersiz e-posta adresi")
 	default:
-		writeError(w, http.StatusInternalServerError, "kod gönderilemedi, lütfen tekrar deneyin")
+		writeError(w, http.StatusInternalServerError, ErrCodeEmailCodeSendFailed, "kod gönderilemedi, lütfen tekrar deneyin")
 	}
 }
 
@@ -150,10 +171,23 @@ type verifyEmailCodeResponse struct {
 	IsNewRegistration bool `json:"is_new_registration"`
 }
 
+// VerifyEmailCode godoc
+// @Summary E-posta doğrulama kodunu doğrula
+// @Description Kodu doğrular; access_token dolu gönderilirse mevcut anonim oturumu aynı user_id ile e-postalı hesaba yükseltir (Durum B), boşsa/olmayan bir e-postaysa yeni hesap açar (Durum A).
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param body body verifyEmailCodeRequest true "email, code, opsiyonel access_token"
+// @Success 200 {object} verifyEmailCodeResponse
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 429 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /auth/email/verify-code [post]
 func (h *AuthHandler) VerifyEmailCode(w http.ResponseWriter, r *http.Request) {
 	var req verifyEmailCodeRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz istek gövdesi")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -169,15 +203,15 @@ func (h *AuthHandler) VerifyEmailCode(w http.ResponseWriter, r *http.Request) {
 			IsNewRegistration: isNew,
 		})
 	case errors.Is(err, service.ErrInvalidEmail):
-		writeError(w, http.StatusBadRequest, "geçersiz e-posta adresi")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidEmail, "geçersiz e-posta adresi")
 	case errors.Is(err, service.ErrTooManyAttempts):
-		writeError(w, http.StatusTooManyRequests, "çok fazla hatalı deneme, yeni kod isteyin")
+		writeError(w, http.StatusTooManyRequests, ErrCodeTooManyAttempts, "çok fazla hatalı deneme, yeni kod isteyin")
 	case errors.Is(err, service.ErrCodeExpired):
-		writeError(w, http.StatusUnauthorized, "kodun süresi doldu, yeni kod isteyin")
+		writeError(w, http.StatusUnauthorized, ErrCodeVerificationExpired, "kodun süresi doldu, yeni kod isteyin")
 	case errors.Is(err, service.ErrInvalidCode):
-		writeError(w, http.StatusUnauthorized, "kod geçersiz")
+		writeError(w, http.StatusUnauthorized, ErrCodeInvalidCode, "kod geçersiz")
 	default:
-		writeError(w, http.StatusInternalServerError, "doğrulama başarısız oldu")
+		writeError(w, http.StatusInternalServerError, ErrCodeVerificationFailed, "doğrulama başarısız oldu")
 	}
 }
 
@@ -187,16 +221,30 @@ type completeRegistrationRequest struct {
 	DisplayName string `json:"display_name"`
 }
 
+// CompleteRegistration godoc
+// @Summary Kayıt sonrası görünen adı belirle
+// @Description users.display_name'i yalnızca bu uç yazar — onboarding'deki preferred_name (hitap) ile karıştırılmaz.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param body body completeRegistrationRequest true "display_name"
+// @Success 200 {object} map[string]bool
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /auth/register/complete [post]
 func (h *AuthHandler) CompleteRegistration(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, "giriş gerekli")
+		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	var req completeRegistrationRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz istek gövdesi")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -205,11 +253,11 @@ func (h *AuthHandler) CompleteRegistration(w http.ResponseWriter, r *http.Reques
 	case err == nil:
 		writeJSON(w, http.StatusOK, map[string]bool{"success": true})
 	case errors.Is(err, service.ErrInvalidDisplayName):
-		writeError(w, http.StatusBadRequest, "geçersiz görünen ad")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidDisplayName, "geçersiz görünen ad")
 	case errors.Is(err, repository.ErrUserNotFound):
-		writeError(w, http.StatusNotFound, "kullanıcı bulunamadı")
+		writeError(w, http.StatusNotFound, ErrCodeUserNotFound, "kullanıcı bulunamadı")
 	default:
-		writeError(w, http.StatusInternalServerError, "profil güncellenemedi")
+		writeError(w, http.StatusInternalServerError, ErrCodeProfileUpdateFailed, "profil güncellenemedi")
 	}
 }
 
@@ -219,10 +267,22 @@ type refreshSessionRequest struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+// RefreshSession godoc
+// @Summary Oturumu yenile
+// @Description Refresh token ile yeni bir access/refresh token çifti üretir.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param body body refreshSessionRequest true "refresh_token"
+// @Success 200 {object} sessionResponse
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /auth/refresh [post]
 func (h *AuthHandler) RefreshSession(w http.ResponseWriter, r *http.Request) {
 	var req refreshSessionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz istek gövdesi")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -235,9 +295,9 @@ func (h *AuthHandler) RefreshSession(w http.ResponseWriter, r *http.Request) {
 			HasCompletedOnboarding: tokens.HasCompletedOnboarding,
 		})
 	case errors.Is(err, service.ErrInvalidRefreshToken), errors.Is(err, service.ErrRefreshTokenExpired):
-		writeError(w, http.StatusUnauthorized, "oturum geçersiz, tekrar giriş yapın")
+		writeError(w, http.StatusUnauthorized, ErrCodeInvalidRefreshToken, "oturum geçersiz, tekrar giriş yapın")
 	default:
-		writeError(w, http.StatusInternalServerError, "oturum yenilenemedi")
+		writeError(w, http.StatusInternalServerError, ErrCodeSessionRefreshFailed, "oturum yenilenemedi")
 	}
 }
 
@@ -247,15 +307,25 @@ type logoutRequest struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+// Logout godoc
+// @Summary Çıkış yap
+// @Description Verilen refresh token'ı iptal eder.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param body body logoutRequest true "refresh_token"
+// @Success 200 {object} map[string]bool
+// @Failure 500 {object} errorResponse
+// @Router /auth/logout [post]
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	var req logoutRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz istek gövdesi")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
 	if err := h.logout.Logout(r.Context(), req.RefreshToken); err != nil {
-		writeError(w, http.StatusInternalServerError, "çıkış yapılamadı")
+		writeError(w, http.StatusInternalServerError, ErrCodeLogoutFailed, "çıkış yapılamadı")
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]bool{"success": true})

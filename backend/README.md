@@ -18,7 +18,7 @@ one:
 2. Under "How you sign in to Google", turn on **2-Step Verification** if it isn't already on (App Passwords require it).
 3. Go to the [App Passwords page](https://myaccount.google.com/apppasswords).
 4. Enter a name for the app (e.g. "Perchly backend") and click **Create**.
-5. Google shows a 16-character password — copy it as `SMTP_PASSWORD` in `.env` (no spaces).
+5. Google shows a 16-character password in groups of four. Paste it quoted in `.env` (`SMTP_PASSWORD="xxxx xxxx xxxx xxxx"`); the backend strips spaces and copy-paste NBSPs at startup.
 6. Set `SMTP_USERNAME` to the full Gmail address that generated the password.
 
 If `SMTP_USERNAME`/`SMTP_PASSWORD` are left empty, the backend logs

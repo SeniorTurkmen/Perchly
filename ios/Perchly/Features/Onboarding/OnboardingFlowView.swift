@@ -20,6 +20,9 @@ struct OnboardingFlowView: View {
     var body: some View {
         ZStack {
             switch coordinator.step {
+            case .nameHitap:
+                NameHitapStepView(coordinator: coordinator)
+                    .transition(stepTransition)
             case .ageRange:
                 AgeRangeStepView(coordinator: coordinator)
                     .transition(stepTransition)

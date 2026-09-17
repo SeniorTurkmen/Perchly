@@ -12,8 +12,11 @@ struct AnonymousBootstrapView: View {
             .task {
                 await AuthManager.shared.bootstrap()
                 // Best-effort, after a session exists: flush any
-                // onboarding profile that failed to sync last time.
-                await OnboardingRetryQueue().retryPending()
+                // onboarding profile that failed to sync last time,
+                // then pull preferred_name back (reinstall / new device).
+                let queue = OnboardingRetryQueue()
+                await queue.retryPending()
+                await queue.syncPreferredName()
             }
     }
 }

@@ -10,11 +10,13 @@ import (
 
 	"perchly-backend/internal/auth"
 	"perchly-backend/internal/model"
+	"perchly-backend/internal/repository"
 	"perchly-backend/internal/service"
 )
 
 type onboardingProfileSaver interface {
-	SaveProfile(ctx context.Context, profile model.OnboardingProfile) (model.OnboardingProfile, error)
+	SaveProfile(ctx context.Context, profile model.OnboardingProfile, preferredName *string, skipHitap *bool) (model.OnboardingProfile, error)
+	GetByUserID(ctx context.Context, userID string) (model.OnboardingProfile, error)
 }
 
 type OnboardingHandler struct {
@@ -30,28 +32,42 @@ type saveOnboardingProfileRequest struct {
 	MoodPreference       *string `json:"mood_preference"`
 	NotificationsGranted bool    `json:"notifications_granted"`
 	SelectedPersonaID    *string `json:"selected_persona_id"`
+	// PreferredName/SkipHitap are pointers deliberately: nil means the
+	// field was absent (an older client), which OnboardingService needs
+	// to tell apart from an explicit empty string / false — see its
+	// SaveProfile doc comment.
+	PreferredName *string `json:"preferred_name"`
+	SkipHitap     *bool   `json:"skip_hitap"`
 }
 
-// SaveProfile handles POST /users/onboarding-profile. Collected for
-// anonymous users too — an anonymous session upgrading to a verified
-// email later keeps the same user id, so nothing here is lost.
-// IsMinor is deliberately not read from the request body — see
-// OnboardingService.SaveProfile.
+// SaveProfile godoc
+// @Summary Onboarding profilini kaydet
+// @Description Anonim kullanıcılar için de çalışır. is_minor asla client'tan okunmaz, age_range'den türetilir. preferred_name/skip_hitap opsiyoneldir: hiçbiri gönderilmezse eski istemci davranışı değişmez; skip_hitap=true ise preferred_name her zaman NULL'a zorlanır (sunucu asla takma ad üretmez); skip_hitap=false iken preferred_name boşsa 400 döner. Bilinmeyen alanlar yok sayılır.
+// @Tags onboarding
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param body body saveOnboardingProfileRequest true "onboarding cevapları"
+// @Success 200 {object} model.OnboardingProfile
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /users/onboarding-profile [post]
 func (h *OnboardingHandler) SaveProfile(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, "giriş gerekli")
+		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	var req saveOnboardingProfileRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz istek gövdesi")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 	if req.SelectedPersonaID != nil {
 		if _, err := uuid.Parse(*req.SelectedPersonaID); err != nil {
-			writeError(w, http.StatusBadRequest, "geçersiz selected_persona_id")
+			writeError(w, http.StatusBadRequest, ErrCodeInvalidSelectedPersonaID, "geçersiz selected_persona_id")
 			return
 		}
 	}
@@ -64,15 +80,49 @@ func (h *OnboardingHandler) SaveProfile(w http.ResponseWriter, r *http.Request) 
 		SelectedPersonaID:    req.SelectedPersonaID,
 	}
 
-	saved, err := h.profiles.SaveProfile(r.Context(), profile)
+	saved, err := h.profiles.SaveProfile(r.Context(), profile, req.PreferredName, req.SkipHitap)
 	switch {
 	case err == nil:
 		writeJSON(w, http.StatusOK, saved)
 	case errors.Is(err, service.ErrInvalidAgeRange):
-		writeError(w, http.StatusBadRequest, "geçersiz yaş aralığı")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidAgeRange, "geçersiz yaş aralığı")
 	case errors.Is(err, service.ErrInvalidMoodPreference):
-		writeError(w, http.StatusBadRequest, "geçersiz mod tercihi")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidMoodPreference, "geçersiz mod tercihi")
+	case errors.Is(err, service.ErrPreferredNameRequired):
+		writeError(w, http.StatusBadRequest, ErrCodePreferredNameRequired, "preferred_name gerekli veya skip_hitap=true gönderin")
+	case errors.Is(err, service.ErrPreferredNameInvalid):
+		writeError(w, http.StatusBadRequest, ErrCodePreferredNameInvalid, "preferred_name 1-40 karakter olmalı ve kontrol karakteri içermemeli")
 	default:
-		writeError(w, http.StatusInternalServerError, "profil kaydedilemedi")
+		writeError(w, http.StatusInternalServerError, ErrCodeOnboardingSaveFailed, "profil kaydedilemedi")
 	}
+}
+
+// GetProfile godoc
+// @Summary Onboarding profilini getir
+// @Description Yeniden kurulum veya ikinci bir cihazda daha önce verilen onboarding cevaplarını senkronize etmek için kullanılır.
+// @Tags onboarding
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} model.OnboardingProfile
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse "onboarding henüz tamamlanmamış"
+// @Failure 500 {object} errorResponse
+// @Router /users/onboarding-profile [get]
+func (h *OnboardingHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
+	userID, ok := auth.UserIDFromContext(r.Context())
+	if !ok {
+		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		return
+	}
+
+	profile, err := h.profiles.GetByUserID(r.Context(), userID)
+	if err != nil {
+		if errors.Is(err, repository.ErrOnboardingProfileNotFound) {
+			writeError(w, http.StatusNotFound, ErrCodeOnboardingProfileNotFound, "onboarding profili bulunamadı")
+			return
+		}
+		writeError(w, http.StatusInternalServerError, ErrCodeOnboardingFetchFailed, "profil getirilemedi")
+		return
+	}
+	writeJSON(w, http.StatusOK, profile)
 }

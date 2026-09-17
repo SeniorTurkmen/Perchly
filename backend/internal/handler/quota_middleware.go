@@ -66,38 +66,38 @@ func QuotaMiddleware(conversations conversationGetter, quotas quotaChecker) func
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			userID, ok := auth.UserIDFromContext(r.Context())
 			if !ok {
-				writeError(w, http.StatusUnauthorized, "giriş gerekli")
+				writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 				return
 			}
 
 			conversationID := chi.URLParam(r, "id")
 			if _, err := uuid.Parse(conversationID); err != nil {
-				writeError(w, http.StatusBadRequest, "geçersiz conversation id")
+				writeError(w, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz conversation id")
 				return
 			}
 
 			conversation, err := conversations.GetByID(r.Context(), conversationID)
 			if err != nil {
 				if errors.Is(err, repository.ErrConversationNotFound) {
-					writeError(w, http.StatusNotFound, "konuşma bulunamadı")
+					writeError(w, http.StatusNotFound, ErrCodeConversationNotFound, "konuşma bulunamadı")
 					return
 				}
-				writeError(w, http.StatusInternalServerError, "konuşma getirilemedi")
+				writeError(w, http.StatusInternalServerError, ErrCodeConversationFetchFailed, "konuşma getirilemedi")
 				return
 			}
 
 			if conversation.UserID != userID {
-				writeError(w, http.StatusForbidden, "bu konuşmaya erişiminiz yok")
+				writeError(w, http.StatusForbidden, ErrCodeConversationForbidden, "bu konuşmaya erişiminiz yok")
 				return
 			}
 
 			result, err := quotas.Check(r.Context(), userID, conversation.PersonaID)
 			if err != nil {
-				writeError(w, http.StatusInternalServerError, "kota kontrol edilemedi")
+				writeError(w, http.StatusInternalServerError, ErrCodeQuotaCheckFailed, "kota kontrol edilemedi")
 				return
 			}
 			if !result.Allowed {
-				writeError(w, http.StatusTooManyRequests, "günlük mesaj hakkınız doldu")
+				writeError(w, http.StatusTooManyRequests, ErrCodeQuotaExceeded, "günlük mesaj hakkınız doldu")
 				return
 			}
 

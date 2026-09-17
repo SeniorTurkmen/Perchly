@@ -3,6 +3,75 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+
+	"perchly-backend/internal/apierror"
+)
+
+// ErrorCode and errorResponse are local aliases for the shared
+// apierror types — see that package's doc for why the envelope lives
+// there and not here (internal/auth needs the exact same shape for
+// 401s it rejects before a handler ever runs).
+type ErrorCode = apierror.Code
+
+type errorResponse = apierror.Response
+
+const (
+	ErrCodeInvalidRequestBody = apierror.CodeInvalidRequestBody
+	ErrCodeUnauthorized       = apierror.CodeUnauthorized
+	ErrCodeInternal           = apierror.CodeInternal
+
+	ErrCodeSessionCreateFailed  = apierror.CodeSessionCreateFailed
+	ErrCodeInvalidEmail         = apierror.CodeInvalidEmail
+	ErrCodeEmailCodeSendFailed  = apierror.CodeEmailCodeSendFailed
+	ErrCodeTooManyAttempts      = apierror.CodeTooManyAttempts
+	ErrCodeVerificationExpired  = apierror.CodeVerificationExpired
+	ErrCodeInvalidCode          = apierror.CodeInvalidCode
+	ErrCodeVerificationFailed   = apierror.CodeVerificationFailed
+	ErrCodeInvalidDisplayName   = apierror.CodeInvalidDisplayName
+	ErrCodeUserNotFound         = apierror.CodeUserNotFound
+	ErrCodeProfileUpdateFailed  = apierror.CodeProfileUpdateFailed
+	ErrCodeInvalidRefreshToken  = apierror.CodeInvalidRefreshToken
+	ErrCodeSessionRefreshFailed = apierror.CodeSessionRefreshFailed
+	ErrCodeLogoutFailed         = apierror.CodeLogoutFailed
+
+	ErrCodeInvalidPersonaID         = apierror.CodeInvalidPersonaID
+	ErrCodePersonaNotFound          = apierror.CodePersonaNotFound
+	ErrCodePersonaFetchFailed       = apierror.CodePersonaFetchFailed
+	ErrCodePersonasListFailed       = apierror.CodePersonasListFailed
+	ErrCodePersonaNotAgeAppropriate = apierror.CodePersonaNotAgeAppropriate
+	ErrCodePersonaTraitOutOfRange   = apierror.CodePersonaTraitOutOfRange
+	ErrCodePersonaTraitsFailed      = apierror.CodePersonaTraitsFailed
+
+	ErrCodeInvalidConversationID      = apierror.CodeInvalidConversationID
+	ErrCodeConversationNotFound       = apierror.CodeConversationNotFound
+	ErrCodeConversationForbidden      = apierror.CodeConversationForbidden
+	ErrCodeConversationCreateFailed   = apierror.CodeConversationCreateFailed
+	ErrCodeConversationsListFailed    = apierror.CodeConversationsListFailed
+	ErrCodeConversationFetchFailed    = apierror.CodeConversationFetchFailed
+	ErrCodeConversationContextMissing = apierror.CodeConversationContextMissing
+	ErrCodeMessagesListFailed         = apierror.CodeMessagesListFailed
+	ErrCodeInvalidMessageID           = apierror.CodeInvalidMessageID
+	ErrCodeMessageNotFound            = apierror.CodeMessageNotFound
+	ErrCodeMessageContentRequired     = apierror.CodeMessageContentRequired
+	ErrCodeMessageSendFailed          = apierror.CodeMessageSendFailed
+	ErrCodeStreamingUnsupported       = apierror.CodeStreamingUnsupported
+	ErrCodeReactionEmojiRequired      = apierror.CodeReactionEmojiRequired
+	ErrCodeInvalidReactionEmoji       = apierror.CodeInvalidReactionEmoji
+	ErrCodeCannotReactToOwnMessage    = apierror.CodeCannotReactToOwnMessage
+	ErrCodeReactionFailed             = apierror.CodeReactionFailed
+
+	ErrCodeInvalidAgeRange           = apierror.CodeInvalidAgeRange
+	ErrCodeInvalidMoodPreference     = apierror.CodeInvalidMoodPreference
+	ErrCodeInvalidSelectedPersonaID  = apierror.CodeInvalidSelectedPersonaID
+	ErrCodePreferredNameRequired     = apierror.CodePreferredNameRequired
+	ErrCodePreferredNameInvalid      = apierror.CodePreferredNameInvalid
+	ErrCodeOnboardingSaveFailed      = apierror.CodeOnboardingSaveFailed
+	ErrCodeOnboardingFetchFailed     = apierror.CodeOnboardingFetchFailed
+	ErrCodeOnboardingProfileNotFound = apierror.CodeOnboardingProfileNotFound
+
+	ErrCodeQuotaCheckFailed = apierror.CodeQuotaCheckFailed
+	ErrCodeQuotaExceeded    = apierror.CodeQuotaExceeded
+	ErrCodeChatEnergyFailed = apierror.CodeChatEnergyFailed
 )
 
 func writeJSON(w http.ResponseWriter, status int, payload any) {
@@ -11,6 +80,6 @@ func writeJSON(w http.ResponseWriter, status int, payload any) {
 	json.NewEncoder(w).Encode(payload)
 }
 
-func writeError(w http.ResponseWriter, status int, message string) {
-	writeJSON(w, status, map[string]string{"error": message})
+func writeError(w http.ResponseWriter, status int, code ErrorCode, message string) {
+	writeJSON(w, status, apierror.New(code, message))
 }

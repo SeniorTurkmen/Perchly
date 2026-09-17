@@ -122,11 +122,16 @@ final class APIClient: @unchecked Sendable {
         return data
     }
 
-    private struct ErrorPayload: Decodable { let error: String }
+    /// `code` is optional so a body from an older backend deploy
+    /// without it still decodes — see APIError.message's doc.
+    private struct ErrorPayload: Decodable {
+        let error: String
+        let code: APIErrorCode?
+    }
 
     private static func apiError(forStatus statusCode: Int, data: Data) -> APIError {
         if let payload = try? JSONDecoder().decode(ErrorPayload.self, from: data) {
-            return .message(statusCode: statusCode, text: payload.error)
+            return .message(statusCode: statusCode, code: payload.code, text: payload.error)
         }
         return .server(statusCode: statusCode, data: data)
     }

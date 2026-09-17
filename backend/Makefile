@@ -2,14 +2,21 @@ include .env
 export
 
 MIGRATE := go run -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.1
+SWAG := go run github.com/swaggo/swag/cmd/swag@v1.16.6
 
-.PHONY: dev run build migrate-up migrate-down migrate-force docker-up docker-down
+.PHONY: dev run build migrate-up migrate-down migrate-force docker-up docker-down swagger
 
 dev:
 	./scripts/dev.sh
 
 run:
 	go run ./cmd/api
+
+# Regenerate docs/ from the @Summary/@Router annotations on handlers —
+# run this after adding or changing any endpoint, then restart the
+# server; the UI is served at /swagger/index.html.
+swagger:
+	$(SWAG) init -g cmd/api/main.go -o docs --parseInternal --parseDependency
 
 build:
 	go build -o bin/api ./cmd/api

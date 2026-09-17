@@ -87,12 +87,22 @@ struct PersonaCard: View {
 
             Spacer(minLength: 8)
 
-            Text(style.badgeTitle)
-                .font(PerchlyTypography.Discover.labelSM)
-                .foregroundStyle(style.badgeText)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
-                .background(style.badgeFill, in: Capsule())
+            VStack(alignment: .trailing, spacing: 6) {
+                if persona.recommended == true, showsTalkButton {
+                    Text("Önerilen")
+                        .font(PerchlyTypography.Discover.labelSM.weight(.semibold))
+                        .foregroundStyle(PerchlyPalette.Discover.primary)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(PerchlyPalette.Discover.primaryFixed.opacity(0.7), in: Capsule())
+                }
+                Text(style.badgeTitle)
+                    .font(PerchlyTypography.Discover.labelSM)
+                    .foregroundStyle(style.badgeText)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(style.badgeFill, in: Capsule())
+            }
         }
     }
 
@@ -170,7 +180,9 @@ struct PersonaCard: View {
                     isActive: true,
                     sortOrder: 2,
                     createdAt: .now,
-                    updatedAt: .now
+                    updatedAt: .now,
+                    recommended: nil,
+                    matchReason: nil
                 ),
                 showsTalkButton: true
             )

@@ -17,9 +17,19 @@ type OnboardingProfile struct {
 	// client, since persona age-gating depends on it.
 	IsMinor bool `json:"is_minor"`
 	// One of "motivation", "dailyChat", "hobbyTalk", "skipped", or nil.
-	MoodPreference       *string   `json:"mood_preference"`
-	NotificationsGranted bool      `json:"notifications_granted"`
-	SelectedPersonaID    *string   `json:"selected_persona_id"`
-	CreatedAt            time.Time `json:"created_at"`
-	UpdatedAt            time.Time `json:"updated_at"`
+	MoodPreference       *string `json:"mood_preference"`
+	NotificationsGranted bool    `json:"notifications_granted"`
+	SelectedPersonaID    *string `json:"selected_persona_id"`
+	// PreferredName is exactly what the user typed for how they want to
+	// be addressed — never a server-generated nickname. nil means no
+	// hitap has been set (either they opted out via SkipHitap, or
+	// they're on a client version that doesn't send this yet).
+	PreferredName *string `json:"preferred_name"`
+	// SkipHitap is true when the user explicitly chose to stay
+	// anonymous — personas must never address them by any name,
+	// nickname, or invented handle in that case (see
+	// ContextBuilder.formatHitapInstruction).
+	SkipHitap bool      `json:"skip_hitap"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

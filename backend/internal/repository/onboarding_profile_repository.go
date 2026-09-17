@@ -24,25 +24,30 @@ func NewOnboardingProfileRepository(pool *pgxpool.Pool) *OnboardingProfileReposi
 
 const onboardingProfileColumns = `
 	user_id::text, age_range, is_minor, mood_preference,
-	notifications_granted, selected_persona_id::text, created_at, updated_at`
+	notifications_granted, selected_persona_id::text, preferred_name, skip_hitap,
+	created_at, updated_at`
 
 // Upsert saves a user's onboarding profile — there is only ever one per
 // user, so a resubmission (e.g. redoing onboarding) replaces it rather
-// than erroring.
+// than erroring. Callers decide PreferredName/SkipHitap up front (see
+// OnboardingService.SaveProfile) — this just writes whatever the
+// profile carries, verbatim.
 func (r *OnboardingProfileRepository) Upsert(ctx context.Context, profile model.OnboardingProfile) (model.OnboardingProfile, error) {
 	row := r.pool.QueryRow(ctx, `
-		INSERT INTO onboarding_profiles (user_id, age_range, is_minor, mood_preference, notifications_granted, selected_persona_id)
-		VALUES ($1::uuid, $2, $3, $4, $5, $6::uuid)
+		INSERT INTO onboarding_profiles (user_id, age_range, is_minor, mood_preference, notifications_granted, selected_persona_id, preferred_name, skip_hitap)
+		VALUES ($1::uuid, $2, $3, $4, $5, $6::uuid, $7, $8)
 		ON CONFLICT (user_id) DO UPDATE SET
 			age_range = EXCLUDED.age_range,
 			is_minor = EXCLUDED.is_minor,
 			mood_preference = EXCLUDED.mood_preference,
 			notifications_granted = EXCLUDED.notifications_granted,
 			selected_persona_id = EXCLUDED.selected_persona_id,
+			preferred_name = EXCLUDED.preferred_name,
+			skip_hitap = EXCLUDED.skip_hitap,
 			updated_at = now()
 		RETURNING `+onboardingProfileColumns,
 		profile.UserID, profile.AgeRange, profile.IsMinor, profile.MoodPreference,
-		profile.NotificationsGranted, profile.SelectedPersonaID,
+		profile.NotificationsGranted, profile.SelectedPersonaID, profile.PreferredName, profile.SkipHitap,
 	)
 	return scanOnboardingProfile(row)
 }
@@ -79,7 +84,8 @@ func scanOnboardingProfile(row rowScanner) (model.OnboardingProfile, error) {
 	var p model.OnboardingProfile
 	err := row.Scan(
 		&p.UserID, &p.AgeRange, &p.IsMinor, &p.MoodPreference,
-		&p.NotificationsGranted, &p.SelectedPersonaID, &p.CreatedAt, &p.UpdatedAt,
+		&p.NotificationsGranted, &p.SelectedPersonaID, &p.PreferredName, &p.SkipHitap,
+		&p.CreatedAt, &p.UpdatedAt,
 	)
 	return p, err
 }

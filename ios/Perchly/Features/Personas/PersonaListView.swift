@@ -55,13 +55,17 @@ struct PersonaListView: View {
                 }
                 await viewModel.load()
                 await viewModel.loadConversations()
+                await viewModel.loadChatEnergy()
                 if shouldOpenInitialChat, let initialPersona {
                     openChat(persona: initialPersona)
                 }
             }
             .onChange(of: path.count) {
                 if path.isEmpty {
-                    Task { await viewModel.loadConversations() }
+                    Task {
+                        await viewModel.loadConversations()
+                        await viewModel.loadChatEnergy()
+                    }
                 }
             }
             .preferredColorScheme(.light)
@@ -80,6 +84,7 @@ struct PersonaListView: View {
                 case .failed(let message):
                     errorView(message) {
                         await viewModel.load()
+                        await viewModel.loadChatEnergy()
                     }
                 case .loaded:
                     personaList
@@ -175,7 +180,9 @@ struct PersonaListView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 greeting
-                energyCapsule
+                if let energy = viewModel.chatEnergy {
+                    energyCapsule(energy)
+                }
                 categoryFilters
 
                 VStack(spacing: 16) {
@@ -299,16 +306,16 @@ struct PersonaListView: View {
         }
     }
 
-    private var energyCapsule: some View {
+    private func energyCapsule(_ energy: ChatEnergy) -> some View {
         HStack(spacing: 12) {
             ZStack {
                 Circle()
                     .stroke(PerchlyPalette.Discover.surfaceContainerHigh, lineWidth: 3.5)
                 Circle()
-                    .trim(from: 0, to: 0.8)
+                    .trim(from: 0, to: energy.progress)
                     .stroke(PerchlyPalette.Discover.primaryContainer, style: StrokeStyle(lineWidth: 3.5, lineCap: .round))
                     .rotationEffect(.degrees(-90))
-                Text("8/10")
+                Text(energy.fractionLabel)
                     .font(PerchlyTypography.Discover.labelSM.weight(.bold))
                     .foregroundStyle(PerchlyPalette.Discover.primary)
             }
@@ -324,7 +331,7 @@ struct PersonaListView: View {
                         .foregroundStyle(PerchlyPalette.Discover.onSurface)
                         .lineLimit(1)
                 }
-                Text("Acele yok, 8 derin sohbet payı seninle")
+                Text(energy.shareCopy)
                     .font(PerchlyTypography.Discover.bodySM)
                     .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
                     .fixedSize(horizontal: false, vertical: true)
@@ -336,7 +343,7 @@ struct PersonaListView: View {
             HStack(spacing: 4) {
                 Image(systemName: "drop.fill")
                     .font(.system(size: 11))
-                Text("Huzurlu")
+                Text(energy.moodLabel)
             }
             .font(PerchlyTypography.Discover.labelSM)
             .foregroundStyle(PerchlyPalette.Discover.primary)
@@ -347,6 +354,8 @@ struct PersonaListView: View {
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .glassEffect(.regular.tint(PerchlyPalette.Discover.surfaceLowest.opacity(0.5)), in: .rect(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Günün sohbet enerjisi \(energy.fractionLabel), \(energy.moodLabel)")
     }
 
     private var categoryFilters: some View {

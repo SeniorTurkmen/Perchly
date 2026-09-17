@@ -12,6 +12,13 @@ struct OnboardingProfile: Codable, Equatable {
         case motivation, dailyChat, hobbyTalk, skipped
     }
 
+    /// How the user wants personas to address them. Synced on
+    /// `POST /users/onboarding-profile` as `preferred_name`.
+    /// `nil` when `skipHitap` is true — never a generated nickname.
+    var preferredName: String?
+    /// True when the user chose anonymous continue: store no name and
+    /// do not address them by any handle in chat (`skip_hitap`).
+    var skipHitap: Bool = false
     var ageRange: AgeRange?
     var moodPreference: MoodPreference?
     var notificationsGranted: Bool = false
@@ -23,6 +30,52 @@ struct OnboardingProfile: Codable, Equatable {
     /// trusts whatever a client sends for it either (see
     /// AuthService/OnboardingService) — this mirrors that on purpose.
     var isMinor: Bool { ageRange == .under18 }
+}
+
+/// Client-side cache of `preferred_name` / `skip_hitap`. Personas read
+/// the hitap from the backend prompt; this is for reinstall sync and UI.
+enum PreferredNameRules {
+    static let maxLength = 40
+
+    static func isValid(_ name: String) -> Bool {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard (1...maxLength).contains(trimmed.count) else { return false }
+        return trimmed.unicodeScalars.allSatisfy { !CharacterSet.controlCharacters.contains($0) }
+    }
+}
+
+enum LocalPreferredNameStore {
+    private static let nameKey = "perchly.local_preferred_name"
+    private static let skipKey = "perchly.local_skip_hitap"
+    /// Previous keys from the short-lived generated-nickname experiment.
+    private static let legacyNameKey = "perchly.local_display_name"
+    private static let legacyAnonymousKey = "perchly.local_display_name_is_anonymous"
+
+    static func save(name: String) {
+        UserDefaults.standard.set(name, forKey: nameKey)
+        UserDefaults.standard.set(false, forKey: skipKey)
+        UserDefaults.standard.removeObject(forKey: legacyNameKey)
+        UserDefaults.standard.removeObject(forKey: legacyAnonymousKey)
+    }
+
+    static func clear() {
+        UserDefaults.standard.removeObject(forKey: nameKey)
+        UserDefaults.standard.set(true, forKey: skipKey)
+        UserDefaults.standard.removeObject(forKey: legacyNameKey)
+        UserDefaults.standard.removeObject(forKey: legacyAnonymousKey)
+    }
+
+    static var name: String? {
+        if UserDefaults.standard.bool(forKey: skipKey) { return nil }
+        if let name = UserDefaults.standard.string(forKey: nameKey), !name.isEmpty {
+            return name
+        }
+        return nil
+    }
+
+    static var skipHitap: Bool {
+        UserDefaults.standard.bool(forKey: skipKey)
+    }
 }
 
 extension OnboardingProfile.MoodPreference {

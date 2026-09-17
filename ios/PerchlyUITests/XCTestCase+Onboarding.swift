@@ -7,6 +7,10 @@ extension XCTestCase {
     /// as possible; it no-ops if onboarding isn't showing (e.g. this
     /// install already completed it in an earlier test).
     func fastForwardThroughOnboardingIfPresented(_ app: XCUIApplication) {
+        if app.buttons["skipNameAnonymousButton"].waitForExistence(timeout: 3) {
+            app.buttons["skipNameAnonymousButton"].tap()
+        }
+
         let ageOption = app.buttons["ageOption_age25to34"]
         guard ageOption.waitForExistence(timeout: 5) else { return }
 

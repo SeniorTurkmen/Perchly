@@ -1,62 +1,77 @@
 import SwiftUI
 
-/// Screen 2: optional, skippable. Three GlassCard options (icon +
-/// title); tapping one, or skipping, both advance the same way.
+/// Stitch "Onboarding - Ruh Hali Seçimi". Mood values still match the
+/// backend enum; presentation is local until a dedicated mood API exists.
 struct MoodPreferenceStepView: View {
     @ObservedObject var coordinator: OnboardingCoordinator
 
-    private let options: [(mood: OnboardingProfile.MoodPreference, icon: String, title: String)] = [
-        (.motivation, "flame.fill", "Motive Olmak"),
-        (.dailyChat, "bubble.left.and.bubble.right.fill", "Gündelik Sohbet"),
-        (.hobbyTalk, "sparkles", "Hobi Paylaşmak"),
+    private let options: [(mood: OnboardingProfile.MoodPreference, icon: String, title: String, subtitle: String)] = [
+        (.motivation, "flame.fill", "Motive Olmak", "Küçük adımlar, somut cesaret"),
+        (.dailyChat, "bubble.left.and.bubble.right.fill", "Gündelik Sohbet", "Günün nasıl geçtiğini paylaş"),
+        (.hobbyTalk, "book.fill", "Hobi Paylaşmak", "Kitap, film ve tutkular"),
     ]
 
     var body: some View {
-        VStack(spacing: 28) {
-            Spacer()
+        OnboardingScaffold(stepIndex: 3, stepLabel: "Ruh Hali", onBack: coordinator.goBack) {
+            VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Şu an nasıl bir sohbet arıyorsun?")
+                        .font(PerchlyTypography.Discover.headlineLG)
+                        .foregroundStyle(PerchlyPalette.Discover.onSurface)
+                    Text("İstersen bunu atlayabilirsin; istediğin zaman değiştirebilirsin.")
+                        .font(PerchlyTypography.Discover.bodyMD)
+                        .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
+                }
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Şu an nasıl bir sohbet arıyorsun?")
-                    .font(PerchlyTypography.largeTitle)
-                Text("İstersen bunu atlayabilirsin, istediğin zaman değiştirebilirsin.")
-                    .font(PerchlyTypography.body)
-                    .foregroundStyle(PerchlyPalette.textSecondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            VStack(spacing: 12) {
-                ForEach(options, id: \.mood) { option in
-                    Button {
-                        coordinator.selectMood(option.mood)
-                    } label: {
-                        GlassCard {
+                VStack(spacing: 12) {
+                    ForEach(options, id: \.mood) { option in
+                        Button {
+                            coordinator.selectMood(option.mood)
+                        } label: {
                             HStack(spacing: 14) {
-                                Image(systemName: option.icon)
-                                    .font(.title2)
-                                    .foregroundStyle(PerchlyPalette.accent)
-                                    .frame(width: 28)
-                                Text(option.title)
-                                    .font(PerchlyTypography.body.weight(.semibold))
-                                    .foregroundStyle(PerchlyPalette.textPrimary)
+                                ZStack {
+                                    Circle().fill(PerchlyPalette.Discover.primaryFixed)
+                                    Image(systemName: option.icon)
+                                        .font(.system(size: 18))
+                                        .foregroundStyle(PerchlyPalette.Discover.primary)
+                                }
+                                .frame(width: 48, height: 48)
+
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(option.title)
+                                        .font(PerchlyTypography.Discover.headlineSM)
+                                        .foregroundStyle(PerchlyPalette.Discover.onSurface)
+                                    Text(option.subtitle)
+                                        .font(PerchlyTypography.Discover.bodySM)
+                                        .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
+                                }
                                 Spacer(minLength: 0)
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
                             }
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .glassEffect(.regular.tint(PerchlyPalette.Discover.surfaceLowest.opacity(0.7)), in: .rect(cornerRadius: 18))
                         }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("moodOption_\(option.mood.rawValue)")
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("moodOption_\(option.mood.rawValue)")
                 }
             }
-
-            Button("Şimdilik Atla") {
+        } footer: {
+            Button {
                 coordinator.skipMood()
+            } label: {
+                Text("Şimdilik Atla")
+                    .font(PerchlyTypography.Discover.labelLG)
+                    .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
             }
-            .font(PerchlyTypography.body)
-            .foregroundStyle(PerchlyPalette.textSecondary)
+            .buttonStyle(.plain)
             .accessibilityIdentifier("skipMoodButton")
-
-            Spacer()
         }
-        .padding()
     }
 }
 

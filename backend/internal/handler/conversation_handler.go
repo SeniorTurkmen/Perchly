@@ -35,23 +35,35 @@ type createConversationRequest struct {
 	PersonaID string `json:"persona_id"`
 }
 
-// Create handles POST /conversations. Requires auth.Middleware to have
-// run first; the owner is always the authenticated caller, never a
-// client-supplied field.
+// Create godoc
+// @Summary Yeni konuşma başlat
+// @Description Sahibi her zaman kimlik doğrulanan çağırandır; client tarafından belirlenemez. Reşit olmayan kullanıcı is_minor_appropriate=false bir personayla konuşma açamaz.
+// @Tags conversations
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param body body createConversationRequest true "persona_id"
+// @Success 201 {object} model.Conversation
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 403 {object} errorResponse "persona yaş grubuna uygun değil"
+// @Failure 404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /conversations [post]
 func (h *ConversationHandler) Create(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, "giriş gerekli")
+		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	var req createConversationRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz istek gövdesi")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 	if _, err := uuid.Parse(req.PersonaID); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz persona_id")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona_id")
 		return
 	}
 
@@ -59,45 +71,66 @@ func (h *ConversationHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrPersonaNotFound):
-			writeError(w, http.StatusNotFound, "persona bulunamadı")
+			writeError(w, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
 		case errors.Is(err, service.ErrPersonaNotAgeAppropriate):
-			writeError(w, http.StatusForbidden, "bu persona yaş grubun için uygun değil")
+			writeError(w, http.StatusForbidden, ErrCodePersonaNotAgeAppropriate, "bu persona yaş grubun için uygun değil")
 		default:
-			writeError(w, http.StatusInternalServerError, "konuşma oluşturulamadı")
+			writeError(w, http.StatusInternalServerError, ErrCodeConversationCreateFailed, "konuşma oluşturulamadı")
 		}
 		return
 	}
 	writeJSON(w, http.StatusCreated, conversation)
 }
 
-// List handles GET /conversations — the caller's inbox, newest activity first.
+// List godoc
+// @Summary Konuşmaları listele
+// @Description Çağıranın gelen kutusu, en son etkinliğe göre sıralı.
+// @Tags conversations
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} model.ConversationPreview
+// @Failure 401 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /conversations [get]
 func (h *ConversationHandler) List(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, "giriş gerekli")
+		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	previews, err := h.conversations.List(r.Context(), userID)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, "konuşmalar getirilemedi")
+		writeError(w, http.StatusInternalServerError, ErrCodeConversationsListFailed, "konuşmalar getirilemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, previews)
 }
 
-// ListMessages handles GET /conversations/{id}/messages. Ownership is
-// enforced in the service; this is a read, so it does not spend quota.
+// ListMessages godoc
+// @Summary Konuşmadaki mesajları listele
+// @Description Salt okunur; kota harcamaz. Sahiplik kontrolü sunucu tarafında yapılır.
+// @Tags conversations
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Conversation ID (UUID)"
+// @Success 200 {array} model.Message
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 403 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /conversations/{id}/messages [get]
 func (h *ConversationHandler) ListMessages(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, "giriş gerekli")
+		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	conversationID := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(conversationID); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz conversation id")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz conversation id")
 		return
 	}
 
@@ -105,11 +138,11 @@ func (h *ConversationHandler) ListMessages(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrConversationNotFound):
-			writeError(w, http.StatusNotFound, "konuşma bulunamadı")
+			writeError(w, http.StatusNotFound, ErrCodeConversationNotFound, "konuşma bulunamadı")
 		case errors.Is(err, service.ErrConversationForbidden):
-			writeError(w, http.StatusForbidden, "bu konuşmaya erişiminiz yok")
+			writeError(w, http.StatusForbidden, ErrCodeConversationForbidden, "bu konuşmaya erişiminiz yok")
 		default:
-			writeError(w, http.StatusInternalServerError, "mesajlar getirilemedi")
+			writeError(w, http.StatusInternalServerError, ErrCodeMessagesListFailed, "mesajlar getirilemedi")
 		}
 		return
 	}
@@ -120,19 +153,46 @@ type setReactionRequest struct {
 	Emoji string `json:"emoji"`
 }
 
-// SetReaction handles POST /conversations/{id}/messages/{messageID}/reaction.
-// Only assistant messages in a conversation the caller owns can be
-// reacted to — see ConversationService.SetMessageReaction.
+// SetReaction godoc
+// @Summary Mesaja emoji tepkisi bırak
+// @Description Yalnızca çağıranın sahip olduğu konuşmadaki asistan mesajlarına tepki bırakılabilir.
+// @Tags conversations
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Conversation ID (UUID)"
+// @Param messageID path string true "Message ID (UUID)"
+// @Param body body setReactionRequest true "emoji"
+// @Success 200 {object} model.Message
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 403 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /conversations/{id}/messages/{messageID}/reaction [post]
 func (h *ConversationHandler) SetReaction(w http.ResponseWriter, r *http.Request) {
 	var req setReactionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || strings.TrimSpace(req.Emoji) == "" {
-		writeError(w, http.StatusBadRequest, "emoji alanı zorunludur")
+		writeError(w, http.StatusBadRequest, ErrCodeReactionEmojiRequired, "emoji alanı zorunludur")
 		return
 	}
 	h.setReaction(w, r, &req.Emoji)
 }
 
-// ClearReaction handles DELETE /conversations/{id}/messages/{messageID}/reaction.
+// ClearReaction godoc
+// @Summary Mesajdaki emoji tepkisini kaldır
+// @Tags conversations
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Conversation ID (UUID)"
+// @Param messageID path string true "Message ID (UUID)"
+// @Success 200 {object} model.Message
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 403 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /conversations/{id}/messages/{messageID}/reaction [delete]
 func (h *ConversationHandler) ClearReaction(w http.ResponseWriter, r *http.Request) {
 	h.setReaction(w, r, nil)
 }
@@ -140,18 +200,18 @@ func (h *ConversationHandler) ClearReaction(w http.ResponseWriter, r *http.Reque
 func (h *ConversationHandler) setReaction(w http.ResponseWriter, r *http.Request, emoji *string) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, "giriş gerekli")
+		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	conversationID := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(conversationID); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz conversation id")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz conversation id")
 		return
 	}
 	messageID := chi.URLParam(r, "messageID")
 	if _, err := uuid.Parse(messageID); err != nil {
-		writeError(w, http.StatusBadRequest, "geçersiz message id")
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidMessageID, "geçersiz message id")
 		return
 	}
 
@@ -159,17 +219,17 @@ func (h *ConversationHandler) setReaction(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrConversationNotFound):
-			writeError(w, http.StatusNotFound, "konuşma bulunamadı")
+			writeError(w, http.StatusNotFound, ErrCodeConversationNotFound, "konuşma bulunamadı")
 		case errors.Is(err, repository.ErrMessageNotFound):
-			writeError(w, http.StatusNotFound, "mesaj bulunamadı")
+			writeError(w, http.StatusNotFound, ErrCodeMessageNotFound, "mesaj bulunamadı")
 		case errors.Is(err, service.ErrConversationForbidden):
-			writeError(w, http.StatusForbidden, "bu konuşmaya erişiminiz yok")
+			writeError(w, http.StatusForbidden, ErrCodeConversationForbidden, "bu konuşmaya erişiminiz yok")
 		case errors.Is(err, service.ErrCannotReactToOwnRoleMessage):
-			writeError(w, http.StatusForbidden, "bu mesaja tepki bırakamazsınız")
+			writeError(w, http.StatusForbidden, ErrCodeCannotReactToOwnMessage, "bu mesaja tepki bırakamazsınız")
 		case errors.Is(err, service.ErrInvalidReactionEmoji):
-			writeError(w, http.StatusBadRequest, "desteklenmeyen emoji")
+			writeError(w, http.StatusBadRequest, ErrCodeInvalidReactionEmoji, "desteklenmeyen emoji")
 		default:
-			writeError(w, http.StatusInternalServerError, "tepki kaydedilemedi")
+			writeError(w, http.StatusInternalServerError, ErrCodeReactionFailed, "tepki kaydedilemedi")
 		}
 		return
 	}

@@ -2,12 +2,14 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
 
 	"perchly-backend/internal/llm"
 	"perchly-backend/internal/model"
+	"perchly-backend/internal/repository"
 )
 
 type MessageRepo interface {
@@ -117,20 +119,22 @@ func scanForReactionTag(buffer string) reactionScanResult {
 // upstream (see handler.QuotaMiddleware) — SendMessage trusts the
 // conversationID/personaID/userID it's given.
 type ChatService struct {
-	messages       MessageRepo
-	personas       PersonaRepo
-	personaTraits  PersonaTraitsRepo
-	llmClient      llm.Client
-	embeddings     *EmbeddingService
-	summaries      *SummaryService
-	contextBuilder *ContextBuilder
-	quotas         *QuotaService
+	messages           MessageRepo
+	personas           PersonaRepo
+	personaTraits      PersonaTraitsRepo
+	onboardingProfiles OnboardingProfileRepo
+	llmClient          llm.Client
+	embeddings         *EmbeddingService
+	summaries          *SummaryService
+	contextBuilder     *ContextBuilder
+	quotas             *QuotaService
 }
 
 func NewChatService(
 	messages MessageRepo,
 	personas PersonaRepo,
 	personaTraits PersonaTraitsRepo,
+	onboardingProfiles OnboardingProfileRepo,
 	llmClient llm.Client,
 	embeddings *EmbeddingService,
 	summaries *SummaryService,
@@ -138,13 +142,14 @@ func NewChatService(
 	quotas *QuotaService,
 ) *ChatService {
 	return &ChatService{
-		messages:       messages,
-		personas:       personas,
-		personaTraits:  personaTraits,
-		llmClient:      llmClient,
-		embeddings:     embeddings,
-		summaries:      summaries,
-		contextBuilder: contextBuilder,
+		messages:           messages,
+		personas:           personas,
+		personaTraits:      personaTraits,
+		onboardingProfiles: onboardingProfiles,
+		llmClient:          llmClient,
+		embeddings:         embeddings,
+		summaries:          summaries,
+		contextBuilder:     contextBuilder,
 		quotas:         quotas,
 	}
 }
@@ -193,7 +198,19 @@ func (s *ChatService) SendMessage(
 		traits = persona.DefaultTraits
 	}
 
-	llmMessages := s.contextBuilder.Build(ctx, conversationID, persona.SystemPrompt, history, content, traits)
+	var preferredName *string
+	var skipHitap bool
+	if onboardingProfile, err := s.onboardingProfiles.GetByUserID(ctx, userID); err == nil {
+		preferredName = onboardingProfile.PreferredName
+		skipHitap = onboardingProfile.SkipHitap
+	} else if !errors.Is(err, repository.ErrOnboardingProfileNotFound) {
+		// Same fail-open reasoning as the traits lookup above: no
+		// onboarding profile (or a lookup glitch) just means no hitap
+		// instruction gets added this turn, never a failed reply.
+		log.Printf("chat: failed to load onboarding profile for hitap (user=%s): %v", userID, err)
+	}
+
+	llmMessages := s.contextBuilder.Build(ctx, conversationID, persona.SystemPrompt, history, content, traits, preferredName, skipHitap)
 
 	var full strings.Builder
 	var reactionEmoji string

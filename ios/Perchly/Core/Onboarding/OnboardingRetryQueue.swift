@@ -51,22 +51,86 @@ struct OnboardingRetryQueue {
         let mood_preference: String?
         let notifications_granted: Bool
         let selected_persona_id: String?
+        /// Omitted (not null) when this payload predates hitap, so the
+        /// server preserves whatever is already on file — see
+        /// OnboardingService.SaveProfile's "neither field sent" path.
+        let preferred_name: String?
+        let skip_hitap: Bool?
+
+        enum CodingKeys: String, CodingKey {
+            case age_range, is_minor, mood_preference
+            case notifications_granted, selected_persona_id
+            case preferred_name, skip_hitap
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(age_range, forKey: .age_range)
+            try container.encode(is_minor, forKey: .is_minor)
+            try container.encodeIfPresent(mood_preference, forKey: .mood_preference)
+            try container.encode(notifications_granted, forKey: .notifications_granted)
+            try container.encodeIfPresent(selected_persona_id, forKey: .selected_persona_id)
+            try container.encodeIfPresent(preferred_name, forKey: .preferred_name)
+            try container.encodeIfPresent(skip_hitap, forKey: .skip_hitap)
+        }
     }
 
     private func submit(_ profile: OnboardingProfile) async throws {
-        // Screen 1 (age range) is mandatory, so a profile reaching this
+        // Screen 2 (age range) is mandatory, so a profile reaching this
         // point should always have one — but there's nothing meaningful
         // to submit without it, so just skip rather than send garbage.
         guard let ageRange = profile.ageRange else { return }
+
+        let preferredName: String?
+        let skipHitap: Bool?
+        if profile.skipHitap {
+            preferredName = nil
+            skipHitap = true
+        } else if let name = profile.preferredName?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  PreferredNameRules.isValid(name) {
+            preferredName = name
+            skipHitap = nil
+        } else {
+            preferredName = nil
+            skipHitap = nil
+        }
 
         let body = try JSONEncoder().encode(SaveProfileRequest(
             age_range: ageRange.rawValue,
             is_minor: profile.isMinor,
             mood_preference: profile.moodPreference?.rawValue,
             notifications_granted: profile.notificationsGranted,
-            selected_persona_id: profile.selectedPersonaID
+            selected_persona_id: profile.selectedPersonaID,
+            preferred_name: preferredName,
+            skip_hitap: skipHitap
         ))
         try await apiClient.send(APIRequest(path: "/users/onboarding-profile", method: .post, body: body))
+    }
+
+    /// Pulls `preferred_name` / `skip_hitap` from the server so a
+    /// reinstall (same anonymous device id) doesn't lose hitap. 404
+    /// means onboarding hasn't been saved yet — leave the local store.
+    func syncPreferredName() async {
+        struct Remote: Decodable {
+            let preferredName: String?
+            let skipHitap: Bool
+
+            enum CodingKeys: String, CodingKey {
+                case preferredName = "preferred_name"
+                case skipHitap = "skip_hitap"
+            }
+        }
+
+        do {
+            let remote: Remote = try await apiClient.send(APIRequest(path: "/users/onboarding-profile"))
+            if remote.skipHitap {
+                LocalPreferredNameStore.clear()
+            } else if let name = remote.preferredName, PreferredNameRules.isValid(name) {
+                LocalPreferredNameStore.save(name: name)
+            }
+        } catch {
+            return
+        }
     }
 
     private func enqueue(_ profile: OnboardingProfile) {

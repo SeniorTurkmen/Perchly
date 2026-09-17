@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 
 	"perchly-backend/internal/auth"
 	"perchly-backend/internal/config"
@@ -17,8 +18,19 @@ import (
 	"perchly-backend/internal/repository"
 	"perchly-backend/internal/requestlog"
 	"perchly-backend/internal/service"
+
+	_ "perchly-backend/docs" // swag init tarafından üretilir; @title vb. burada değil docs.go'da tutulur
 )
 
+// @title Perchly Backend API
+// @version 1.0
+// @description Perchly sohbet uygulamasının REST API'si — kimlik doğrulama, onboarding, persona, konuşma/mesajlaşma ve kota uçları.
+// @description Kimlik doğrulama gerektiren uçlar için "Authorize" düğmesinden `Bearer <access_token>` girin.
+// @BasePath /
+// @schemes http https
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	cfg, err := config.Load()
 	if err != nil {
@@ -38,8 +50,10 @@ func main() {
 	healthService := service.NewHealthService(pool)
 	healthHandler := handler.NewHealthHandler(healthService)
 
+	onboardingProfileRepo := repository.NewOnboardingProfileRepository(pool)
+
 	personaRepo := repository.NewPersonaRepository(pool)
-	personaService := service.NewPersonaService(personaRepo)
+	personaService := service.NewPersonaService(personaRepo, onboardingProfileRepo)
 	personaHandler := handler.NewPersonaHandler(personaService)
 
 	personaTraitsRepo := repository.NewPersonaTraitsRepository(pool)
@@ -57,7 +71,6 @@ func main() {
 	userRepo := repository.NewUserRepository(pool)
 	verificationCodeRepo := repository.NewVerificationCodeRepository(pool)
 	refreshTokenRepo := repository.NewRefreshTokenRepository(pool)
-	onboardingProfileRepo := repository.NewOnboardingProfileRepository(pool)
 	accessTokenIssuer := auth.NewAccessTokenIssuer(cfg.JWTSecret, cfg.AccessTokenTTL)
 
 	authService := service.NewAuthService(
@@ -110,16 +123,17 @@ func main() {
 
 	quotaRepo := repository.NewQuotaRepository(pool)
 	creditRepo := repository.NewCreditRepository(pool)
-	quotaService := service.NewQuotaService(quotaRepo, creditRepo, cfg.DefaultDailyMessageLimit)
+	quotaService := service.NewQuotaService(quotaRepo, creditRepo, personaRepo, userRepo, cfg.DefaultDailyMessageLimit)
 
 	quotaResetJob := service.NewQuotaResetJob(quotaRepo, cfg.QuotaResetInterval)
 	go quotaResetJob.Run(ctx)
 
 	chatService := service.NewChatService(
-		messageRepo, personaRepo, personaTraitsRepo, llmClient,
+		messageRepo, personaRepo, personaTraitsRepo, onboardingProfileRepo, llmClient,
 		embeddingService, summaryService, contextBuilder, quotaService,
 	)
 	messageHandler := handler.NewMessageHandler(chatService)
+	chatEnergyHandler := handler.NewChatEnergyHandler(quotaService)
 
 	requestLogRepo := repository.NewRequestLogRepository(pool)
 
@@ -132,8 +146,14 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	r.Get("/health", healthHandler.Health)
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger/doc.json"),
+	))
 
 	r.Route("/personas", func(r chi.Router) {
+		// Soft auth: GET / and GET /{id} stay public either way; List
+		// itself only enforces auth for the ?recommend=true variant.
+		r.Use(auth.OptionalMiddleware(accessTokenIssuer))
 		r.Get("/", personaHandler.List)
 		r.Get("/{id}", personaHandler.Get)
 
@@ -168,6 +188,8 @@ func main() {
 	r.Route("/users", func(r chi.Router) {
 		r.Use(auth.Middleware(accessTokenIssuer))
 		r.Post("/onboarding-profile", onboardingHandler.SaveProfile)
+		r.Get("/onboarding-profile", onboardingHandler.GetProfile)
+		r.Get("/chat-energy", chatEnergyHandler.Get)
 	})
 
 	addr := ":" + cfg.ServerPort

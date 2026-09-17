@@ -1,11 +1,9 @@
 import Foundation
 
-/// The onboarding flow's steps, in order. A future welcome/intro
-/// sequence ("Perchlemek" — karşılama, kelime tanıtımı, platonik
-/// konumlandırma) is meant to live under this same coordinator ahead of
-/// `.ageRange`, once those screens exist; for now this covers only the
-/// data-collection steps that are actually specified.
+/// The onboarding flow's steps, in order: name/hitap, age, mood,
+/// notifications, then a persona match preview.
 enum OnboardingStep: Equatable {
+    case nameHitap
     case ageRange
     case moodPreference
     case notificationPermission
@@ -21,7 +19,7 @@ enum OnboardingStep: Equatable {
 /// whichever step this points at).
 @MainActor
 final class OnboardingCoordinator: ObservableObject {
-    @Published private(set) var step: OnboardingStep = .ageRange
+    @Published private(set) var step: OnboardingStep = .nameHitap
     @Published private(set) var profile = OnboardingProfile()
     /// Set the instant a persona is picked, so OnboardingFlowView can
     /// render ChatView for `.completed` without waiting on anything.
@@ -35,14 +33,49 @@ final class OnboardingCoordinator: ObservableObject {
         self.retryQueue = retryQueue
     }
 
-    // MARK: Screen 1 — age range (mandatory)
+    // MARK: Screen 1 — preferred name, or no hitap at all
+
+    func selectPreferredName(_ name: String) {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard PreferredNameRules.isValid(trimmed) else { return }
+        profile.preferredName = trimmed
+        profile.skipHitap = false
+        LocalPreferredNameStore.save(name: trimmed)
+        step = .ageRange
+    }
+
+    /// User opted out of being addressed by name. Nothing is stored and
+    /// personas must not invent a nickname either.
+    func continueAnonymously() {
+        profile.preferredName = nil
+        profile.skipHitap = true
+        LocalPreferredNameStore.clear()
+        step = .ageRange
+    }
+
+    func goBack() {
+        switch step {
+        case .ageRange:
+            step = .nameHitap
+        case .moodPreference:
+            step = .ageRange
+        case .notificationPermission:
+            step = .moodPreference
+        case .personaPick:
+            step = .notificationPermission
+        case .nameHitap, .completed:
+            break
+        }
+    }
+
+    // MARK: Screen 2 — age range (mandatory)
 
     func selectAgeRange(_ ageRange: OnboardingProfile.AgeRange) {
         profile.ageRange = ageRange
         step = .moodPreference
     }
 
-    // MARK: Screen 2 — mood preference (optional)
+    // MARK: Screen 3 — mood preference (optional)
 
     func selectMood(_ mood: OnboardingProfile.MoodPreference) {
         profile.moodPreference = mood
@@ -54,14 +87,14 @@ final class OnboardingCoordinator: ObservableObject {
         step = .notificationPermission
     }
 
-    // MARK: Screen 3 — notification permission
+    // MARK: Screen 4 — notification permission
 
     func setNotificationsGranted(_ granted: Bool) {
         profile.notificationsGranted = granted
         step = .personaPick
     }
 
-    // MARK: Screen 4 — persona pick, and completion
+    // MARK: Screen 5 — persona match preview, and completion
 
     /// The user tapped a persona. Local completion is immediate and
     /// unconditional — `step` flips to `.completed` right away, and

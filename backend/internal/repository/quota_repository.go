@@ -2,7 +2,9 @@ package repository
 
 import (
 	"context"
+	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"perchly-backend/internal/model"
@@ -48,6 +50,30 @@ func (r *QuotaRepository) GetOrCreate(ctx context.Context, userID, personaID str
 	var q model.UserQuota
 	err := row.Scan(&q.UserID, &q.PersonaID, &q.MessageCountToday, &q.DailyLimit, &q.LastResetAt)
 	return q, err
+}
+
+// GetExisting returns the raw quota row for a user/persona pair without
+// creating one and without resetting it for a new local day — unlike
+// GetOrCreate, this is strictly read-only, for reporting (e.g. chat
+// energy) where a stale row's rollover must be accounted for by the
+// caller (who knows the user's timezone) rather than mutated here.
+// ok is false when no row exists yet, meaning that persona's quota is
+// still fully unused.
+func (r *QuotaRepository) GetExisting(ctx context.Context, userID, personaID string) (model.UserQuota, bool, error) {
+	row := r.pool.QueryRow(ctx, `
+		SELECT user_id::text, persona_id::text, message_count_today, daily_limit, last_reset_at
+		FROM user_quotas
+		WHERE user_id = $1::uuid AND persona_id = $2::uuid
+	`, userID, personaID)
+
+	var q model.UserQuota
+	if err := row.Scan(&q.UserID, &q.PersonaID, &q.MessageCountToday, &q.DailyLimit, &q.LastResetAt); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return model.UserQuota{}, false, nil
+		}
+		return model.UserQuota{}, false, err
+	}
+	return q, true, nil
 }
 
 // IncrementMessageCount records one message against today's usage.

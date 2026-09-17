@@ -21,9 +21,14 @@ func NewHealthHandler(health healthChecker) *HealthHandler {
 	return &HealthHandler{health: health}
 }
 
-// Health handles GET /health. It reports 200 when the database is
-// reachable and 503 (with status "degraded") when it is not, so the
-// server can start and be probed even while the database is unavailable.
+// Health godoc
+// @Summary Sağlık kontrolü
+// @Description Veritabanı bağlantısı dahil canlılık kontrolü. Veritabanına erişilemiyorsa 503 döner, sunucu çökmez.
+// @Tags health
+// @Produce json
+// @Success 200 {object} model.HealthResponse
+// @Failure 503 {object} model.HealthResponse
+// @Router /health [get]
 func (h *HealthHandler) Health(w http.ResponseWriter, r *http.Request) {
 	resp := model.HealthResponse{Status: "ok", Database: "ok"}
 	status := http.StatusOK

@@ -105,25 +105,24 @@ final class CodeVerificationViewModel: ObservableObject {
 
     /// Maps a failed verify attempt to (next phase, calm message).
     ///
-    /// Distinguishing "expired" from "wrong code" relies on matching the
-    /// backend's own response text (both cases are a plain 401 — there's
-    /// no dedicated machine-readable error field yet). Since that text is
-    /// authored by this same app's backend and already calm/Turkish,
-    /// this is a deliberate, documented coupling rather than a workaround
-    /// — but if the backend ever adds a structured error code, prefer
-    /// that over this substring match.
-    private func classify(_ error: Error) -> (Phase, String) {
+    /// "Expired" vs. "wrong code" are both a plain 401 — they're told
+    /// apart by the backend's machine-readable `code`
+    /// (`.verificationCodeExpired` vs. `.invalidVerificationCode`), not
+    /// by matching on the Turkish message text.
+    ///
+    /// Internal (not private) so APIErrorCodeTests can exercise it
+    /// directly without a real network round trip.
+    func classify(_ error: Error) -> (Phase, String) {
         guard let apiError = error as? APIError else {
             return (.entering, "Bir şeyler ters gitti, birazdan tekrar dene.")
         }
 
-        switch apiError.statusCode {
-        case 429:
+        switch apiError.code {
+        case .tooManyAttempts:
             return (.expired, "Çok fazla hatalı deneme yaptın. Yeni bir kod istemen gerekiyor.")
-        case 401:
-            if let text = apiError.errorDescription, text.contains("süresi doldu") {
-                return (.expired, "Kodun süresi doldu. Yeni bir kod isteyebilirsin.")
-            }
+        case .verificationCodeExpired:
+            return (.expired, "Kodun süresi doldu. Yeni bir kod isteyebilirsin.")
+        case .invalidVerificationCode:
             return (.entering, "Kod geçersiz. Tekrar dener misin?")
         default:
             return (.entering, "Bir şeyler ters gitti, birazdan tekrar dene.")

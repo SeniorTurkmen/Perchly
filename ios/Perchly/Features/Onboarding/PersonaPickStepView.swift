@@ -1,34 +1,48 @@
 import SwiftUI
 
-/// Screen 4, the last link in the chain: personalized persona
-/// suggestions (reordered by `PersonaListViewModel`, using the mood
-/// preference from screen 2 — see
-/// `OnboardingProfile.MoodPreference.personaCategory`), filtered for a
-/// minor's own onboarding answer so a restricted persona is never even
-/// shown (the backend also enforces this server-side when starting a
-/// conversation — this is belt-and-suspenders on the client). Tapping a
-/// persona hands off straight to the coordinator; this screen never
-/// navigates anywhere itself.
+/// Stitch "Onboarding - Persona Eşleşme Önizlemesi". Mood is still
+/// local here (the onboarding profile isn't POSTed until a persona is
+/// picked), so the list is reordered client-side. After onboarding,
+/// Keşfet uses `GET /personas?recommend=true` for the same mapping.
 struct PersonaPickStepView: View {
     @ObservedObject var coordinator: OnboardingCoordinator
     @StateObject private var viewModel = PersonaListViewModel()
 
     var body: some View {
-        VStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Kiminle konuşmak istersin?")
-                    .font(PerchlyTypography.largeTitle)
-                Text("Seçimini istediğin zaman değiştirebilirsin.")
-                    .font(PerchlyTypography.body)
-                    .foregroundStyle(PerchlyPalette.textSecondary)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding([.horizontal, .top])
+        OnboardingScaffold(stepIndex: 5, stepLabel: "Eşleşme", onBack: coordinator.goBack) {
+            VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Sana bir Perchmate önerdik")
+                        .font(PerchlyTypography.Discover.headlineLG)
+                        .foregroundStyle(PerchlyPalette.Discover.onSurface)
+                    Text(matchCopy)
+                        .font(PerchlyTypography.Discover.bodyMD)
+                        .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
+                }
 
-            content
+                content
+            }
+        } footer: {
+            EmptyView()
         }
         .task {
             await viewModel.load(prioritizedCategory: coordinator.profile.moodPreference?.personaCategory)
+        }
+    }
+
+    private var matchCopy: String {
+        if let reason = featuredPersona?.matchReason, !reason.isEmpty {
+            return "\(reason) İstersen başka birini seçebilirsin."
+        }
+        switch coordinator.profile.moodPreference {
+        case .motivation:
+            return "Motive olmak istediğin için bu eşleşmeyi öne çıkardık. İstersen başka birini seçebilirsin."
+        case .dailyChat:
+            return "Gündelik sohbet aradığın için bu eşleşmeyi öne çıkardık. İstersen başka birini seçebilirsin."
+        case .hobbyTalk:
+            return "Hobi paylaşmak istediğin için bu eşleşmeyi öne çıkardık. İstersen başka birini seçebilirsin."
+        default:
+            return "Seçimini istediğin zaman değiştirebilirsin."
         }
     }
 
@@ -37,7 +51,7 @@ struct PersonaPickStepView: View {
         switch viewModel.state {
         case .idle, .loading:
             ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, minHeight: 220)
         case .failed(let message):
             errorView(message)
         case .loaded:
@@ -46,19 +60,26 @@ struct PersonaPickStepView: View {
     }
 
     private var personaList: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                ForEach(visiblePersonas) { persona in
-                    Button {
-                        coordinator.selectPersona(persona)
-                    } label: {
+        VStack(spacing: 16) {
+            ForEach(visiblePersonas) { persona in
+                Button {
+                    coordinator.selectPersona(persona)
+                } label: {
+                    VStack(alignment: .leading, spacing: 12) {
+                        if persona.id == featuredPersona?.id {
+                            Text("Önerilen eşleşme")
+                                .font(PerchlyTypography.Discover.labelSM.weight(.semibold))
+                                .foregroundStyle(PerchlyPalette.Discover.primary)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(PerchlyPalette.Discover.primaryFixed.opacity(0.7), in: Capsule())
+                        }
                         PersonaCard(persona: persona, showsTalkButton: false)
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("personaOption_\(persona.id)")
                 }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("personaOption_\(persona.id)")
             }
-            .padding()
         }
     }
 
@@ -67,6 +88,10 @@ struct PersonaPickStepView: View {
     private var visiblePersonas: [Persona] {
         guard coordinator.profile.isMinor else { return viewModel.personas }
         return viewModel.personas.filter(\.isMinorAppropriate)
+    }
+
+    private var featuredPersona: Persona? {
+        visiblePersonas.first(where: { $0.recommended == true }) ?? visiblePersonas.first
     }
 
     private func errorView(_ message: String) -> some View {
@@ -82,7 +107,7 @@ struct PersonaPickStepView: View {
             }
         }
         .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity, minHeight: 220)
     }
 }
 

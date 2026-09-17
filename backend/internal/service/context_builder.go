@@ -69,10 +69,21 @@ var reactionProtocolInstruction = fmt.Sprintf(
 	strings.Join(model.OrderedAllowedReactionEmojis, " "),
 )
 
-func (b *ContextBuilder) Build(ctx context.Context, conversationID, systemPrompt string, history []model.Message, newMessageContent string, traits model.PersonaTraits) []llm.Message {
-	messages := make([]llm.Message, 0, contextRawWindowSize+5)
+func (b *ContextBuilder) Build(
+	ctx context.Context,
+	conversationID, systemPrompt string,
+	history []model.Message,
+	newMessageContent string,
+	traits model.PersonaTraits,
+	preferredName *string,
+	skipHitap bool,
+) []llm.Message {
+	messages := make([]llm.Message, 0, contextRawWindowSize+6)
 	messages = append(messages, llm.Message{Role: "system", Content: systemPrompt})
 	messages = append(messages, llm.Message{Role: "system", Content: reactionProtocolInstruction})
+	if hitap := formatHitapInstruction(preferredName, skipHitap); hitap != "" {
+		messages = append(messages, llm.Message{Role: "system", Content: hitap})
+	}
 	messages = append(messages, llm.Message{Role: "system", Content: formatTraitsInstruction(traits)})
 
 	if summary, err := b.summaries.GetByConversationID(ctx, conversationID); err == nil && summary.SummaryText != "" {
@@ -100,6 +111,30 @@ func (b *ContextBuilder) Build(ctx context.Context, conversationID, systemPrompt
 	}
 
 	return messages
+}
+
+// formatHitapInstruction turns the user's own address preference (see
+// model.OnboardingProfile.PreferredName/SkipHitap) into a system-prompt
+// instruction, or "" to add no instruction at all. The server never
+// invents a nickname: preferredName is always exactly what the user
+// themselves typed, and skipHitap's whole point is that no name of any
+// kind — real, invented, or a generic placeholder like "dostum" — gets
+// used in its place.
+func formatHitapInstruction(preferredName *string, skipHitap bool) string {
+	switch {
+	case preferredName != nil && !skipHitap:
+		return fmt.Sprintf(
+			"Kullanıcıya yalnızca '%s' diye hitap et. Bu, kullanıcının kendisinin yazdığı hitaptır. "+
+				"Takma ad uydurma, kısaltma icat etme, başka isim kullanma. Her mesajda zorla kullanma; "+
+				"doğal olduğunda kullan. Romantik/flörtöz hitap yok; platonic kal.",
+			*preferredName,
+		)
+	case skipHitap:
+		return "Bu kullanıcı isimle hitap edilmek istemiyor. Ona hiçbir isim, lakap, takma ad veya uydurma " +
+			"handle ile seslenme. 'dostum', 'kanka' gibi hitap kalıplarını da isim yerine kullanma; doğrudan konuş."
+	default:
+		return ""
+	}
 }
 
 // traitPhraseTiers maps a 0-100 dial value into one of 5 descriptive

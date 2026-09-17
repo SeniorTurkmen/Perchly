@@ -23,6 +23,10 @@ struct Persona: Identifiable, Codable, Equatable, Hashable {
     let sortOrder: Int
     let createdAt: Date
     let updatedAt: Date
+    /// Set only on `GET /personas?recommend=true`. Plain `GET /personas`
+    /// omits it (decodes as nil).
+    let recommended: Bool?
+    let matchReason: String?
 
     enum CodingKeys: String, CodingKey {
         case id, slug, name, category
@@ -35,6 +39,8 @@ struct Persona: Identifiable, Codable, Equatable, Hashable {
         case sortOrder = "sort_order"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
+        case recommended
+        case matchReason = "match_reason"
     }
 }
 
@@ -257,6 +263,8 @@ extension Persona {
         isActive: true,
         sortOrder: 1,
         createdAt: .now,
-        updatedAt: .now
+        updatedAt: .now,
+        recommended: true,
+        matchReason: "Motive olmak istediğin için önerdik."
     )
 }

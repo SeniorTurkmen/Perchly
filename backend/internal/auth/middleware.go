@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"perchly-backend/internal/apierror"
 	"perchly-backend/internal/requestlog"
 )
 
@@ -44,6 +45,30 @@ func Middleware(tokens TokenVerifier) func(http.Handler) http.Handler {
 	}
 }
 
+// OptionalMiddleware behaves like Middleware when a valid bearer token
+// is present — same user id/is_anonymous in context — but, unlike
+// Middleware, never rejects the request for one being absent or
+// invalid; it just proceeds without them. For routes that are public
+// by default but have one specific, query-param-gated behavior that
+// needs a signed-in user (see GET /personas?recommend=true) — the
+// handler itself checks UserIDFromContext and decides whether that
+// specific behavior requires rejecting the request.
+func OptionalMiddleware(tokens TokenVerifier) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if token, ok := bearerToken(r); ok {
+				if claims, err := tokens.Verify(token); err == nil {
+					ctx := WithUserID(r.Context(), claims.UserID)
+					ctx = WithIsAnonymous(ctx, claims.IsAnonymous)
+					requestlog.SetUserID(ctx, claims.UserID)
+					r = r.WithContext(ctx)
+				}
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
 func bearerToken(r *http.Request) (string, bool) {
 	header := r.Header.Get("Authorization")
 	const prefix = "Bearer "
@@ -57,5 +82,5 @@ func bearerToken(r *http.Request) (string, bool) {
 func writeUnauthorized(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusUnauthorized)
-	json.NewEncoder(w).Encode(map[string]string{"error": "giriş gerekli"})
+	json.NewEncoder(w).Encode(apierror.New(apierror.CodeUnauthorized, "giriş gerekli"))
 }
