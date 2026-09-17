@@ -43,12 +43,12 @@ final class EmailEntryViewModel: ObservableObject {
     }
 
     private func calmMessage(for error: Error) -> String {
-        // The backend currently never actually returns 429 from this
+        // The backend currently never actually returns this from this
         // endpoint — rate-limiting there is silent by design, specifically
         // so throttling can't be used to probe whether an email is
         // registered. This branch is kept ready in case that policy ever
         // changes, but today it's effectively unreachable.
-        if let apiError = error as? APIError, apiError.statusCode == 429 {
+        if let apiError = error as? APIError, apiError.code == .tooManyAttempts {
             return "Çok fazla deneme yaptın, biraz sonra tekrar dene."
         }
         return "Bir şeyler ters gitti, birazdan tekrar dene."

@@ -17,14 +17,21 @@ struct OnboardingRetryQueue {
         self.apiClient = apiClient
     }
 
-    /// Tries to submit `profile` right away; if that fails, queues it
-    /// instead of losing it. Never throws — callers proceed with their
-    /// own flow regardless of the outcome.
+    /// Tries to submit `profile` right away; if that fails for a reason
+    /// a retry could plausibly fix (network blip, backend hiccup),
+    /// queues it instead of losing it. Never throws — callers proceed
+    /// with their own flow regardless of the outcome.
     func submitOrEnqueue(_ profile: OnboardingProfile) async {
         do {
             try await submit(profile)
         } catch {
-            enqueue(profile)
+            if Self.isRetryable(error) {
+                enqueue(profile)
+            }
+            // A permanent validation failure (see isRetryable) would
+            // fail identically on every future launch — queuing it
+            // would just grow the retry list forever with an entry
+            // that can never succeed.
         }
     }
 
@@ -39,10 +46,33 @@ struct OnboardingRetryQueue {
             do {
                 try await submit(profile)
             } catch {
-                stillPending.append(profile)
+                if Self.isRetryable(error) {
+                    stillPending.append(profile)
+                }
             }
         }
         savePending(stillPending)
+    }
+
+    /// A 4xx body-validation failure (e.g. this build's local checks
+    /// missed something the backend now rejects) will fail the exact
+    /// same way on every retry — pointless to keep queuing. Anything
+    /// else (network failure, decoding, a 5xx) is worth retrying later.
+    /// Defaults to retryable for a non-APIError or a body without a
+    /// `code`, since dropping something we can't classify risks losing
+    /// data for no reason.
+    ///
+    /// Internal (not private) so OnboardingRetryQueueTests can exercise
+    /// it directly.
+    static func isRetryable(_ error: Error) -> Bool {
+        guard let apiError = error as? APIError, let code = apiError.code else { return true }
+        switch code {
+        case .invalidAgeRange, .invalidMoodPreference, .invalidSelectedPersonaID,
+             .preferredNameRequired, .preferredNameInvalid:
+            return false
+        default:
+            return true
+        }
     }
 
     private struct SaveProfileRequest: Encodable {

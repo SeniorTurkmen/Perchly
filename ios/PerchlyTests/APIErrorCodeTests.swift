@@ -52,4 +52,25 @@ final class APIErrorCodeTests: XCTestCase {
         let somethingElse = APIError.message(statusCode: 401, code: .unknown, text: "?")
         XCTAssertEqual(viewModel.classify(somethingElse).0, .entering)
     }
+
+    // MARK: - OnboardingRetryQueue.isRetryable
+
+    func testPermanentValidationFailures_AreNotRetryable() {
+        let permanentCodes: [APIErrorCode] = [
+            .invalidAgeRange, .invalidMoodPreference, .invalidSelectedPersonaID,
+            .preferredNameRequired, .preferredNameInvalid,
+        ]
+        for code in permanentCodes {
+            let error = APIError.message(statusCode: 400, code: code, text: "x")
+            XCTAssertFalse(OnboardingRetryQueue.isRetryable(error), "\(code) should not be retried — it will fail identically every time")
+        }
+    }
+
+    func testServerAndNetworkFailures_AreRetryable() {
+        XCTAssertTrue(OnboardingRetryQueue.isRetryable(APIError.message(statusCode: 500, code: .onboardingSaveFailed, text: "x")))
+        XCTAssertTrue(OnboardingRetryQueue.isRetryable(APIError.transport(URLError(.notConnectedToInternet))))
+        // A body without a `code` (e.g. an older backend) must default
+        // to retryable — never silently drop something we can't classify.
+        XCTAssertTrue(OnboardingRetryQueue.isRetryable(APIError.message(statusCode: 500, code: nil, text: "x")))
+    }
 }

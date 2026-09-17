@@ -27,7 +27,11 @@ final class RegisterCompleteViewModel: ObservableObject {
                 displayName: displayName.trimmingCharacters(in: .whitespacesAndNewlines)
             )
         } catch {
-            errorMessage = "Bir şeyler ters gitti, birazdan tekrar dene."
+            if let apiError = error as? APIError, apiError.code == .invalidDisplayName {
+                errorMessage = "Bu görünen ad kullanılamıyor. Farklı bir ad dener misin?"
+            } else {
+                errorMessage = "Bir şeyler ters gitti, birazdan tekrar dene."
+            }
         }
     }
 }
