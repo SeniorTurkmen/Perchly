@@ -1,0 +1,17 @@
+# Go
+backend/bin/
+backend/.env
+
+# macOS
+.DS_Store
+
+# Xcode / SwiftUI
+ios/**/xcuserdata/
+ios/**/*.xcuserstate
+ios/**/DerivedData/
+ios/.build/
+ios/build/
+
+# ai
+.cursor/
+.stitch/

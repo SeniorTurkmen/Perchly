@@ -1,0 +1,864 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0F9969C4B206ABDAB025C661 /* PerchlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D1BEB51F601C9910184951 /* PerchlyApp.swift */; };
+		0FE67410F37DF2BD6CECED5B /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078CBCD0AB424B41448091FD /* ChatViewModel.swift */; };
+		1B1616319D02A0E97B59DD6F /* AgeRangeStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866BD5D8A0D008FD99A23F19 /* AgeRangeStepView.swift */; };
+		26229C7D435BB79CD8839D34 /* ChatInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FDBA4A48A541F169C8E6C6 /* ChatInputBar.swift */; };
+		2866B7AB020410A0CE5303C3 /* OnboardingFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B16D86E4255A02A868FE195 /* OnboardingFlowUITests.swift */; };
+		29A085F80CE55B6384B551C5 /* PersonaDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F83262427C6832D9BB5F2D /* PersonaDetailView.swift */; };
+		32C0FBED02E1AF45B74CF8DE /* CountdownBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2897C67C90FB7380FF892C6 /* CountdownBar.swift */; };
+		33DC7D5E5F7CE3411C3D919E /* RegisterCompleteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD387AA4920C5BD468785B2 /* RegisterCompleteViewModel.swift */; };
+		33F988F0D0DE190DC4867C88 /* DebugResetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2ACC7B837F4ACD926587E31 /* DebugResetUITests.swift */; };
+		367A6BC7F6D52FF4BA15C6A4 /* XCTestCase+Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125C2044F609AEA5C1767A2B /* XCTestCase+Onboarding.swift */; };
+		381EFB663DFA12883A15F3F1 /* NotificationPermissionStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A90CF7DD068386EF3AD08F /* NotificationPermissionStepView.swift */; };
+		3E6635116EF361CCE3BB1333 /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57435CA8C932D2A8F92DBDDE /* HTTPMethod.swift */; };
+		4043C1997E8D669CB0E663DC /* OnboardingRetryQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F482DF14FD04EB328F7AB8 /* OnboardingRetryQueue.swift */; };
+		4295ED8479095616DD7A22A0 /* PersonaPickStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBEFDA6D9068610A9F08579A /* PersonaPickStepView.swift */; };
+		4646EBD50280884DC2251E58 /* RegisterCompleteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A62112F4F3105D39D5A8572 /* RegisterCompleteView.swift */; };
+		4E71E85A221693C864C9D298 /* MoodPreferenceStepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA8EB36A70F7BE2175550E8 /* MoodPreferenceStepView.swift */; };
+		51064114F383445BA7CE8169 /* GlassButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F855A6955C5F614CC79A83EA /* GlassButton.swift */; };
+		51EC1D751FDFD7E56FE9C73A /* ChatStreamingIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58EDF4B2B660316E2F694C76 /* ChatStreamingIntegrationTests.swift */; };
+		52BC5A1D61A8285702432F4C /* APIRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384E236C5E486776F24576A3 /* APIRequest.swift */; };
+		55AAE146A891024D7C283EDF /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E80FB984C2BBBF139A8FBBBF /* APIClient.swift */; };
+		55D9DED2187B2C60CD8C24F5 /* ChatBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0092BDA5F715FC045FEEC5F9 /* ChatBubble.swift */; };
+		58C8FC796B637219CDD760AB /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B646072D854B88528601F2F7 /* OnboardingFlowView.swift */; };
+		596CBA414FED5924D2F34476 /* PersonaListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC69D79EA47A16D430EF944 /* PersonaListView.swift */; };
+		5A121F4465EF63EE8E8FAEBE /* MessageReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25F6E3CC32FF49AFB65C53C /* MessageReaction.swift */; };
+		6339319152977BA10AE03C2B /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88CBF47BA3D71ACDCAF87CB /* ChatView.swift */; };
+		69F3A538AB605C70404AF7A7 /* PerchlyPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A4FDA36831DA31CF01B /* PerchlyPalette.swift */; };
+		6EBEBDE53B31B19BC35B3E8C /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4ADBA9E0D9B9D665658026 /* AuthManager.swift */; };
+		6F1ACD5486238153285271F6 /* OnboardingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCECFBAD7F310008F332348F /* OnboardingCoordinator.swift */; };
+		7F8AB5E190D60C237EEB86B3 /* CodeEntryField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FEA37849BC7377389A1ABD /* CodeEntryField.swift */; };
+		80FEBCEC8C749F4C6B805E17 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFAF31FCAD28765D6BB54C6 /* ChatMessage.swift */; };
+		8BBE4C1591880886DEB23448 /* AuthFlowDurumAUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71AB7CA9BEC7CF6BA94D0295 /* AuthFlowDurumAUITests.swift */; };
+		945941490F7F4433F5F1A31D /* AuthState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B83C8F6D75F3033FD75EE2 /* AuthState.swift */; };
+		9553272887C2A2AEF38D3EF6 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5605AE2E4D04DE8CB838E298 /* Color+Hex.swift */; };
+		9688BAD27B8DE31B7F6BC5CE /* Persona.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACEA36F1D3657651AE396D4 /* Persona.swift */; };
+		9857752D528393C553DDC0A4 /* EmailEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D48417CA311ED919C04F0B /* EmailEntryView.swift */; };
+		987F7C11BE541DB0182BBFA4 /* EmailEntryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC37E0B2A5F749007D3AC44F /* EmailEntryViewModel.swift */; };
+		A1B50B80F4680A6928EB95B4 /* MessageReactionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFC686AC3A0ECB8FE8E6A4D /* MessageReactionUITests.swift */; };
+		A1C6EECA92CB7B531AF3C895 /* PersonaListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACAC5B8AF0FA86D8BC2AA797 /* PersonaListViewModel.swift */; };
+		A7DE2AB30DCB5CE69B6112B1 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A4238123785848A338926C /* ProfileView.swift */; };
+		A9475C1EDD95E6F90579C2CE /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98E799D6B58EC128C06BE2D /* APIError.swift */; };
+		ACDD18C3C215EACE0D2BC943 /* PerchlyTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D10FA4F5FAABE72AC5AC07 /* PerchlyTypography.swift */; };
+		B0E8E708F01539DDB10E496A /* TypingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796C36C19E4FC4CDBC5122E3 /* TypingIndicator.swift */; };
+		BA3CCE982636BB9383E0F574 /* AuthFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0DE7145CFF5E66C699C12 /* AuthFlowUITests.swift */; };
+		BC4052CCD8624134CC2E7CA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D78512173C5CB7B85059371 /* Assets.xcassets */; };
+		BDED91BB869834819ECAC4A4 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2412889F74D2DBD87C717A40 /* RootView.swift */; };
+		C7C82DF43E21A50B46DFA939 /* AccessTokenClaims.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACF3263EC0AD5B98E0B98114 /* AccessTokenClaims.swift */; };
+		CAF21DA82A3970289B6B128A /* GlassTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72563841319CCE35028A940F /* GlassTextField.swift */; };
+		D29E729F2739816C1B400722 /* SSEEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB3EF371714ECF8FF8E828 /* SSEEvent.swift */; };
+		D30D9FDC4A62ACA7A4DEBE24 /* OnboardingProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB4E752C90EEC4DAFDFA8EE /* OnboardingProfile.swift */; };
+		D34AB210541D0A7F3940CD84 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D465416A3C73966072A6DAF /* GlassCard.swift */; };
+		D56A25B417BD66FBF900FD79 /* CodeVerificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C74FDFE492DE64641299BAF /* CodeVerificationViewModel.swift */; };
+		D8FD7C4BC5EA0C2D122CDF80 /* PersonaCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8B05EC7F829FE440FD2630 /* PersonaCard.swift */; };
+		E4D06CF032D6C83310AFFD91 /* OnboardingSkipUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D1FCD21A6709508616BA12 /* OnboardingSkipUITests.swift */; };
+		EB3B5452D0D3E0715E50E3B9 /* CodeVerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BECD95A2C4DE8820A4B8A0 /* CodeVerificationView.swift */; };
+		EB60C874A71F277246884004 /* OnboardingStatusStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED55A5FB6B8C69BA2FCACF30 /* OnboardingStatusStore.swift */; };
+		EC90E68EA674B45F6CA4552E /* TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CADEC2E99A26FB0C3E69B20 /* TokenStorage.swift */; };
+		F3AEC8DCFB73E136FEEDB8F8 /* AuthInterceptorIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9DF9F3E591C53B4C41FF7F /* AuthInterceptorIntegrationTests.swift */; };
+		F70258C8862056E629CD97E5 /* AnonymousBootstrapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6323DB12826F037931F8CB5E /* AnonymousBootstrapView.swift */; };
+		FE7100409922CD7B7799A84E /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D6CC56949EF6B5EA15FD71 /* ProfileViewModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5DE07893D09FBC6AB1BC9EE7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 555D6B57BED7009E990A0BA1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 238124FF9BE5DCAFDF8D7AF6;
+			remoteInfo = Perchly;
+		};
+		CDA4B2AE8A0DF71590E75D01 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 555D6B57BED7009E990A0BA1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 238124FF9BE5DCAFDF8D7AF6;
+			remoteInfo = Perchly;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0092BDA5F715FC045FEEC5F9 /* ChatBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubble.swift; sourceTree = "<group>"; };
+		06A4238123785848A338926C /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		078CBCD0AB424B41448091FD /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		0A62112F4F3105D39D5A8572 /* RegisterCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterCompleteView.swift; sourceTree = "<group>"; };
+		0B16D86E4255A02A868FE195 /* OnboardingFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowUITests.swift; sourceTree = "<group>"; };
+		125C2044F609AEA5C1767A2B /* XCTestCase+Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Onboarding.swift"; sourceTree = "<group>"; };
+		1C74FDFE492DE64641299BAF /* CodeVerificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeVerificationViewModel.swift; sourceTree = "<group>"; };
+		2412889F74D2DBD87C717A40 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		2C950A4FDA36831DA31CF01B /* PerchlyPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerchlyPalette.swift; sourceTree = "<group>"; };
+		2F8B05EC7F829FE440FD2630 /* PersonaCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaCard.swift; sourceTree = "<group>"; };
+		37D6CC56949EF6B5EA15FD71 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		384E236C5E486776F24576A3 /* APIRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIRequest.swift; sourceTree = "<group>"; };
+		3CADEC2E99A26FB0C3E69B20 /* TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStorage.swift; sourceTree = "<group>"; };
+		3CFC686AC3A0ECB8FE8E6A4D /* MessageReactionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionUITests.swift; sourceTree = "<group>"; };
+		42F83262427C6832D9BB5F2D /* PersonaDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaDetailView.swift; sourceTree = "<group>"; };
+		46D1FCD21A6709508616BA12 /* OnboardingSkipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSkipUITests.swift; sourceTree = "<group>"; };
+		4CFB3EF371714ECF8FF8E828 /* SSEEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEEvent.swift; sourceTree = "<group>"; };
+		5605AE2E4D04DE8CB838E298 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		57435CA8C932D2A8F92DBDDE /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
+		58EDF4B2B660316E2F694C76 /* ChatStreamingIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStreamingIntegrationTests.swift; sourceTree = "<group>"; };
+		5ACEA36F1D3657651AE396D4 /* Persona.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persona.swift; sourceTree = "<group>"; };
+		5D465416A3C73966072A6DAF /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
+		5E4ADBA9E0D9B9D665658026 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		6323DB12826F037931F8CB5E /* AnonymousBootstrapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnonymousBootstrapView.swift; sourceTree = "<group>"; };
+		71AB7CA9BEC7CF6BA94D0295 /* AuthFlowDurumAUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowDurumAUITests.swift; sourceTree = "<group>"; };
+		72563841319CCE35028A940F /* GlassTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassTextField.swift; sourceTree = "<group>"; };
+		72D1BEB51F601C9910184951 /* PerchlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerchlyApp.swift; sourceTree = "<group>"; };
+		796C36C19E4FC4CDBC5122E3 /* TypingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingIndicator.swift; sourceTree = "<group>"; };
+		7AFAF31FCAD28765D6BB54C6 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		81D48417CA311ED919C04F0B /* EmailEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailEntryView.swift; sourceTree = "<group>"; };
+		82FEA37849BC7377389A1ABD /* CodeEntryField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeEntryField.swift; sourceTree = "<group>"; };
+		834F938E2A7F53B385E07107 /* PerchlyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PerchlyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		866BD5D8A0D008FD99A23F19 /* AgeRangeStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgeRangeStepView.swift; sourceTree = "<group>"; };
+		8A9DF9F3E591C53B4C41FF7F /* AuthInterceptorIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthInterceptorIntegrationTests.swift; sourceTree = "<group>"; };
+		8D78512173C5CB7B85059371 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9548FEDB3429C0C865CA9C5E /* PerchlyUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PerchlyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9CA8EB36A70F7BE2175550E8 /* MoodPreferenceStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodPreferenceStepView.swift; sourceTree = "<group>"; };
+		9EB4E752C90EEC4DAFDFA8EE /* OnboardingProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingProfile.swift; sourceTree = "<group>"; };
+		A25F6E3CC32FF49AFB65C53C /* MessageReaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReaction.swift; sourceTree = "<group>"; };
+		A2ACC7B837F4ACD926587E31 /* DebugResetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugResetUITests.swift; sourceTree = "<group>"; };
+		A8BECD95A2C4DE8820A4B8A0 /* CodeVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeVerificationView.swift; sourceTree = "<group>"; };
+		ACAC5B8AF0FA86D8BC2AA797 /* PersonaListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaListViewModel.swift; sourceTree = "<group>"; };
+		ACF3263EC0AD5B98E0B98114 /* AccessTokenClaims.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenClaims.swift; sourceTree = "<group>"; };
+		B2897C67C90FB7380FF892C6 /* CountdownBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownBar.swift; sourceTree = "<group>"; };
+		B646072D854B88528601F2F7 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
+		B98E799D6B58EC128C06BE2D /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+		BCD387AA4920C5BD468785B2 /* RegisterCompleteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterCompleteViewModel.swift; sourceTree = "<group>"; };
+		CB98ED2D49BAC220A9CC72E2 /* Perchly.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Perchly.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCECFBAD7F310008F332348F /* OnboardingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCoordinator.swift; sourceTree = "<group>"; };
+		D0F482DF14FD04EB328F7AB8 /* OnboardingRetryQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingRetryQueue.swift; sourceTree = "<group>"; };
+		D7D10FA4F5FAABE72AC5AC07 /* PerchlyTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerchlyTypography.swift; sourceTree = "<group>"; };
+		D88CBF47BA3D71ACDCAF87CB /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		DDC69D79EA47A16D430EF944 /* PersonaListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaListView.swift; sourceTree = "<group>"; };
+		E6A90CF7DD068386EF3AD08F /* NotificationPermissionStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPermissionStepView.swift; sourceTree = "<group>"; };
+		E7B83C8F6D75F3033FD75EE2 /* AuthState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthState.swift; sourceTree = "<group>"; };
+		E80FB984C2BBBF139A8FBBBF /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		E9F0DE7145CFF5E66C699C12 /* AuthFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowUITests.swift; sourceTree = "<group>"; };
+		ED55A5FB6B8C69BA2FCACF30 /* OnboardingStatusStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStatusStore.swift; sourceTree = "<group>"; };
+		F2FDBA4A48A541F169C8E6C6 /* ChatInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputBar.swift; sourceTree = "<group>"; };
+		F855A6955C5F614CC79A83EA /* GlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassButton.swift; sourceTree = "<group>"; };
+		FBEFDA6D9068610A9F08579A /* PersonaPickStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaPickStepView.swift; sourceTree = "<group>"; };
+		FC37E0B2A5F749007D3AC44F /* EmailEntryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailEntryViewModel.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		01AC89E042D419EFFDFF48A1 /* Perchly */ = {
+			isa = PBXGroup;
+			children = (
+				72D1BEB51F601C9910184951 /* PerchlyApp.swift */,
+				2412889F74D2DBD87C717A40 /* RootView.swift */,
+				A66A5FF8F4E76F9927C596DD /* Core */,
+				5F89CDA30F10B65A875F1A2B /* DesignSystem */,
+				94355B87ABF1D42A05B8C361 /* Features */,
+				5A9FE279AF12A061D2CA060F /* Resources */,
+			);
+			path = Perchly;
+			sourceTree = "<group>";
+		};
+		081E8CAD9C95276DB691B762 = {
+			isa = PBXGroup;
+			children = (
+				01AC89E042D419EFFDFF48A1 /* Perchly */,
+				3152CEBEDD7206A8C55B2B51 /* PerchlyTests */,
+				322F034644D53A6964C5B63C /* PerchlyUITests */,
+				E86E40A4968D639DE029FC5D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		286E228A35D484973E3E4EFE /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				E80FB984C2BBBF139A8FBBBF /* APIClient.swift */,
+				B98E799D6B58EC128C06BE2D /* APIError.swift */,
+				384E236C5E486776F24576A3 /* APIRequest.swift */,
+				57435CA8C932D2A8F92DBDDE /* HTTPMethod.swift */,
+				4CFB3EF371714ECF8FF8E828 /* SSEEvent.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		2B02CD4AD7FCFE6D12200BD2 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				0092BDA5F715FC045FEEC5F9 /* ChatBubble.swift */,
+				F2FDBA4A48A541F169C8E6C6 /* ChatInputBar.swift */,
+				7AFAF31FCAD28765D6BB54C6 /* ChatMessage.swift */,
+				D88CBF47BA3D71ACDCAF87CB /* ChatView.swift */,
+				078CBCD0AB424B41448091FD /* ChatViewModel.swift */,
+				796C36C19E4FC4CDBC5122E3 /* TypingIndicator.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		302A0F456CF730953A18E552 /* Typography */ = {
+			isa = PBXGroup;
+			children = (
+				D7D10FA4F5FAABE72AC5AC07 /* PerchlyTypography.swift */,
+			);
+			path = Typography;
+			sourceTree = "<group>";
+		};
+		3152CEBEDD7206A8C55B2B51 /* PerchlyTests */ = {
+			isa = PBXGroup;
+			children = (
+				8A9DF9F3E591C53B4C41FF7F /* AuthInterceptorIntegrationTests.swift */,
+				58EDF4B2B660316E2F694C76 /* ChatStreamingIntegrationTests.swift */,
+			);
+			path = PerchlyTests;
+			sourceTree = "<group>";
+		};
+		322F034644D53A6964C5B63C /* PerchlyUITests */ = {
+			isa = PBXGroup;
+			children = (
+				71AB7CA9BEC7CF6BA94D0295 /* AuthFlowDurumAUITests.swift */,
+				E9F0DE7145CFF5E66C699C12 /* AuthFlowUITests.swift */,
+				A2ACC7B837F4ACD926587E31 /* DebugResetUITests.swift */,
+				3CFC686AC3A0ECB8FE8E6A4D /* MessageReactionUITests.swift */,
+				0B16D86E4255A02A868FE195 /* OnboardingFlowUITests.swift */,
+				46D1FCD21A6709508616BA12 /* OnboardingSkipUITests.swift */,
+				125C2044F609AEA5C1767A2B /* XCTestCase+Onboarding.swift */,
+			);
+			path = PerchlyUITests;
+			sourceTree = "<group>";
+		};
+		5A9FE279AF12A061D2CA060F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8D78512173C5CB7B85059371 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5BF11A22E5BA81EB0C44117E /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				82FEA37849BC7377389A1ABD /* CodeEntryField.swift */,
+				B2897C67C90FB7380FF892C6 /* CountdownBar.swift */,
+				F855A6955C5F614CC79A83EA /* GlassButton.swift */,
+				5D465416A3C73966072A6DAF /* GlassCard.swift */,
+				72563841319CCE35028A940F /* GlassTextField.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		5F89CDA30F10B65A875F1A2B /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				9CF819C208DFC8363CE034B7 /* Colors */,
+				5BF11A22E5BA81EB0C44117E /* Components */,
+				302A0F456CF730953A18E552 /* Typography */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		878B562142A2C41399D5E136 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				6323DB12826F037931F8CB5E /* AnonymousBootstrapView.swift */,
+				A8BECD95A2C4DE8820A4B8A0 /* CodeVerificationView.swift */,
+				1C74FDFE492DE64641299BAF /* CodeVerificationViewModel.swift */,
+				81D48417CA311ED919C04F0B /* EmailEntryView.swift */,
+				FC37E0B2A5F749007D3AC44F /* EmailEntryViewModel.swift */,
+				0A62112F4F3105D39D5A8572 /* RegisterCompleteView.swift */,
+				BCD387AA4920C5BD468785B2 /* RegisterCompleteViewModel.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		94355B87ABF1D42A05B8C361 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				878B562142A2C41399D5E136 /* Auth */,
+				2B02CD4AD7FCFE6D12200BD2 /* Chat */,
+				CEE67091F8A0D95666C576A9 /* Onboarding */,
+				ED7DC8529EC70AFCFE867D0A /* Personas */,
+				AE57572257E07C349EAD6C8D /* Profile */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		9CF819C208DFC8363CE034B7 /* Colors */ = {
+			isa = PBXGroup;
+			children = (
+				5605AE2E4D04DE8CB838E298 /* Color+Hex.swift */,
+				2C950A4FDA36831DA31CF01B /* PerchlyPalette.swift */,
+			);
+			path = Colors;
+			sourceTree = "<group>";
+		};
+		A66A5FF8F4E76F9927C596DD /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				C18AA1B5F92E440E11974892 /* Auth */,
+				DAE937DCA8D01A8BD30AE2BE /* Models */,
+				286E228A35D484973E3E4EFE /* Networking */,
+				F244C9F7BD03744CAA19119D /* Onboarding */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		AE57572257E07C349EAD6C8D /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				06A4238123785848A338926C /* ProfileView.swift */,
+				37D6CC56949EF6B5EA15FD71 /* ProfileViewModel.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		C18AA1B5F92E440E11974892 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				ACF3263EC0AD5B98E0B98114 /* AccessTokenClaims.swift */,
+				5E4ADBA9E0D9B9D665658026 /* AuthManager.swift */,
+				E7B83C8F6D75F3033FD75EE2 /* AuthState.swift */,
+				3CADEC2E99A26FB0C3E69B20 /* TokenStorage.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		CEE67091F8A0D95666C576A9 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				866BD5D8A0D008FD99A23F19 /* AgeRangeStepView.swift */,
+				9CA8EB36A70F7BE2175550E8 /* MoodPreferenceStepView.swift */,
+				E6A90CF7DD068386EF3AD08F /* NotificationPermissionStepView.swift */,
+				CCECFBAD7F310008F332348F /* OnboardingCoordinator.swift */,
+				B646072D854B88528601F2F7 /* OnboardingFlowView.swift */,
+				FBEFDA6D9068610A9F08579A /* PersonaPickStepView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		DAE937DCA8D01A8BD30AE2BE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A25F6E3CC32FF49AFB65C53C /* MessageReaction.swift */,
+				5ACEA36F1D3657651AE396D4 /* Persona.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E86E40A4968D639DE029FC5D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CB98ED2D49BAC220A9CC72E2 /* Perchly.app */,
+				834F938E2A7F53B385E07107 /* PerchlyTests.xctest */,
+				9548FEDB3429C0C865CA9C5E /* PerchlyUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ED7DC8529EC70AFCFE867D0A /* Personas */ = {
+			isa = PBXGroup;
+			children = (
+				2F8B05EC7F829FE440FD2630 /* PersonaCard.swift */,
+				42F83262427C6832D9BB5F2D /* PersonaDetailView.swift */,
+				DDC69D79EA47A16D430EF944 /* PersonaListView.swift */,
+				ACAC5B8AF0FA86D8BC2AA797 /* PersonaListViewModel.swift */,
+			);
+			path = Personas;
+			sourceTree = "<group>";
+		};
+		F244C9F7BD03744CAA19119D /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				9EB4E752C90EEC4DAFDFA8EE /* OnboardingProfile.swift */,
+				D0F482DF14FD04EB328F7AB8 /* OnboardingRetryQueue.swift */,
+				ED55A5FB6B8C69BA2FCACF30 /* OnboardingStatusStore.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		165ED4B1BFBF5CE5BE8BA51D /* PerchlyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 73B099CE99FE562CB18501E8 /* Build configuration list for PBXNativeTarget "PerchlyTests" */;
+			buildPhases = (
+				8F6F6F17E9A2D09BBCB6781A /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				646B7E49374CDC9B1AA973ED /* PBXTargetDependency */,
+			);
+			name = PerchlyTests;
+			packageProductDependencies = (
+			);
+			productName = PerchlyTests;
+			productReference = 834F938E2A7F53B385E07107 /* PerchlyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		238124FF9BE5DCAFDF8D7AF6 /* Perchly */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 487DBBDD44A3FD23DC5F3EDF /* Build configuration list for PBXNativeTarget "Perchly" */;
+			buildPhases = (
+				0F8E4201CE7D6F0D78861729 /* Sources */,
+				AE44E486828E7C3B13D6467F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Perchly;
+			packageProductDependencies = (
+			);
+			productName = Perchly;
+			productReference = CB98ED2D49BAC220A9CC72E2 /* Perchly.app */;
+			productType = "com.apple.product-type.application";
+		};
+		84D8787A873FD841A02F59EA /* PerchlyUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4DD33792655192E754F3E55A /* Build configuration list for PBXNativeTarget "PerchlyUITests" */;
+			buildPhases = (
+				6425749933648147F0F506F0 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C698717EA8025875241A902D /* PBXTargetDependency */,
+			);
+			name = PerchlyUITests;
+			packageProductDependencies = (
+			);
+			productName = PerchlyUITests;
+			productReference = 9548FEDB3429C0C865CA9C5E /* PerchlyUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		555D6B57BED7009E990A0BA1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					84D8787A873FD841A02F59EA = {
+						TestTargetID = 238124FF9BE5DCAFDF8D7AF6;
+					};
+				};
+			};
+			buildConfigurationList = D4253199010A1FFBDFCF580E /* Build configuration list for PBXProject "Perchly" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 081E8CAD9C95276DB691B762;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = E86E40A4968D639DE029FC5D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				238124FF9BE5DCAFDF8D7AF6 /* Perchly */,
+				165ED4B1BFBF5CE5BE8BA51D /* PerchlyTests */,
+				84D8787A873FD841A02F59EA /* PerchlyUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AE44E486828E7C3B13D6467F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC4052CCD8624134CC2E7CA3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0F8E4201CE7D6F0D78861729 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				55AAE146A891024D7C283EDF /* APIClient.swift in Sources */,
+				A9475C1EDD95E6F90579C2CE /* APIError.swift in Sources */,
+				52BC5A1D61A8285702432F4C /* APIRequest.swift in Sources */,
+				C7C82DF43E21A50B46DFA939 /* AccessTokenClaims.swift in Sources */,
+				1B1616319D02A0E97B59DD6F /* AgeRangeStepView.swift in Sources */,
+				F70258C8862056E629CD97E5 /* AnonymousBootstrapView.swift in Sources */,
+				6EBEBDE53B31B19BC35B3E8C /* AuthManager.swift in Sources */,
+				945941490F7F4433F5F1A31D /* AuthState.swift in Sources */,
+				55D9DED2187B2C60CD8C24F5 /* ChatBubble.swift in Sources */,
+				26229C7D435BB79CD8839D34 /* ChatInputBar.swift in Sources */,
+				80FEBCEC8C749F4C6B805E17 /* ChatMessage.swift in Sources */,
+				6339319152977BA10AE03C2B /* ChatView.swift in Sources */,
+				0FE67410F37DF2BD6CECED5B /* ChatViewModel.swift in Sources */,
+				7F8AB5E190D60C237EEB86B3 /* CodeEntryField.swift in Sources */,
+				EB3B5452D0D3E0715E50E3B9 /* CodeVerificationView.swift in Sources */,
+				D56A25B417BD66FBF900FD79 /* CodeVerificationViewModel.swift in Sources */,
+				9553272887C2A2AEF38D3EF6 /* Color+Hex.swift in Sources */,
+				32C0FBED02E1AF45B74CF8DE /* CountdownBar.swift in Sources */,
+				9857752D528393C553DDC0A4 /* EmailEntryView.swift in Sources */,
+				987F7C11BE541DB0182BBFA4 /* EmailEntryViewModel.swift in Sources */,
+				51064114F383445BA7CE8169 /* GlassButton.swift in Sources */,
+				D34AB210541D0A7F3940CD84 /* GlassCard.swift in Sources */,
+				CAF21DA82A3970289B6B128A /* GlassTextField.swift in Sources */,
+				3E6635116EF361CCE3BB1333 /* HTTPMethod.swift in Sources */,
+				5A121F4465EF63EE8E8FAEBE /* MessageReaction.swift in Sources */,
+				4E71E85A221693C864C9D298 /* MoodPreferenceStepView.swift in Sources */,
+				381EFB663DFA12883A15F3F1 /* NotificationPermissionStepView.swift in Sources */,
+				6F1ACD5486238153285271F6 /* OnboardingCoordinator.swift in Sources */,
+				58C8FC796B637219CDD760AB /* OnboardingFlowView.swift in Sources */,
+				D30D9FDC4A62ACA7A4DEBE24 /* OnboardingProfile.swift in Sources */,
+				4043C1997E8D669CB0E663DC /* OnboardingRetryQueue.swift in Sources */,
+				EB60C874A71F277246884004 /* OnboardingStatusStore.swift in Sources */,
+				0F9969C4B206ABDAB025C661 /* PerchlyApp.swift in Sources */,
+				69F3A538AB605C70404AF7A7 /* PerchlyPalette.swift in Sources */,
+				ACDD18C3C215EACE0D2BC943 /* PerchlyTypography.swift in Sources */,
+				9688BAD27B8DE31B7F6BC5CE /* Persona.swift in Sources */,
+				D8FD7C4BC5EA0C2D122CDF80 /* PersonaCard.swift in Sources */,
+				29A085F80CE55B6384B551C5 /* PersonaDetailView.swift in Sources */,
+				596CBA414FED5924D2F34476 /* PersonaListView.swift in Sources */,
+				A1C6EECA92CB7B531AF3C895 /* PersonaListViewModel.swift in Sources */,
+				4295ED8479095616DD7A22A0 /* PersonaPickStepView.swift in Sources */,
+				A7DE2AB30DCB5CE69B6112B1 /* ProfileView.swift in Sources */,
+				FE7100409922CD7B7799A84E /* ProfileViewModel.swift in Sources */,
+				4646EBD50280884DC2251E58 /* RegisterCompleteView.swift in Sources */,
+				33DC7D5E5F7CE3411C3D919E /* RegisterCompleteViewModel.swift in Sources */,
+				BDED91BB869834819ECAC4A4 /* RootView.swift in Sources */,
+				D29E729F2739816C1B400722 /* SSEEvent.swift in Sources */,
+				EC90E68EA674B45F6CA4552E /* TokenStorage.swift in Sources */,
+				B0E8E708F01539DDB10E496A /* TypingIndicator.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6425749933648147F0F506F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8BBE4C1591880886DEB23448 /* AuthFlowDurumAUITests.swift in Sources */,
+				BA3CCE982636BB9383E0F574 /* AuthFlowUITests.swift in Sources */,
+				33F988F0D0DE190DC4867C88 /* DebugResetUITests.swift in Sources */,
+				A1B50B80F4680A6928EB95B4 /* MessageReactionUITests.swift in Sources */,
+				2866B7AB020410A0CE5303C3 /* OnboardingFlowUITests.swift in Sources */,
+				E4D06CF032D6C83310AFFD91 /* OnboardingSkipUITests.swift in Sources */,
+				367A6BC7F6D52FF4BA15C6A4 /* XCTestCase+Onboarding.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F6F6F17E9A2D09BBCB6781A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3AEC8DCFB73E136FEEDB8F8 /* AuthInterceptorIntegrationTests.swift in Sources */,
+				51EC1D751FDFD7E56FE9C73A /* ChatStreamingIntegrationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		646B7E49374CDC9B1AA973ED /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 238124FF9BE5DCAFDF8D7AF6 /* Perchly */;
+			targetProxy = 5DE07893D09FBC6AB1BC9EE7 /* PBXContainerItemProxy */;
+		};
+		C698717EA8025875241A902D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 238124FF9BE5DCAFDF8D7AF6 /* Perchly */;
+			targetProxy = CDA4B2AE8A0DF71590E75D01 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2E67BE2C69C6D50F65B21387 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Perchly;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perchly.app;
+				PRODUCT_NAME = Perchly;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		5E5FDBA0B20B1CBDA19954A1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		7FF498B23B2D2236D30680C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.perchly.PerchlyUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Perchly;
+			};
+			name = Release;
+		};
+		999BC3BE2C54D71CBE0C7667 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.perchly.PerchlyUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Perchly;
+			};
+			name = Debug;
+		};
+		9E9D0A7F6E06E25329730354 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		B31F14460A08F9EC04B78266 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.perchly.PerchlyTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Perchly.app/Perchly";
+			};
+			name = Release;
+		};
+		C2E18FF19C909DFBA4372F4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Perchly;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.perchly.app;
+				PRODUCT_NAME = Perchly;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F406CB9C7DF1466D6F56ECB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.perchly.PerchlyTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Perchly.app/Perchly";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		487DBBDD44A3FD23DC5F3EDF /* Build configuration list for PBXNativeTarget "Perchly" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2E18FF19C909DFBA4372F4B /* Debug */,
+				2E67BE2C69C6D50F65B21387 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4DD33792655192E754F3E55A /* Build configuration list for PBXNativeTarget "PerchlyUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				999BC3BE2C54D71CBE0C7667 /* Debug */,
+				7FF498B23B2D2236D30680C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		73B099CE99FE562CB18501E8 /* Build configuration list for PBXNativeTarget "PerchlyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F406CB9C7DF1466D6F56ECB4 /* Debug */,
+				B31F14460A08F9EC04B78266 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D4253199010A1FFBDFCF580E /* Build configuration list for PBXProject "Perchly" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9E9D0A7F6E06E25329730354 /* Debug */,
+				5E5FDBA0B20B1CBDA19954A1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 555D6B57BED7009E990A0BA1 /* Project object */;
+}

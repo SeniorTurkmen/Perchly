@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: ankane/pgvector:latest
+    container_name: perchly_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-perchly}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-perchly}
+      POSTGRES_DB: ${DB_NAME:-perchly}
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-perchly}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
