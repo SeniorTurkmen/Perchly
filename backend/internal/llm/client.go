@@ -32,9 +32,10 @@ type Client interface {
 // Completions API (or any OpenAI-compatible base URL) and also requires
 // APIKey; "huggingface" calls Hugging Face Inference Providers (OpenAI-
 // compatible router at https://router.huggingface.co) with an HF token;
-// "echo" needs no API key and just streams the user's own message back,
-// for local dev/tests. Adding a real new provider is just another case
-// in New plus a type implementing Client.
+// "gemini" calls Google's Gemini generateContent API (AI Studio key)
+// with SSE streaming; "echo" needs no API key and just streams the
+// user's own message back, for local dev/tests. Adding a real new
+// provider is just another case in New plus a type implementing Client.
 type Config struct {
 	Provider string
 	APIKey   string
@@ -75,6 +76,16 @@ func New(cfg Config) (Client, error) {
 		}
 		httpClient := &http.Client{Timeout: 60 * time.Second}
 		return NewHuggingFaceClient(cfg.APIKey, model, cfg.BaseURL, httpClient), nil
+	case "gemini":
+		if cfg.APIKey == "" {
+			return nil, fmt.Errorf("LLM_API_KEY is required for the %q provider", "gemini")
+		}
+		model := cfg.Model
+		if model == "" {
+			model = geminiDefaultModel
+		}
+		httpClient := &http.Client{Timeout: 60 * time.Second}
+		return NewGeminiClient(cfg.APIKey, model, cfg.BaseURL, httpClient), nil
 	case "echo":
 		return NewEchoClient(), nil
 	default:

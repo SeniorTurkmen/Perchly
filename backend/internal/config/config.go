@@ -120,7 +120,7 @@ func Load() (*Config, error) {
 		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
 
 		LLMProvider: getEnv("LLM_PROVIDER", "anthropic"),
-		LLMAPIKey:   getEnv("LLM_API_KEY", getEnv("ANTHROPIC_API_KEY", getEnv("OPENAI_API_KEY", getEnv("HF_TOKEN", "")))),
+		LLMAPIKey:   getEnv("LLM_API_KEY", getEnv("ANTHROPIC_API_KEY", getEnv("OPENAI_API_KEY", getEnv("HF_TOKEN", getEnv("GEMINI_API_KEY", ""))))),
 		LLMModel:    getEnv("LLM_MODEL", "claude-sonnet-5"),
 		LLMBaseURL:  getEnv("LLM_BASE_URL", ""),
 
