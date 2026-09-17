@@ -20,9 +20,13 @@ type Persona struct {
 	// IsMinorAppropriate gates whether a user flagged as a minor (see
 	// OnboardingProfile.IsMinor) may start a conversation with this
 	// persona — enforced in ConversationService.Create.
-	IsMinorAppropriate bool      `json:"is_minor_appropriate"`
-	IsActive           bool      `json:"is_active"`
-	SortOrder          int       `json:"sort_order"`
-	CreatedAt          time.Time `json:"created_at"`
-	UpdatedAt          time.Time `json:"updated_at"`
+	IsMinorAppropriate bool `json:"is_minor_appropriate"`
+	IsActive           bool `json:"is_active"`
+	SortOrder          int  `json:"sort_order"`
+	// DefaultTraits are this persona's own personality dial positions —
+	// what a user gets before they've ever customized anything for it.
+	// See PersonaTraits and user_persona_traits.
+	DefaultTraits PersonaTraits `json:"default_traits"`
+	CreatedAt     time.Time     `json:"created_at"`
+	UpdatedAt     time.Time     `json:"updated_at"`
 }

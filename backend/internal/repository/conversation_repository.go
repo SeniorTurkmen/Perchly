@@ -115,6 +115,7 @@ func (r *ConversationRepository) ListByUserID(ctx context.Context, userID string
 const previewPersonaColumns = `
 	p.id::text, p.slug, p.name, p.category, p.short_description, p.system_prompt,
 	p.tone_description, p.avatar_url, p.accent_color, p.is_minor_appropriate, p.is_active, p.sort_order,
+	p.default_warmth, p.default_humor, p.default_wisdom, p.default_directness, p.default_energy,
 	p.created_at, p.updated_at`
 
 func scanConversationPreview(row rowScanner) (model.ConversationPreview, error) {
@@ -132,7 +133,10 @@ func scanConversationPreview(row rowScanner) (model.ConversationPreview, error) 
 		&preview.Persona.ID, &preview.Persona.Slug, &preview.Persona.Name, &preview.Persona.Category,
 		&preview.Persona.ShortDescription, &preview.Persona.SystemPrompt, &preview.Persona.ToneDescription,
 		&preview.Persona.AvatarURL, &preview.Persona.AccentColor, &preview.Persona.IsMinorAppropriate,
-		&preview.Persona.IsActive, &preview.Persona.SortOrder, &preview.Persona.CreatedAt, &preview.Persona.UpdatedAt,
+		&preview.Persona.IsActive, &preview.Persona.SortOrder,
+		&preview.Persona.DefaultTraits.Warmth, &preview.Persona.DefaultTraits.Humor, &preview.Persona.DefaultTraits.Wisdom,
+		&preview.Persona.DefaultTraits.Directness, &preview.Persona.DefaultTraits.Energy,
+		&preview.Persona.CreatedAt, &preview.Persona.UpdatedAt,
 		&lastID, &lastConvID, &lastRole, &lastContent, &lastReactionEmoji, &lastCreatedAt,
 	)
 	if err != nil {

@@ -69,10 +69,11 @@ var reactionProtocolInstruction = fmt.Sprintf(
 	strings.Join(model.OrderedAllowedReactionEmojis, " "),
 )
 
-func (b *ContextBuilder) Build(ctx context.Context, conversationID, systemPrompt string, history []model.Message, newMessageContent string) []llm.Message {
-	messages := make([]llm.Message, 0, contextRawWindowSize+4)
+func (b *ContextBuilder) Build(ctx context.Context, conversationID, systemPrompt string, history []model.Message, newMessageContent string, traits model.PersonaTraits) []llm.Message {
+	messages := make([]llm.Message, 0, contextRawWindowSize+5)
 	messages = append(messages, llm.Message{Role: "system", Content: systemPrompt})
 	messages = append(messages, llm.Message{Role: "system", Content: reactionProtocolInstruction})
+	messages = append(messages, llm.Message{Role: "system", Content: formatTraitsInstruction(traits)})
 
 	if summary, err := b.summaries.GetByConversationID(ctx, conversationID); err == nil && summary.SummaryText != "" {
 		messages = append(messages, llm.Message{
@@ -99,6 +100,81 @@ func (b *ContextBuilder) Build(ctx context.Context, conversationID, systemPrompt
 	}
 
 	return messages
+}
+
+// traitPhraseTiers maps a 0-100 dial value into one of 5 descriptive
+// phrases, used to turn model.PersonaTraits into prompt guidance an LLM
+// follows more reliably than a bare number would.
+var (
+	warmthPhraseTiers = [5]string{
+		"çok soğuk ve mesafeli",
+		"mesafeli, resmi bir ton",
+		"orta düzeyde sıcak",
+		"sıcak ve şefkatli",
+		"son derece sıcak, şefkatli ve cana yakın",
+	}
+	humorPhraseTiers = [5]string{
+		"tamamen ciddi, hiç şaka yapma",
+		"nadiren ve hafif espri yapan",
+		"ara sıra espri katan",
+		"sık sık esprili",
+		"oldukça şakacı ve eğlenceli",
+	}
+	wisdomPhraseTiers = [5]string{
+		"yüzeysel, basit yanıtlar veren",
+		"temel düzeyde düşünceli",
+		"orta düzeyde derinlikli",
+		"derin ve olgun",
+		"çok derin, felsefi ve olgun",
+	}
+	directnessPhraseTiers = [5]string{
+		"son derece yumuşak ve dolaylı, her şeyi nazikçe yumuşatan",
+		"nazik ve yumuşatarak konuşan",
+		"orta düzeyde doğrudan",
+		"doğrudan ve net",
+		"hiç yumuşatmadan sert ve doğrudan konuşan",
+	}
+	energyPhraseTiers = [5]string{
+		"çok sakin ve durgun",
+		"sakin",
+		"orta tempolu",
+		"enerjik",
+		"son derece enerjik ve coşkulu",
+	}
+)
+
+// traitTier buckets a 0-100 dial value into one of 5 tiers (0-4).
+func traitTier(value int) int {
+	switch {
+	case value < 20:
+		return 0
+	case value < 40:
+		return 1
+	case value < 60:
+		return 2
+	case value < 80:
+		return 3
+	default:
+		return 4
+	}
+}
+
+// formatTraitsInstruction turns the user's current dial positions for
+// this persona into a system-prompt instruction. Deliberately phrased
+// as fine-tuning the persona's existing character, not replacing it —
+// the persona's own system prompt (its identity, boundaries, platonic
+// framing) always takes precedence.
+func formatTraitsInstruction(t model.PersonaTraits) string {
+	return fmt.Sprintf(
+		"Şu anda kullanıcının senin için ayarladığı kişilik ayarlarıyla konuş (kullanıcı bunları istediği "+
+			"zaman değiştirebilir, kimliğini değiştirmez, sadece tonunu ince ayarlar): "+
+			"Sıcaklık %%%d (%s), Espri %%%d (%s), Bilgelik %%%d (%s), Doğrudanlık %%%d (%s), Enerji %%%d (%s).",
+		t.Warmth, warmthPhraseTiers[traitTier(t.Warmth)],
+		t.Humor, humorPhraseTiers[traitTier(t.Humor)],
+		t.Wisdom, wisdomPhraseTiers[traitTier(t.Wisdom)],
+		t.Directness, directnessPhraseTiers[traitTier(t.Directness)],
+		t.Energy, energyPhraseTiers[traitTier(t.Energy)],
+	)
 }
 
 func (b *ContextBuilder) findNearest(ctx context.Context, conversationID, queryText string, excludeIDs []string) []model.Message {

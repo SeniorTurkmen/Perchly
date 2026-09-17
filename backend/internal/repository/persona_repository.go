@@ -24,6 +24,7 @@ func NewPersonaRepository(pool *pgxpool.Pool) *PersonaRepository {
 const personaColumns = `
 	id::text, slug, name, category, short_description, system_prompt,
 	tone_description, avatar_url, accent_color, is_minor_appropriate, is_active, sort_order,
+	default_warmth, default_humor, default_wisdom, default_directness, default_energy,
 	created_at, updated_at`
 
 // List returns active personas ordered for display.
@@ -82,6 +83,7 @@ func scanPersona(row rowScanner) (model.Persona, error) {
 	err := row.Scan(
 		&p.ID, &p.Slug, &p.Name, &p.Category, &p.ShortDescription, &p.SystemPrompt,
 		&p.ToneDescription, &p.AvatarURL, &p.AccentColor, &p.IsMinorAppropriate, &p.IsActive, &p.SortOrder,
+		&p.DefaultTraits.Warmth, &p.DefaultTraits.Humor, &p.DefaultTraits.Wisdom, &p.DefaultTraits.Directness, &p.DefaultTraits.Energy,
 		&p.CreatedAt, &p.UpdatedAt,
 	)
 	return p, err

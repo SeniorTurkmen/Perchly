@@ -119,6 +119,7 @@ func scanForReactionTag(buffer string) reactionScanResult {
 type ChatService struct {
 	messages       MessageRepo
 	personas       PersonaRepo
+	personaTraits  PersonaTraitsRepo
 	llmClient      llm.Client
 	embeddings     *EmbeddingService
 	summaries      *SummaryService
@@ -129,6 +130,7 @@ type ChatService struct {
 func NewChatService(
 	messages MessageRepo,
 	personas PersonaRepo,
+	personaTraits PersonaTraitsRepo,
 	llmClient llm.Client,
 	embeddings *EmbeddingService,
 	summaries *SummaryService,
@@ -138,6 +140,7 @@ func NewChatService(
 	return &ChatService{
 		messages:       messages,
 		personas:       personas,
+		personaTraits:  personaTraits,
 		llmClient:      llmClient,
 		embeddings:     embeddings,
 		summaries:      summaries,
@@ -182,7 +185,15 @@ func (s *ChatService) SendMessage(
 		return "", "", fmt.Errorf("load history: %w", err)
 	}
 
-	llmMessages := s.contextBuilder.Build(ctx, conversationID, persona.SystemPrompt, history, content)
+	traits, _, err := s.personaTraits.GetEffective(ctx, userID, personaID)
+	if err != nil {
+		// A trait-lookup glitch shouldn't sink the whole turn — fall
+		// back to the persona's own defaults, already in hand.
+		log.Printf("chat: failed to load persona traits (user=%s persona=%s): %v, using persona defaults", userID, personaID, err)
+		traits = persona.DefaultTraits
+	}
+
+	llmMessages := s.contextBuilder.Build(ctx, conversationID, persona.SystemPrompt, history, content, traits)
 
 	var full strings.Builder
 	var reactionEmoji string

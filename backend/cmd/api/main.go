@@ -42,6 +42,10 @@ func main() {
 	personaService := service.NewPersonaService(personaRepo)
 	personaHandler := handler.NewPersonaHandler(personaService)
 
+	personaTraitsRepo := repository.NewPersonaTraitsRepository(pool)
+	personaTraitsService := service.NewPersonaTraitsService(personaTraitsRepo, personaRepo)
+	personaTraitsHandler := handler.NewPersonaTraitsHandler(personaTraitsService)
+
 	var emailSender email.Sender
 	if cfg.SMTPUsername == "" || cfg.SMTPPassword == "" {
 		log.Printf("warning: SMTP_USERNAME/SMTP_PASSWORD not set, verification codes will only be logged, not emailed")
@@ -112,7 +116,7 @@ func main() {
 	go quotaResetJob.Run(ctx)
 
 	chatService := service.NewChatService(
-		messageRepo, personaRepo, llmClient,
+		messageRepo, personaRepo, personaTraitsRepo, llmClient,
 		embeddingService, summaryService, contextBuilder, quotaService,
 	)
 	messageHandler := handler.NewMessageHandler(chatService)
@@ -128,8 +132,18 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	r.Get("/health", healthHandler.Health)
-	r.Get("/personas", personaHandler.List)
-	r.Get("/personas/{id}", personaHandler.Get)
+
+	r.Route("/personas", func(r chi.Router) {
+		r.Get("/", personaHandler.List)
+		r.Get("/{id}", personaHandler.Get)
+
+		r.Group(func(r chi.Router) {
+			r.Use(auth.Middleware(accessTokenIssuer))
+			r.Get("/{id}/traits", personaTraitsHandler.Get)
+			r.Put("/{id}/traits", personaTraitsHandler.Set)
+			r.Delete("/{id}/traits", personaTraitsHandler.Reset)
+		})
+	})
 
 	r.Route("/auth", func(r chi.Router) {
 		r.Post("/anonymous", authHandler.CreateAnonymousSession)
