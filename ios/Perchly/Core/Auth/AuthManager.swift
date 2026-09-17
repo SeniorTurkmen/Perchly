@@ -32,6 +32,19 @@ final class AuthManager: ObservableObject {
         self.tokenStorage = tokenStorage
         self.email = tokenStorage.email
         self.hasCompletedOnboarding = onboardingStatusStore.hasCompletedOnboarding
+
+        #if DEBUG
+        // UI tests that aren't exercising onboarding itself opt into
+        // this via `--uitest-skip-onboarding` (see
+        // PerchlyUITests/XCTestCase+Onboarding.swift) so they aren't
+        // hostage to a real tap making it through the onboarding flow —
+        // never set outside of a test target's launch arguments, and
+        // compiled out of Release entirely.
+        if ProcessInfo.processInfo.arguments.contains("--uitest-skip-onboarding") {
+            self.hasCompletedOnboarding = true
+            onboardingStatusStore.hasCompletedOnboarding = true
+        }
+        #endif
     }
 
     // MARK: - Bootstrap
