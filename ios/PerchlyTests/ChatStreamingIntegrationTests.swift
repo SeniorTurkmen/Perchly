@@ -47,6 +47,12 @@ final class ChatStreamingIntegrationTests: XCTestCase {
             case "message":
                 chunkCount += 1
                 receivedText += try event.decodedText()
+            case "reaction":
+                // The persona may lead its reply with a reaction tag
+                // instead of, or before, replying with text (see the
+                // backend's ChatService.SendMessage) — a legitimate
+                // event this test doesn't otherwise care about.
+                break
             case "done":
                 sawDone = true
             default:
