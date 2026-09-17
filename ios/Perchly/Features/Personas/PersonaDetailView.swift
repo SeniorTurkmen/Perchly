@@ -5,6 +5,13 @@ import SwiftUI
 struct PersonaDetailView: View {
     let persona: Persona
     let onStartChat: () -> Void
+    @StateObject private var traitsViewModel: PersonaTraitsViewModel
+
+    init(persona: Persona, onStartChat: @escaping () -> Void) {
+        self.persona = persona
+        self.onStartChat = onStartChat
+        _traitsViewModel = StateObject(wrappedValue: PersonaTraitsViewModel(personaID: persona.id))
+    }
 
     private var style: PersonaCategoryStyle { persona.categoryStyle }
 
@@ -13,6 +20,7 @@ struct PersonaDetailView: View {
             VStack(spacing: 24) {
                 auraCard
                 startChatButton
+                personalityDialsSection
                 traitsSection
                 aboutCard
                 privacyRow
@@ -202,6 +210,85 @@ struct PersonaDetailView: View {
         }
         .accessibilityIdentifier("personaDetailStartChat")
         .accessibilityLabel("\(persona.name) ile sohbete başla")
+    }
+
+    /// The user's own personality-dial customization for this persona
+    /// (Perchmate) — separate from `traitsSection` below, which is just
+    /// decorative, category-level copy. Each slider saves the instant
+    /// its drag ends, so "changed" and "applied" are the same moment;
+    /// there's nothing to remember to hit save on. Changes take effect
+    /// starting with the user's very next message to this persona.
+    private var personalityDialsSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("Kişilik Ayarları")
+                    .font(PerchlyTypography.Discover.labelLG)
+                    .foregroundStyle(PerchlyPalette.Discover.onSurface)
+                Spacer()
+                if traitsViewModel.isCustomized {
+                    Button("Varsayılana Döndür") {
+                        Task { await traitsViewModel.reset() }
+                    }
+                    .font(PerchlyTypography.Discover.labelSM.weight(.semibold))
+                    .foregroundStyle(persona.accent)
+                    .accessibilityIdentifier("personaTraitsResetButton")
+                }
+            }
+
+            Text("\(persona.name)'ın sana nasıl karşılık verdiğini kendine göre ayarla. Örneğin sıcaklığı yükseltip doğrudanlığı düşürerek daha yumuşak, ya da tam tersini yaparak daha sert yanıtlar alabilirsin.")
+                .font(PerchlyTypography.Discover.bodySM)
+                .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
+                .fixedSize(horizontal: false, vertical: true)
+
+            VStack(spacing: 18) {
+                traitSlider(key: "warmth", title: "Sıcaklık", systemImage: "heart.fill", value: $traitsViewModel.traits.warmth)
+                traitSlider(key: "humor", title: "Espri", systemImage: "face.smiling.fill", value: $traitsViewModel.traits.humor)
+                traitSlider(key: "wisdom", title: "Bilgelik", systemImage: "brain.head.profile", value: $traitsViewModel.traits.wisdom)
+                traitSlider(key: "directness", title: "Doğrudanlık", systemImage: "bolt.fill", value: $traitsViewModel.traits.directness)
+                traitSlider(key: "energy", title: "Enerji", systemImage: "sparkles", value: $traitsViewModel.traits.energy)
+            }
+
+            if let errorMessage = traitsViewModel.errorMessage {
+                Text(errorMessage)
+                    .font(PerchlyTypography.Discover.bodySM)
+                    .foregroundStyle(PerchlyPalette.Discover.secondary)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassEffect(.regular.tint(PerchlyPalette.Discover.surfaceLowest.opacity(0.65)), in: .rect(cornerRadius: 16))
+        .task { await traitsViewModel.loadIfNeeded() }
+    }
+
+    private func traitSlider(key: String, title: String, systemImage: String, value: Binding<Int>) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Label(title, systemImage: systemImage)
+                    .font(PerchlyTypography.Discover.labelMD)
+                    .foregroundStyle(PerchlyPalette.Discover.onSurface)
+                Spacer()
+                Text("%\(value.wrappedValue)")
+                    .font(PerchlyTypography.Discover.labelMD.weight(.semibold))
+                    .foregroundStyle(persona.accent)
+                    .monospacedDigit()
+            }
+
+            Slider(
+                value: Binding(
+                    get: { Double(value.wrappedValue) },
+                    set: { value.wrappedValue = Int($0.rounded()) }
+                ),
+                in: 0...100,
+                step: 1,
+                onEditingChanged: { isEditing in
+                    if !isEditing {
+                        Task { await traitsViewModel.save() }
+                    }
+                }
+            )
+            .tint(persona.accent)
+            .accessibilityIdentifier("traitSlider_\(key)")
+        }
     }
 
     private var traitsSection: some View {

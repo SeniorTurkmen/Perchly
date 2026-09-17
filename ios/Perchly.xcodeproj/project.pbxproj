@@ -32,9 +32,11 @@
 		596CBA414FED5924D2F34476 /* PersonaListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDC69D79EA47A16D430EF944 /* PersonaListView.swift */; };
 		5A121F4465EF63EE8E8FAEBE /* MessageReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A25F6E3CC32FF49AFB65C53C /* MessageReaction.swift */; };
 		6339319152977BA10AE03C2B /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88CBF47BA3D71ACDCAF87CB /* ChatView.swift */; };
+		65F6E10BAB51AF380EFDE4BB /* PersonaTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738CF1F2533A97AE1081101E /* PersonaTraits.swift */; };
 		69F3A538AB605C70404AF7A7 /* PerchlyPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A4FDA36831DA31CF01B /* PerchlyPalette.swift */; };
 		6EBEBDE53B31B19BC35B3E8C /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4ADBA9E0D9B9D665658026 /* AuthManager.swift */; };
 		6F1ACD5486238153285271F6 /* OnboardingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCECFBAD7F310008F332348F /* OnboardingCoordinator.swift */; };
+		7BDB6ABAFC8FB65F36DDD3D5 /* PersonaTraitsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB7706A29C2872C88150A /* PersonaTraitsUITests.swift */; };
 		7F8AB5E190D60C237EEB86B3 /* CodeEntryField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FEA37849BC7377389A1ABD /* CodeEntryField.swift */; };
 		80FEBCEC8C749F4C6B805E17 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFAF31FCAD28765D6BB54C6 /* ChatMessage.swift */; };
 		8BBE4C1591880886DEB23448 /* AuthFlowDurumAUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71AB7CA9BEC7CF6BA94D0295 /* AuthFlowDurumAUITests.swift */; };
@@ -43,6 +45,7 @@
 		9688BAD27B8DE31B7F6BC5CE /* Persona.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ACEA36F1D3657651AE396D4 /* Persona.swift */; };
 		9857752D528393C553DDC0A4 /* EmailEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D48417CA311ED919C04F0B /* EmailEntryView.swift */; };
 		987F7C11BE541DB0182BBFA4 /* EmailEntryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC37E0B2A5F749007D3AC44F /* EmailEntryViewModel.swift */; };
+		9C59798881F0D38A2738BDFB /* PersonaTraitsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD48151DDA1615DB43911640 /* PersonaTraitsViewModel.swift */; };
 		A1B50B80F4680A6928EB95B4 /* MessageReactionUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFC686AC3A0ECB8FE8E6A4D /* MessageReactionUITests.swift */; };
 		A1C6EECA92CB7B531AF3C895 /* PersonaListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACAC5B8AF0FA86D8BC2AA797 /* PersonaListViewModel.swift */; };
 		A7DE2AB30DCB5CE69B6112B1 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A4238123785848A338926C /* ProfileView.swift */; };
@@ -106,6 +109,7 @@
 		5605AE2E4D04DE8CB838E298 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
 		57435CA8C932D2A8F92DBDDE /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		58EDF4B2B660316E2F694C76 /* ChatStreamingIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStreamingIntegrationTests.swift; sourceTree = "<group>"; };
+		59DDB7706A29C2872C88150A /* PersonaTraitsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaTraitsUITests.swift; sourceTree = "<group>"; };
 		5ACEA36F1D3657651AE396D4 /* Persona.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persona.swift; sourceTree = "<group>"; };
 		5D465416A3C73966072A6DAF /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
 		5E4ADBA9E0D9B9D665658026 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
@@ -113,6 +117,7 @@
 		71AB7CA9BEC7CF6BA94D0295 /* AuthFlowDurumAUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowDurumAUITests.swift; sourceTree = "<group>"; };
 		72563841319CCE35028A940F /* GlassTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassTextField.swift; sourceTree = "<group>"; };
 		72D1BEB51F601C9910184951 /* PerchlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerchlyApp.swift; sourceTree = "<group>"; };
+		738CF1F2533A97AE1081101E /* PersonaTraits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaTraits.swift; sourceTree = "<group>"; };
 		796C36C19E4FC4CDBC5122E3 /* TypingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingIndicator.swift; sourceTree = "<group>"; };
 		7AFAF31FCAD28765D6BB54C6 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		81D48417CA311ED919C04F0B /* EmailEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailEntryView.swift; sourceTree = "<group>"; };
@@ -129,6 +134,7 @@
 		A8BECD95A2C4DE8820A4B8A0 /* CodeVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeVerificationView.swift; sourceTree = "<group>"; };
 		ACAC5B8AF0FA86D8BC2AA797 /* PersonaListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaListViewModel.swift; sourceTree = "<group>"; };
 		ACF3263EC0AD5B98E0B98114 /* AccessTokenClaims.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenClaims.swift; sourceTree = "<group>"; };
+		AD48151DDA1615DB43911640 /* PersonaTraitsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaTraitsViewModel.swift; sourceTree = "<group>"; };
 		B2897C67C90FB7380FF892C6 /* CountdownBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownBar.swift; sourceTree = "<group>"; };
 		B646072D854B88528601F2F7 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
 		B98E799D6B58EC128C06BE2D /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
@@ -225,6 +231,7 @@
 				3CFC686AC3A0ECB8FE8E6A4D /* MessageReactionUITests.swift */,
 				0B16D86E4255A02A868FE195 /* OnboardingFlowUITests.swift */,
 				46D1FCD21A6709508616BA12 /* OnboardingSkipUITests.swift */,
+				59DDB7706A29C2872C88150A /* PersonaTraitsUITests.swift */,
 				125C2044F609AEA5C1767A2B /* XCTestCase+Onboarding.swift */,
 			);
 			path = PerchlyUITests;
@@ -344,6 +351,7 @@
 			children = (
 				A25F6E3CC32FF49AFB65C53C /* MessageReaction.swift */,
 				5ACEA36F1D3657651AE396D4 /* Persona.swift */,
+				738CF1F2533A97AE1081101E /* PersonaTraits.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -365,6 +373,7 @@
 				42F83262427C6832D9BB5F2D /* PersonaDetailView.swift */,
 				DDC69D79EA47A16D430EF944 /* PersonaListView.swift */,
 				ACAC5B8AF0FA86D8BC2AA797 /* PersonaListViewModel.swift */,
+				AD48151DDA1615DB43911640 /* PersonaTraitsViewModel.swift */,
 			);
 			path = Personas;
 			sourceTree = "<group>";
@@ -528,6 +537,8 @@
 				596CBA414FED5924D2F34476 /* PersonaListView.swift in Sources */,
 				A1C6EECA92CB7B531AF3C895 /* PersonaListViewModel.swift in Sources */,
 				4295ED8479095616DD7A22A0 /* PersonaPickStepView.swift in Sources */,
+				65F6E10BAB51AF380EFDE4BB /* PersonaTraits.swift in Sources */,
+				9C59798881F0D38A2738BDFB /* PersonaTraitsViewModel.swift in Sources */,
 				A7DE2AB30DCB5CE69B6112B1 /* ProfileView.swift in Sources */,
 				FE7100409922CD7B7799A84E /* ProfileViewModel.swift in Sources */,
 				4646EBD50280884DC2251E58 /* RegisterCompleteView.swift in Sources */,
@@ -549,6 +560,7 @@
 				A1B50B80F4680A6928EB95B4 /* MessageReactionUITests.swift in Sources */,
 				2866B7AB020410A0CE5303C3 /* OnboardingFlowUITests.swift in Sources */,
 				E4D06CF032D6C83310AFFD91 /* OnboardingSkipUITests.swift in Sources */,
+				7BDB6ABAFC8FB65F36DDD3D5 /* PersonaTraitsUITests.swift in Sources */,
 				367A6BC7F6D52FF4BA15C6A4 /* XCTestCase+Onboarding.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
