@@ -18,6 +18,7 @@ const PROVIDER_LABELS: Record<string, string> = {
   anthropic: "Anthropic",
   gemini: "Google Gemini",
   huggingface: "Hugging Face",
+  deepseek: "DeepSeek",
 };
 
 export default async function ProvidersPage() {

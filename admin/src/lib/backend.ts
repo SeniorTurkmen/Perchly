@@ -445,7 +445,7 @@ export async function adminGetOnboardingInsights(
 
 // --- LLM provider credentials & models ---
 
-export type LLMProvider = "openai" | "anthropic" | "gemini" | "huggingface";
+export type LLMProvider = "openai" | "anthropic" | "gemini" | "huggingface" | "deepseek";
 
 export type LLMCredential = {
   id: string;

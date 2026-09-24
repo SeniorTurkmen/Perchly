@@ -16,6 +16,7 @@ const PROVIDERS = [
   { value: "anthropic", label: "Anthropic" },
   { value: "gemini", label: "Google Gemini" },
   { value: "huggingface", label: "Hugging Face" },
+  { value: "deepseek", label: "DeepSeek" },
 ] as const;
 
 export function CredentialForm({
