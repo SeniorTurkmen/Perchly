@@ -123,11 +123,20 @@ type ChatService struct {
 	personas           PersonaRepo
 	personaTraits      PersonaTraitsRepo
 	onboardingProfiles OnboardingProfileRepo
-	llmClient          llm.Client
+	llmClients         LLMClientResolver
 	embeddings         *EmbeddingService
 	summaries          *SummaryService
 	contextBuilder     *ContextBuilder
 	quotas             *QuotaService
+}
+
+// LLMClientResolver picks the llm.Client a persona's turn should
+// actually be answered by — see LLMClientFactory, the only real
+// implementation: a persona with no assigned model (see
+// Persona.LLMModelID) gets the process-wide default; one pinned to a
+// stored model gets a client built from that model's own credential.
+type LLMClientResolver interface {
+	ForPersona(ctx context.Context, p model.Persona) (llm.Client, error)
 }
 
 func NewChatService(
@@ -135,7 +144,7 @@ func NewChatService(
 	personas PersonaRepo,
 	personaTraits PersonaTraitsRepo,
 	onboardingProfiles OnboardingProfileRepo,
-	llmClient llm.Client,
+	llmClients LLMClientResolver,
 	embeddings *EmbeddingService,
 	summaries *SummaryService,
 	contextBuilder *ContextBuilder,
@@ -146,11 +155,11 @@ func NewChatService(
 		personas:           personas,
 		personaTraits:      personaTraits,
 		onboardingProfiles: onboardingProfiles,
-		llmClient:          llmClient,
+		llmClients:         llmClients,
 		embeddings:         embeddings,
 		summaries:          summaries,
 		contextBuilder:     contextBuilder,
-		quotas:         quotas,
+		quotas:             quotas,
 	}
 }
 
@@ -212,12 +221,17 @@ func (s *ChatService) SendMessage(
 
 	llmMessages := s.contextBuilder.Build(ctx, conversationID, persona.SystemPrompt, history, content, traits, preferredName, skipHitap)
 
+	llmClient, err := s.llmClients.ForPersona(ctx, persona)
+	if err != nil {
+		return "", "", fmt.Errorf("resolve llm client: %w", err)
+	}
+
 	var full strings.Builder
 	var reactionEmoji string
 	var reactionTagResolved bool
 	var pending strings.Builder
 
-	if err := s.llmClient.StreamChat(ctx, llmMessages, func(delta string) error {
+	if err := llmClient.StreamChat(ctx, llmMessages, func(delta string) error {
 		if reactionTagResolved {
 			full.WriteString(delta)
 			return onDelta(delta)
