@@ -334,3 +334,85 @@ export async function adminDeleteMessage(
     { method: "DELETE" },
   );
 }
+
+// --- Request logs (app users) ---
+
+export type RequestLog = {
+  id: number;
+  user_id: string | null;
+  user_email: string | null;
+  user_display_name: string | null;
+  method: string;
+  route_pattern: string;
+  path: string;
+  query_params: Record<string, unknown> | null;
+  route_params: Record<string, unknown> | null;
+  body: unknown;
+  status_code: number;
+  duration_ms: number;
+  request_headers: Record<string, unknown> | null;
+  response_headers: Record<string, unknown> | null;
+  response_body: string | null;
+  client_version: string | null;
+  platform: string | null;
+  os_version: string | null;
+  device_model: string | null;
+  user_agent: string;
+  ip_address: string;
+  created_at: string;
+};
+
+export type RequestLogsPage = { logs: RequestLog[]; total: number };
+
+export async function adminListLogs(
+  sessionToken: string,
+  params: {
+    search?: string;
+    statusMin?: number;
+    userId?: string;
+    limit?: number;
+    offset?: number;
+  } = {},
+): Promise<RequestLogsPage> {
+  const qs = new URLSearchParams();
+  if (params.search) qs.set("search", params.search);
+  if (params.statusMin) qs.set("status_min", String(params.statusMin));
+  if (params.userId) qs.set("user_id", params.userId);
+  if (params.limit) qs.set("limit", String(params.limit));
+  if (params.offset) qs.set("offset", String(params.offset));
+  const query = qs.toString();
+  return authedFetch<RequestLogsPage>(
+    `/admin/logs${query ? `?${query}` : ""}`,
+    sessionToken,
+  );
+}
+
+// --- Admin activity log (admins) ---
+
+export type AdminActivityEntry = {
+  id: string;
+  admin_user_id: string;
+  admin_email: string;
+  action: string;
+  target_type: string;
+  target_id: string | null;
+  detail: Record<string, unknown> | null;
+  created_at: string;
+};
+
+export type AdminActivityPage = { entries: AdminActivityEntry[]; total: number };
+
+export async function adminListActivity(
+  sessionToken: string,
+  params: { adminUserId?: string; limit?: number; offset?: number } = {},
+): Promise<AdminActivityPage> {
+  const qs = new URLSearchParams();
+  if (params.adminUserId) qs.set("admin_user_id", params.adminUserId);
+  if (params.limit) qs.set("limit", String(params.limit));
+  if (params.offset) qs.set("offset", String(params.offset));
+  const query = qs.toString();
+  return authedFetch<AdminActivityPage>(
+    `/admin/activity${query ? `?${query}` : ""}`,
+    sessionToken,
+  );
+}
