@@ -216,6 +216,10 @@ export type Persona = {
   is_active: boolean;
   sort_order: number;
   default_traits: PersonaTraits;
+  // llm_model_id is null when this persona uses the process-wide
+  // LLM_PROVIDER/LLM_MODEL default instead of a specific stored model
+  // (see the "AI Sağlayıcıları" panel).
+  llm_model_id: string | null;
   created_at: string;
   updated_at: string;
 };
