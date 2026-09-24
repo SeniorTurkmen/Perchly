@@ -1,9 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import type { Persona } from "@/lib/backend";
+import type { LLMCredential, LLMModel, Persona } from "@/lib/backend";
 
 const TRAITS = [
   { key: "warmth", label: "Sıcaklık" },
@@ -13,13 +20,49 @@ const TRAITS = [
   { key: "energy", label: "Enerji" },
 ] as const;
 
+// Base UI's Select needs a non-empty value for every item, so "use the
+// process-wide default" (llm_model_id: null) is represented by this
+// sentinel and translated back to null in actions.ts's readPersonaInput.
+export const DEFAULT_MODEL_VALUE = "__default__";
+
+export type LLMModelOption = {
+  id: string;
+  label: string;
+  disabled: boolean;
+};
+
+// buildModelOptions joins every stored model with its credential to
+// produce a display label ("OpenAI - Prod / GPT-4.1") and disables a
+// model whose credential (or the model itself) is inactive — matching
+// AdminPersonaService.validateLLMModel's own check, so an admin sees why
+// an option can't be picked instead of the request just failing later.
+export function buildModelOptions(
+  models: LLMModel[],
+  credentials: LLMCredential[],
+): LLMModelOption[] {
+  const credentialById = new Map(credentials.map((c) => [c.id, c]));
+
+  return models.map((model) => {
+    const credential = credentialById.get(model.credential_id);
+    const credentialLabel = credential?.label ?? "bilinmeyen kimlik bilgisi";
+    const disabled = !model.is_active || !(credential?.is_active ?? false);
+    return {
+      id: model.id,
+      label: `${credentialLabel} / ${model.display_name}${disabled ? " (pasif)" : ""}`,
+      disabled,
+    };
+  });
+}
+
 export function PersonaForm({
   persona,
+  modelOptions,
   action,
   submitLabel,
   error,
 }: {
   persona?: Persona;
+  modelOptions: LLMModelOption[];
   action: (formData: FormData) => Promise<void>;
   submitLabel: string;
   error?: string;
@@ -99,6 +142,32 @@ export function PersonaForm({
         />
         <p className="text-xs text-muted-foreground">
           Yalnızca admin görür — uygulama kullanıcılarına asla gösterilmez.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="llm_model_id">Model</Label>
+        <Select
+          name="llm_model_id"
+          defaultValue={persona?.llm_model_id ?? DEFAULT_MODEL_VALUE}
+        >
+          <SelectTrigger id="llm_model_id" className="w-full">
+            <SelectValue placeholder="Model seç" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={DEFAULT_MODEL_VALUE}>
+              Varsayılan (sunucu ayarları)
+            </SelectItem>
+            {modelOptions.map((option) => (
+              <SelectItem key={option.id} value={option.id} disabled={option.disabled}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-muted-foreground">
+          Belirli bir model seçilmezse bu persona sunucunun genel LLM ayarını kullanır.
+          AI Sağlayıcıları panelinden kimlik bilgisi ve model eklemen gerekir.
         </p>
       </div>
 
