@@ -1,0 +1,73 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend API (Go)",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/backend/cmd/api",
+      "cwd": "${workspaceFolder}/backend",
+      "preLaunchTask": "backend: postgres up + migrate"
+    },
+    {
+      "name": "createadmin (Go)",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/backend/cmd/createadmin",
+      "cwd": "${workspaceFolder}/backend",
+      "args": ["-email", "${input:adminEmail}", "-password", "${input:adminPassword}"],
+      "preLaunchTask": "backend: postgres up + migrate"
+    },
+    {
+      "name": "Admin dashboard: server-side (Next.js)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev -- --inspect",
+      "cwd": "${workspaceFolder}/admin"
+    },
+    {
+      "name": "Admin dashboard: client-side (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000"
+    },
+    {
+      "name": "Admin dashboard: full stack (Next.js)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/admin/node_modules/next/dist/bin/next",
+      "cwd": "${workspaceFolder}/admin",
+      "runtimeArgs": ["--inspect"],
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "killOnServerStop": true,
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}/admin"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug admin system (backend + dashboard)",
+      "configurations": ["Backend API (Go)", "Admin dashboard: full stack (Next.js)"],
+      "stopAll": true
+    }
+  ],
+  "inputs": [
+    {
+      "id": "adminEmail",
+      "type": "promptString",
+      "description": "Admin e-posta"
+    },
+    {
+      "id": "adminPassword",
+      "type": "promptString",
+      "description": "Admin şifre",
+      "password": true
+    }
+  ]
+}

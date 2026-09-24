@@ -1,6 +1,8 @@
 # Go
 backend/bin/
 backend/.env
+# Delve debug binaries (VS Code Go extension / dlv debug), wherever they land
+**/__debug_bin*
 
 # macOS
 .DS_Store
