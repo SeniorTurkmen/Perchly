@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ClipboardList,
   Gauge,
   GitBranch,
   LayoutDashboard,
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { href: "/personas", label: "Personalar", icon: Sparkles },
   { href: "/conversations", label: "Konuşmalar", icon: MessagesSquare },
   { href: "/quotas", label: "Kota & Kredi", icon: Gauge },
+  { href: "/onboarding", label: "Onboarding", icon: ClipboardList },
   { href: "/logs", label: "Loglar", icon: ScrollText },
   { href: "/engineering", label: "Mühendislik", icon: GitBranch },
 ] as const;

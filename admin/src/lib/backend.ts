@@ -416,3 +416,29 @@ export async function adminListActivity(
     sessionToken,
   );
 }
+
+// --- Onboarding insights ---
+
+export type PersonaSelectionCount = {
+  persona_id: string;
+  persona_name: string;
+  count: number;
+};
+
+export type AdminOnboardingInsights = {
+  total_users: number;
+  completed_onboarding: number;
+  minor_count: number;
+  notifications_granted_count: number;
+  preferred_name_set_count: number;
+  skip_hitap_count: number;
+  age_range_counts: Record<string, number>;
+  mood_preference_counts: Record<string, number>;
+  top_selected_personas: PersonaSelectionCount[];
+};
+
+export async function adminGetOnboardingInsights(
+  sessionToken: string,
+): Promise<AdminOnboardingInsights> {
+  return authedFetch<AdminOnboardingInsights>("/admin/onboarding/insights", sessionToken);
+}
