@@ -91,6 +91,9 @@ const (
 	ErrCodeAdminPersonasListFailed  = apierror.CodeAdminPersonasListFailed
 	ErrCodeAdminPersonaCreateFailed = apierror.CodeAdminPersonaCreateFailed
 	ErrCodeAdminPersonaUpdateFailed = apierror.CodeAdminPersonaUpdateFailed
+	ErrCodeInvalidPersonaLLMModelID = apierror.CodeInvalidPersonaLLMModelID
+	ErrCodePersonaLLMModelNotFound  = apierror.CodePersonaLLMModelNotFound
+	ErrCodePersonaLLMModelInactive  = apierror.CodePersonaLLMModelInactive
 
 	ErrCodeAdminMetricsFailed = apierror.CodeAdminMetricsFailed
 

@@ -98,6 +98,9 @@ const (
 	CodeAdminPersonasListFailed  Code = "admin_personas_list_failed"
 	CodeAdminPersonaCreateFailed Code = "admin_persona_create_failed"
 	CodeAdminPersonaUpdateFailed Code = "admin_persona_update_failed"
+	CodeInvalidPersonaLLMModelID Code = "invalid_persona_llm_model_id"
+	CodePersonaLLMModelNotFound  Code = "persona_llm_model_not_found"
+	CodePersonaLLMModelInactive  Code = "persona_llm_model_inactive"
 
 	// Admin dashboard — home metrics.
 	CodeAdminMetricsFailed Code = "admin_metrics_failed"
