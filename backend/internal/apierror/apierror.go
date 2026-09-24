@@ -101,6 +101,11 @@ const (
 
 	// Admin dashboard — home metrics.
 	CodeAdminMetricsFailed Code = "admin_metrics_failed"
+
+	// Admin dashboard — conversations & moderation.
+	CodeAdminConversationsListFailed Code = "admin_conversations_list_failed"
+	CodeAdminConversationFetchFailed Code = "admin_conversation_fetch_failed"
+	CodeAdminMessageDeleteFailed     Code = "admin_message_delete_failed"
 )
 
 // Response is the standard JSON error envelope every failed endpoint

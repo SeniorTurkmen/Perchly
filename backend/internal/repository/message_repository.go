@@ -72,6 +72,20 @@ func (r *MessageRepository) SetReaction(ctx context.Context, id string, emoji *s
 	return m, nil
 }
 
+// Delete permanently removes a message — used by the admin dashboard
+// for moderation. There's no soft-delete/undo; the caller is
+// responsible for confirming with the admin first.
+func (r *MessageRepository) Delete(ctx context.Context, id string) error {
+	tag, err := r.pool.Exec(ctx, `DELETE FROM messages WHERE id = $1::uuid`, id)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrMessageNotFound
+	}
+	return nil
+}
+
 // ListByConversation returns every message in a conversation, oldest first.
 func (r *MessageRepository) ListByConversation(ctx context.Context, conversationID string) ([]model.Message, error) {
 	rows, err := r.pool.Query(ctx, `
