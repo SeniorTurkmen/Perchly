@@ -112,6 +112,9 @@ const (
 
 	// Admin dashboard — own activity log.
 	CodeAdminActivityListFailed Code = "admin_activity_list_failed"
+
+	// Admin dashboard — onboarding insights.
+	CodeAdminOnboardingInsightsFailed Code = "admin_onboarding_insights_failed"
 )
 
 // Response is the standard JSON error envelope every failed endpoint
