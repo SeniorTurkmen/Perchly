@@ -1,10 +1,15 @@
 import { notFound } from "next/navigation";
 
 import { requireSessionToken } from "@/lib/auth";
-import { AdminApiError, adminGetPersona } from "@/lib/backend";
+import {
+  AdminApiError,
+  adminGetPersona,
+  adminListLLMCredentials,
+  adminListLLMModels,
+} from "@/lib/backend";
 
 import { updatePersonaAction } from "../actions";
-import { PersonaForm } from "../persona-form";
+import { buildModelOptions, PersonaForm } from "../persona-form";
 
 export default async function EditPersonaPage({
   params,
@@ -25,6 +30,11 @@ export default async function EditPersonaPage({
     throw err;
   }
 
+  const [models, credentials] = await Promise.all([
+    adminListLLMModels(token),
+    adminListLLMCredentials(token),
+  ]);
+
   const boundUpdate = updatePersonaAction.bind(null, id);
 
   return (
@@ -35,6 +45,7 @@ export default async function EditPersonaPage({
       </div>
       <PersonaForm
         persona={persona}
+        modelOptions={buildModelOptions(models, credentials)}
         action={boundUpdate}
         submitLabel="Kaydet"
         error={error}
