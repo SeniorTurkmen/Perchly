@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -66,8 +67,11 @@ type adminPersonaResponse struct {
 	IsActive           bool                `json:"is_active"`
 	SortOrder          int                 `json:"sort_order"`
 	DefaultTraits      model.PersonaTraits `json:"default_traits"`
-	CreatedAt          time.Time           `json:"created_at"`
-	UpdatedAt          time.Time           `json:"updated_at"`
+	// LLMModelID is nil when this persona uses the process-wide
+	// LLM_PROVIDER/LLM_MODEL default instead of a specific stored model.
+	LLMModelID *string   `json:"llm_model_id"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 func toAdminPersonaResponse(p model.Persona) adminPersonaResponse {
@@ -76,7 +80,8 @@ func toAdminPersonaResponse(p model.Persona) adminPersonaResponse {
 		ShortDescription: p.ShortDescription, SystemPrompt: p.SystemPrompt, ToneDescription: p.ToneDescription,
 		AvatarURL: p.AvatarURL, AccentColor: p.AccentColor, IsMinorAppropriate: p.IsMinorAppropriate,
 		IsActive: p.IsActive, SortOrder: p.SortOrder, DefaultTraits: p.DefaultTraits,
-		CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt,
+		LLMModelID: p.LLMModelID,
+		CreatedAt:  p.CreatedAt, UpdatedAt: p.UpdatedAt,
 	}
 }
 
@@ -133,9 +138,20 @@ type adminPersonaRequest struct {
 	IsActive           bool                `json:"is_active"`
 	SortOrder          int                 `json:"sort_order"`
 	DefaultTraits      model.PersonaTraits `json:"default_traits"`
+	// LLMModelID is a *string (rather than string) so the admin form can
+	// distinguish "explicitly pinned to this model" from "cleared back
+	// to the default" — an empty string in the JSON body means the
+	// latter and is normalized to nil in toPersona, same reasoning as
+	// AvatarURL elsewhere in this struct.
+	LLMModelID *string `json:"llm_model_id"`
 }
 
 func (req adminPersonaRequest) toPersona(id string) model.Persona {
+	llmModelID := req.LLMModelID
+	if llmModelID != nil && strings.TrimSpace(*llmModelID) == "" {
+		llmModelID = nil
+	}
+
 	return model.Persona{
 		ID:                 id,
 		Slug:               req.Slug,
@@ -150,6 +166,7 @@ func (req adminPersonaRequest) toPersona(id string) model.Persona {
 		IsActive:           req.IsActive,
 		SortOrder:          req.SortOrder,
 		DefaultTraits:      req.DefaultTraits,
+		LLMModelID:         llmModelID,
 	}
 }
 
@@ -161,6 +178,10 @@ func (h *AdminPersonaHandler) Create(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
+	if !validPersonaLLMModelID(req.LLMModelID) {
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaLLMModelID, "geçersiz model id")
+		return
+	}
 
 	adminUserID, _ := auth.AdminUserIDFromContext(r.Context())
 
@@ -170,9 +191,25 @@ func (h *AdminPersonaHandler) Create(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusCreated, toAdminPersonaResponse(created))
 	case errors.Is(err, service.ErrInvalidPersonaInput), errors.Is(err, model.ErrPersonaTraitOutOfRange):
 		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaInput, "geçersiz persona girdisi")
+	case errors.Is(err, service.ErrPersonaLLMModelNotFound):
+		writeError(w, http.StatusBadRequest, ErrCodePersonaLLMModelNotFound, "seçilen model bulunamadı")
+	case errors.Is(err, service.ErrPersonaLLMModelInactive):
+		writeError(w, http.StatusBadRequest, ErrCodePersonaLLMModelInactive, "seçilen model veya kimlik bilgisi pasif durumda")
 	default:
 		writeError(w, http.StatusInternalServerError, ErrCodeAdminPersonaCreateFailed, "persona oluşturulamadı")
 	}
+}
+
+// validPersonaLLMModelID allows nil or an empty string (both mean "no
+// override"), otherwise requires a well-formed UUID — rejected early so
+// a malformed value never reaches the repository layer as a raw ::uuid
+// cast, which would surface as an opaque 500 instead of a clean 400.
+func validPersonaLLMModelID(id *string) bool {
+	if id == nil || strings.TrimSpace(*id) == "" {
+		return true
+	}
+	_, err := uuid.Parse(*id)
+	return err == nil
 }
 
 // --- PUT /admin/personas/{id} ---
@@ -189,6 +226,10 @@ func (h *AdminPersonaHandler) Update(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
+	if !validPersonaLLMModelID(req.LLMModelID) {
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaLLMModelID, "geçersiz model id")
+		return
+	}
 
 	adminUserID, _ := auth.AdminUserIDFromContext(r.Context())
 
@@ -198,6 +239,10 @@ func (h *AdminPersonaHandler) Update(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, toAdminPersonaResponse(updated))
 	case errors.Is(err, service.ErrInvalidPersonaInput), errors.Is(err, model.ErrPersonaTraitOutOfRange):
 		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaInput, "geçersiz persona girdisi")
+	case errors.Is(err, service.ErrPersonaLLMModelNotFound):
+		writeError(w, http.StatusBadRequest, ErrCodePersonaLLMModelNotFound, "seçilen model bulunamadı")
+	case errors.Is(err, service.ErrPersonaLLMModelInactive):
+		writeError(w, http.StatusBadRequest, ErrCodePersonaLLMModelInactive, "seçilen model veya kimlik bilgisi pasif durumda")
 	case errors.Is(err, repository.ErrPersonaNotFound):
 		writeError(w, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
 	default:

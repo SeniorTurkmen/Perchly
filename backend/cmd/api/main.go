@@ -160,7 +160,10 @@ func main() {
 	adminUserService := service.NewAdminUserService(userRepo, quotaRepo, creditRepo, adminAuditLogRepo)
 	adminUserHandler := handler.NewAdminUserHandler(adminUserService)
 
-	adminPersonaService := service.NewAdminPersonaService(personaRepo, adminAuditLogRepo)
+	llmCredentialRepo := repository.NewLLMCredentialRepository(pool)
+	llmModelRepo := repository.NewLLMModelRepository(pool)
+
+	adminPersonaService := service.NewAdminPersonaService(personaRepo, llmModelRepo, llmCredentialRepo, adminAuditLogRepo)
 	adminPersonaHandler := handler.NewAdminPersonaHandler(adminPersonaService)
 
 	adminMetricsRepo := repository.NewAdminMetricsRepository(pool)
@@ -180,8 +183,6 @@ func main() {
 	adminOnboardingService := service.NewAdminOnboardingService(adminOnboardingInsightsRepo)
 	adminOnboardingHandler := handler.NewAdminOnboardingHandler(adminOnboardingService)
 
-	llmCredentialRepo := repository.NewLLMCredentialRepository(pool)
-	llmModelRepo := repository.NewLLMModelRepository(pool)
 	adminLLMService := service.NewAdminLLMService(llmCredentialRepo, llmModelRepo, llmTokenBox, adminAuditLogRepo)
 	adminLLMHandler := handler.NewAdminLLMHandler(adminLLMService)
 
