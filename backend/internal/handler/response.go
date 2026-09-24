@@ -72,6 +72,12 @@ const (
 	ErrCodeQuotaCheckFailed = apierror.CodeQuotaCheckFailed
 	ErrCodeQuotaExceeded    = apierror.CodeQuotaExceeded
 	ErrCodeChatEnergyFailed = apierror.CodeChatEnergyFailed
+
+	ErrCodeAdminInvalidCredentials = apierror.CodeAdminInvalidCredentials
+	ErrCodeAdminLoginFailed        = apierror.CodeAdminLoginFailed
+	ErrCodeAdminUnauthorized       = apierror.CodeAdminUnauthorized
+	ErrCodeAdminLogoutFailed       = apierror.CodeAdminLogoutFailed
+	ErrCodeAdminMeFailed           = apierror.CodeAdminMeFailed
 )
 
 func writeJSON(w http.ResponseWriter, status int, payload any) {

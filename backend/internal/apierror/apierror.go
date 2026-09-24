@@ -75,6 +75,14 @@ const (
 	CodeQuotaCheckFailed Code = "quota_check_failed"
 	CodeQuotaExceeded    Code = "quota_exceeded"
 	CodeChatEnergyFailed Code = "chat_energy_failed"
+
+	// Admin dashboard auth — entirely separate from the app-user codes
+	// above so a client can never confuse the two.
+	CodeAdminInvalidCredentials Code = "admin_invalid_credentials"
+	CodeAdminLoginFailed        Code = "admin_login_failed"
+	CodeAdminUnauthorized       Code = "admin_unauthorized"
+	CodeAdminLogoutFailed       Code = "admin_logout_failed"
+	CodeAdminMeFailed           Code = "admin_me_failed"
 )
 
 // Response is the standard JSON error envelope every failed endpoint
