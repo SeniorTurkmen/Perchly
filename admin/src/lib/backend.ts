@@ -442,3 +442,14 @@ export async function adminGetOnboardingInsights(
 ): Promise<AdminOnboardingInsights> {
   return authedFetch<AdminOnboardingInsights>("/admin/onboarding/insights", sessionToken);
 }
+
+// --- Backend health (public, no session token — same as the iOS app's
+// own health check) ---
+
+export type BackendHealth = { status: string; database: string };
+
+export async function checkBackendHealth(): Promise<BackendHealth> {
+  const res = await fetch(`${BACKEND_URL}/health`, { cache: "no-store" });
+  if (!res.ok) await throwApiError(res);
+  return res.json();
+}
