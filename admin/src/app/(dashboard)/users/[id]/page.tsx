@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { LocalDateTime } from "@/components/local-date-time";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,11 +29,6 @@ import {
 } from "@/lib/backend";
 
 import { setCreditsAction, setQuotaAction } from "./actions";
-
-const dateFormatter = new Intl.DateTimeFormat("tr-TR", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
 
 export default async function UserDetailPage({
   params,
@@ -105,7 +101,9 @@ export default async function UserDetailPage({
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Oluşturulma</span>
-              <span>{dateFormatter.format(new Date(detail.user.created_at))}</span>
+              <span>
+                <LocalDateTime value={detail.user.created_at} />
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -178,7 +176,9 @@ export default async function UserDetailPage({
                       </Button>
                     </form>
                   </TableCell>
-                  <TableCell>{dateFormatter.format(new Date(quota.last_reset_at))}</TableCell>
+                  <TableCell>
+                    <LocalDateTime value={quota.last_reset_at} />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

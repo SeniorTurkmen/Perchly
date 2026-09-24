@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LocalDateTime } from "@/components/local-date-time";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,11 +18,6 @@ import { adminListLogs } from "@/lib/backend";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 50;
-
-const dateFormatter = new Intl.DateTimeFormat("tr-TR", {
-  dateStyle: "medium",
-  timeStyle: "medium",
-});
 
 const STATUS_FILTERS = [
   { label: "Tümü", value: "0" },
@@ -234,7 +230,7 @@ export default async function LogsPage({
                   {[log.platform, log.client_version].filter(Boolean).join(" · ") || "—"}
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  {dateFormatter.format(new Date(log.created_at))}
+                  <LocalDateTime value={log.created_at} style="medium" />
                 </TableCell>
               </TableRow>
             ))}
