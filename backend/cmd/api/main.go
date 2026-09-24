@@ -137,6 +137,40 @@ func main() {
 
 	requestLogRepo := repository.NewRequestLogRepository(pool)
 
+	adminUserRepo := repository.NewAdminUserRepository(pool)
+	adminSessionRepo := repository.NewAdminSessionRepository(pool)
+	adminAuditLogRepo := repository.NewAdminAuditLogRepository(pool)
+	adminAuthService := service.NewAdminAuthService(adminUserRepo, adminSessionRepo, adminAuditLogRepo, cfg.AdminSessionTTL)
+	adminAuthHandler := handler.NewAdminAuthHandler(adminAuthService)
+
+	// The admin services below reuse the same repositories the public
+	// API already constructed above (userRepo, quotaRepo, creditRepo,
+	// personaRepo) — the admin dashboard's extra read/write methods
+	// were added directly onto those repository types, not split into
+	// separate ones, since they operate on the exact same tables.
+	adminUserService := service.NewAdminUserService(userRepo, quotaRepo, creditRepo, adminAuditLogRepo)
+	adminUserHandler := handler.NewAdminUserHandler(adminUserService)
+
+	adminPersonaService := service.NewAdminPersonaService(personaRepo, adminAuditLogRepo)
+	adminPersonaHandler := handler.NewAdminPersonaHandler(adminPersonaService)
+
+	adminMetricsRepo := repository.NewAdminMetricsRepository(pool)
+	adminDashboardService := service.NewAdminDashboardService(adminMetricsRepo)
+	adminDashboardHandler := handler.NewAdminDashboardHandler(adminDashboardService)
+
+	adminConversationService := service.NewAdminConversationService(conversationRepo, messageRepo, adminAuditLogRepo)
+	adminConversationHandler := handler.NewAdminConversationHandler(adminConversationService)
+
+	adminLogService := service.NewAdminLogService(requestLogRepo)
+	adminLogHandler := handler.NewAdminLogHandler(adminLogService)
+
+	adminActivityService := service.NewAdminActivityService(adminAuditLogRepo)
+	adminActivityHandler := handler.NewAdminActivityHandler(adminActivityService)
+
+	adminOnboardingInsightsRepo := repository.NewAdminOnboardingInsightsRepository(pool)
+	adminOnboardingService := service.NewAdminOnboardingService(adminOnboardingInsightsRepo)
+	adminOnboardingHandler := handler.NewAdminOnboardingHandler(adminOnboardingService)
+
 	r := chi.NewRouter()
 	// requestlog.Middleware is mounted before Recoverer deliberately —
 	// see its doc comment for why that's required for it to log
@@ -190,6 +224,48 @@ func main() {
 		r.Post("/onboarding-profile", onboardingHandler.SaveProfile)
 		r.Get("/onboarding-profile", onboardingHandler.GetProfile)
 		r.Get("/chat-energy", chatEnergyHandler.Get)
+	})
+
+	// Admin dashboard API — entirely separate auth from everything above
+	// (see AdminAuthService). Only login/logout are public; every other
+	// /admin/* route sits inside the AdminMiddleware-gated group below.
+	r.Route("/admin", func(r chi.Router) {
+		r.Route("/auth", func(r chi.Router) {
+			r.Post("/login", adminAuthHandler.Login)
+			r.Post("/logout", adminAuthHandler.Logout)
+		})
+
+		r.Group(func(r chi.Router) {
+			r.Use(handler.AdminMiddleware(adminAuthService))
+
+			r.Get("/auth/me", adminAuthHandler.Me)
+
+			r.Route("/users", func(r chi.Router) {
+				r.Get("/", adminUserHandler.List)
+				r.Get("/{id}", adminUserHandler.Get)
+				r.Patch("/{id}/quota", adminUserHandler.SetQuota)
+				r.Patch("/{id}/credits", adminUserHandler.SetCredits)
+			})
+
+			r.Route("/personas", func(r chi.Router) {
+				r.Get("/", adminPersonaHandler.List)
+				r.Get("/{id}", adminPersonaHandler.Get)
+				r.Post("/", adminPersonaHandler.Create)
+				r.Put("/{id}", adminPersonaHandler.Update)
+			})
+
+			r.Get("/dashboard/metrics", adminDashboardHandler.Metrics)
+
+			r.Route("/conversations", func(r chi.Router) {
+				r.Get("/", adminConversationHandler.List)
+				r.Get("/{id}", adminConversationHandler.Get)
+				r.Delete("/{id}/messages/{messageID}", adminConversationHandler.DeleteMessage)
+			})
+
+			r.Get("/logs", adminLogHandler.List)
+			r.Get("/activity", adminActivityHandler.List)
+			r.Get("/onboarding/insights", adminOnboardingHandler.Insights)
+		})
 	})
 
 	addr := ":" + cfg.ServerPort
