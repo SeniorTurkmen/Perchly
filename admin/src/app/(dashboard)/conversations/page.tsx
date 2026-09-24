@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LocalDateTime } from "@/components/local-date-time";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,11 +15,6 @@ import { requireSessionToken } from "@/lib/auth";
 import { adminListConversations } from "@/lib/backend";
 
 const PAGE_SIZE = 20;
-
-const dateFormatter = new Intl.DateTimeFormat("tr-TR", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
 
 function truncate(text: string, max: number) {
   return text.length > max ? `${text.slice(0, max)}…` : text;
@@ -109,9 +105,7 @@ export default async function ConversationsPage({
                   )}
                 </TableCell>
                 <TableCell>
-                  {conv.last_message
-                    ? dateFormatter.format(new Date(conv.last_message.created_at))
-                    : dateFormatter.format(new Date(conv.created_at))}
+                  <LocalDateTime value={conv.last_message?.created_at ?? conv.created_at} />
                 </TableCell>
                 <TableCell className="text-right">
                   <Button

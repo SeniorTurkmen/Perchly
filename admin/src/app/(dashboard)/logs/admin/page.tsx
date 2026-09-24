@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LocalDateTime } from "@/components/local-date-time";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LogsTabs } from "@/components/logs-tabs";
@@ -15,11 +16,6 @@ import { requireSessionToken } from "@/lib/auth";
 import { adminListActivity } from "@/lib/backend";
 
 const PAGE_SIZE = 50;
-
-const dateFormatter = new Intl.DateTimeFormat("tr-TR", {
-  dateStyle: "medium",
-  timeStyle: "medium",
-});
 
 function actionVariant(action: string): "default" | "secondary" | "destructive" {
   if (action.includes("delete")) return "destructive";
@@ -115,7 +111,7 @@ export default async function AdminActivityPage({
                   )}
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  {dateFormatter.format(new Date(entry.created_at))}
+                  <LocalDateTime value={entry.created_at} style="medium" />
                 </TableCell>
               </TableRow>
             ))}

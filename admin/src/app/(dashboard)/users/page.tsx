@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LocalDateTime } from "@/components/local-date-time";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,11 +16,6 @@ import { requireSessionToken } from "@/lib/auth";
 import { adminListUsers } from "@/lib/backend";
 
 const PAGE_SIZE = 20;
-
-const dateFormatter = new Intl.DateTimeFormat("tr-TR", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
 
 export default async function UsersPage({
   searchParams,
@@ -96,7 +92,9 @@ export default async function UsersPage({
                     {user.is_anonymous ? "Anonim" : "Kayıtlı"}
                   </Badge>
                 </TableCell>
-                <TableCell>{dateFormatter.format(new Date(user.created_at))}</TableCell>
+                <TableCell>
+                  <LocalDateTime value={user.created_at} />
+                </TableCell>
                 <TableCell className="text-right">
                   <Button
                     render={<Link href={`/users/${user.id}`} />}

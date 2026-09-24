@@ -1,5 +1,8 @@
+import { requireSessionToken } from "@/lib/auth";
+import { adminListLLMCredentials, adminListLLMModels } from "@/lib/backend";
+
 import { createPersonaAction } from "../actions";
-import { PersonaForm } from "../persona-form";
+import { buildModelOptions, PersonaForm } from "../persona-form";
 
 export default async function NewPersonaPage({
   searchParams,
@@ -7,6 +10,11 @@ export default async function NewPersonaPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
+  const token = await requireSessionToken();
+  const [models, credentials] = await Promise.all([
+    adminListLLMModels(token),
+    adminListLLMCredentials(token),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -16,7 +24,12 @@ export default async function NewPersonaPage({
           Yeni bir persona oluştur — tüm alanlar zorunlu, dial değerleri 0-100.
         </p>
       </div>
-      <PersonaForm action={createPersonaAction} submitLabel="Oluştur" error={error} />
+      <PersonaForm
+        modelOptions={buildModelOptions(models, credentials)}
+        action={createPersonaAction}
+        submitLabel="Oluştur"
+        error={error}
+      />
     </div>
   );
 }

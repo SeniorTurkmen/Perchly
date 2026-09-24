@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { LocalDateTime } from "@/components/local-date-time";
 import { Badge } from "@/components/ui/badge";
 import { DeleteMessageButton } from "@/components/delete-message-button";
 import { requireSessionToken } from "@/lib/auth";
@@ -12,11 +13,6 @@ import {
 import { cn } from "@/lib/utils";
 
 import { deleteMessageAction } from "../actions";
-
-const dateFormatter = new Intl.DateTimeFormat("tr-TR", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
 
 export default async function ConversationDetailPage({
   params,
@@ -76,7 +72,7 @@ export default async function ConversationDetailPage({
                 </Badge>
                 {message.reaction_emoji && <span>{message.reaction_emoji}</span>}
                 <span className="text-muted-foreground">
-                  {dateFormatter.format(new Date(message.created_at))}
+                  <LocalDateTime value={message.created_at} />
                 </span>
               </div>
               <form action={deleteMessageAction.bind(null, detail.conversation.id, message.id)}>

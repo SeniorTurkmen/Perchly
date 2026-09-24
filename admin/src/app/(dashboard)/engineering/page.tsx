@@ -1,3 +1,4 @@
+import { LocalDateTime } from "@/components/local-date-time";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -17,11 +18,6 @@ import {
   listOpenIssues,
   listRecentPullRequests,
 } from "@/lib/github";
-
-const dateFormatter = new Intl.DateTimeFormat("tr-TR", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
 
 async function BackendHealthCard() {
   let health: { status: string; database: string } | null = null;
@@ -145,7 +141,7 @@ export default async function EngineeringPage() {
                     #{issue.number} {issue.title}
                   </span>
                   <span className="shrink-0 text-xs text-muted-foreground">
-                    {dateFormatter.format(new Date(issue.updated_at))}
+                    <LocalDateTime value={issue.updated_at} />
                   </span>
                 </div>
                 {issue.labels.length > 0 && (
@@ -196,7 +192,7 @@ export default async function EngineeringPage() {
                   </Badge>
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground">
-                  {pr.user?.login} · {dateFormatter.format(new Date(pr.updated_at))}
+                  {pr.user?.login} · <LocalDateTime value={pr.updated_at} />
                 </div>
               </a>
             ))}

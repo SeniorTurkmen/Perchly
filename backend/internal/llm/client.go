@@ -33,9 +33,11 @@ type Client interface {
 // APIKey; "huggingface" calls Hugging Face Inference Providers (OpenAI-
 // compatible router at https://router.huggingface.co) with an HF token;
 // "gemini" calls Google's Gemini generateContent API (AI Studio key)
-// with SSE streaming; "echo" needs no API key and just streams the
-// user's own message back, for local dev/tests. Adding a real new
-// provider is just another case in New plus a type implementing Client.
+// with SSE streaming; "deepseek" calls DeepSeek's Chat Completions API
+// (OpenAI-compatible) and also requires APIKey; "echo" needs no API key
+// and just streams the user's own message back, for local dev/tests.
+// Adding a real new provider is just another case in New plus a type
+// implementing Client.
 type Config struct {
 	Provider string
 	APIKey   string
@@ -46,6 +48,16 @@ type Config struct {
 // New builds the Client for cfg.Provider.
 func New(cfg Config) (Client, error) {
 	switch cfg.Provider {
+	case "deepseek":
+		if cfg.APIKey == "" {
+			return nil, fmt.Errorf("LLM_API_KEY is required for the %q provider", "deepseek")
+		}
+		model := cfg.Model
+		if model == "" {
+			model = deepseekDefaultModel
+		}
+		httpClient := &http.Client{Timeout: 60 * time.Second}
+		return NewDeepSeekClient(cfg.APIKey, model, cfg.BaseURL, httpClient), nil
 	case "", "anthropic":
 		if cfg.APIKey == "" {
 			return nil, fmt.Errorf("LLM_API_KEY is required for the %q provider", "anthropic")

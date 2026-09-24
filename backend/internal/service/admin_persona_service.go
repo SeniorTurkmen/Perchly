@@ -6,9 +6,14 @@ import (
 	"strings"
 
 	"perchly-backend/internal/model"
+	"perchly-backend/internal/repository"
 )
 
-var ErrInvalidPersonaInput = errors.New("invalid persona input")
+var (
+	ErrInvalidPersonaInput     = errors.New("invalid persona input")
+	ErrPersonaLLMModelNotFound = errors.New("persona llm model not found")
+	ErrPersonaLLMModelInactive = errors.New("persona llm model or its credential is inactive")
+)
 
 type AdminPersonaRepo interface {
 	ListAll(ctx context.Context) ([]model.Persona, error)
@@ -17,18 +22,40 @@ type AdminPersonaRepo interface {
 	Update(ctx context.Context, p model.Persona) (model.Persona, error)
 }
 
+// AdminPersonaLLMModelRepo is the narrow slice of AdminLLMModelRepo this
+// service needs — just enough to validate a persona's llm_model_id
+// points at a real, active model.
+type AdminPersonaLLMModelRepo interface {
+	GetByID(ctx context.Context, id string) (model.LLMModel, error)
+}
+
+// AdminPersonaLLMCredentialRepo is the narrow slice of
+// AdminLLMCredentialRepo this service needs — validating a persona's
+// model isn't enough on its own if the credential backing it has since
+// been deactivated.
+type AdminPersonaLLMCredentialRepo interface {
+	GetByID(ctx context.Context, id string) (model.LLMCredential, error)
+}
+
 // AdminPersonaService is the admin dashboard's full CRUD over personas
 // — unlike PersonaService (the public, read-only, active-only view),
 // this can see inactive personas and write to every field, including
 // system_prompt, which is never exposed over the public API. Every
 // mutation is written to admin_audit_log.
 type AdminPersonaService struct {
-	personas AdminPersonaRepo
-	auditLog AdminAuditLogRepo
+	personas    AdminPersonaRepo
+	llmModels   AdminPersonaLLMModelRepo
+	credentials AdminPersonaLLMCredentialRepo
+	auditLog    AdminAuditLogRepo
 }
 
-func NewAdminPersonaService(personas AdminPersonaRepo, auditLog AdminAuditLogRepo) *AdminPersonaService {
-	return &AdminPersonaService{personas: personas, auditLog: auditLog}
+func NewAdminPersonaService(
+	personas AdminPersonaRepo,
+	llmModels AdminPersonaLLMModelRepo,
+	credentials AdminPersonaLLMCredentialRepo,
+	auditLog AdminAuditLogRepo,
+) *AdminPersonaService {
+	return &AdminPersonaService{personas: personas, llmModels: llmModels, credentials: credentials, auditLog: auditLog}
 }
 
 func (s *AdminPersonaService) List(ctx context.Context) ([]model.Persona, error) {
@@ -41,6 +68,9 @@ func (s *AdminPersonaService) Get(ctx context.Context, id string) (model.Persona
 
 func (s *AdminPersonaService) Create(ctx context.Context, adminUserID string, p model.Persona) (model.Persona, error) {
 	if err := validatePersonaInput(p); err != nil {
+		return model.Persona{}, err
+	}
+	if err := s.validateLLMModel(ctx, p.LLMModelID); err != nil {
 		return model.Persona{}, err
 	}
 
@@ -60,6 +90,9 @@ func (s *AdminPersonaService) Update(ctx context.Context, adminUserID string, p 
 	if err := validatePersonaInput(p); err != nil {
 		return model.Persona{}, err
 	}
+	if err := s.validateLLMModel(ctx, p.LLMModelID); err != nil {
+		return model.Persona{}, err
+	}
 
 	updated, err := s.personas.Update(ctx, p)
 	if err != nil {
@@ -71,6 +104,43 @@ func (s *AdminPersonaService) Update(ctx context.Context, adminUserID string, p 
 	})
 
 	return updated, nil
+}
+
+// validateLLMModel confirms llmModelID (when set — nil means "use the
+// process-wide default", always valid) points at a model that both
+// exists and is active, and whose credential is also active. Checking
+// only the model wouldn't be enough: an admin can deactivate a
+// credential without touching the models under it (see
+// AdminLLMService.UpdateCredential), so a model can be "active" while
+// unusable.
+func (s *AdminPersonaService) validateLLMModel(ctx context.Context, llmModelID *string) error {
+	if llmModelID == nil {
+		return nil
+	}
+
+	m, err := s.llmModels.GetByID(ctx, *llmModelID)
+	if err != nil {
+		if errors.Is(err, repository.ErrLLMModelNotFound) {
+			return ErrPersonaLLMModelNotFound
+		}
+		return err
+	}
+	if !m.IsActive {
+		return ErrPersonaLLMModelInactive
+	}
+
+	credential, err := s.credentials.GetByID(ctx, m.CredentialID)
+	if err != nil {
+		if errors.Is(err, repository.ErrLLMCredentialNotFound) {
+			return ErrPersonaLLMModelNotFound
+		}
+		return err
+	}
+	if !credential.IsActive {
+		return ErrPersonaLLMModelInactive
+	}
+
+	return nil
 }
 
 func validatePersonaInput(p model.Persona) error {

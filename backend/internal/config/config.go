@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/base64"
 	"fmt"
 	"os"
 	"strconv"
@@ -47,6 +48,17 @@ type Config struct {
 	// opaque token, since admin accounts are few and it's fine to just
 	// log in again after it lapses.
 	AdminSessionTTL time.Duration
+
+	// LLMTokenEncryptionKey is the raw 32-byte AES-256-GCM key used to
+	// encrypt LLM provider API keys stored in llm_credentials (see
+	// internal/crypto.SecretBox). Empty LLMTokenEncryptionKeyIsEphemeral
+	// means Load generated a random one for this process only — fine for
+	// local dev, but any credential encrypted with it becomes
+	// undecryptable after a restart, so set a stable, base64-encoded
+	// LLM_TOKEN_ENCRYPTION_KEY (`openssl rand -base64 32`) anywhere
+	// stored provider tokens need to survive one.
+	LLMTokenEncryptionKey            []byte
+	LLMTokenEncryptionKeyIsEphemeral bool
 
 	// SMTP* configure the verification-code email sender. If
 	// SMTPUsername or SMTPPassword is empty, the server falls back to
@@ -124,6 +136,23 @@ func Load() (*Config, error) {
 		jwtSecret = secret
 	}
 
+	llmTokenEncryptionKeyRaw := getEnv("LLM_TOKEN_ENCRYPTION_KEY", "")
+	llmTokenEncryptionKeyEphemeral := llmTokenEncryptionKeyRaw == ""
+	var llmTokenEncryptionKey []byte
+	if llmTokenEncryptionKeyEphemeral {
+		key, err := randomKeyBytes(32)
+		if err != nil {
+			return nil, fmt.Errorf("generate ephemeral LLM token encryption key: %w", err)
+		}
+		llmTokenEncryptionKey = key
+	} else {
+		key, err := base64.StdEncoding.DecodeString(llmTokenEncryptionKeyRaw)
+		if err != nil || len(key) != 32 {
+			return nil, fmt.Errorf("LLM_TOKEN_ENCRYPTION_KEY must be a base64-encoded 32-byte key (generate one with `openssl rand -base64 32`)")
+		}
+		llmTokenEncryptionKey = key
+	}
+
 	cfg := &Config{
 		ServerPort: getEnv("SERVER_PORT", "8080"),
 		DBHost:     getEnv("DB_HOST", "localhost"),
@@ -148,6 +177,9 @@ func Load() (*Config, error) {
 		AccessTokenTTL:       accessTokenTTL,
 		RefreshTokenTTL:      refreshTokenTTL,
 		AdminSessionTTL:      adminSessionTTL,
+
+		LLMTokenEncryptionKey:            llmTokenEncryptionKey,
+		LLMTokenEncryptionKeyIsEphemeral: llmTokenEncryptionKeyEphemeral,
 
 		SMTPHost:     getEnv("SMTP_HOST", "smtp.gmail.com"),
 		SMTPPort:     smtpPort,

@@ -14,7 +14,10 @@ import (
 const (
 	anthropicDefaultBaseURL = "https://api.anthropic.com"
 	anthropicVersion        = "2023-06-01"
-	anthropicMaxTokens      = 1024
+	// anthropicMaxTokens bounds a single reply — see openAIMaxTokens'
+	// doc comment for why this was raised from the original 1024 (kept
+	// in sync across providers rather than left OpenAI-specific).
+	anthropicMaxTokens = 4096
 )
 
 // AnthropicClient implements Client against Anthropic's Messages API

@@ -11,9 +11,12 @@ import {
   type PersonaInput,
 } from "@/lib/backend";
 
+import { DEFAULT_MODEL_VALUE } from "./persona-form";
+
 function readPersonaInput(formData: FormData): PersonaInput {
   const trait = (name: string) => Number(formData.get(name) ?? 50);
   const avatarUrl = String(formData.get("avatar_url") ?? "").trim();
+  const llmModelId = String(formData.get("llm_model_id") ?? "");
 
   return {
     slug: String(formData.get("slug") ?? "").trim(),
@@ -27,6 +30,7 @@ function readPersonaInput(formData: FormData): PersonaInput {
     is_minor_appropriate: formData.get("is_minor_appropriate") === "on",
     is_active: formData.get("is_active") === "on",
     sort_order: Number(formData.get("sort_order") ?? 0),
+    llm_model_id: llmModelId && llmModelId !== DEFAULT_MODEL_VALUE ? llmModelId : null,
     default_traits: {
       warmth: trait("warmth"),
       humor: trait("humor"),

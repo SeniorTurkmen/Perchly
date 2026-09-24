@@ -48,7 +48,7 @@ func (r *MessageEmbeddingRepository) NearestByConversation(
 	}
 
 	rows, err := r.pool.Query(ctx, `
-		SELECT m.id::text, m.conversation_id::text, m.role, m.content, m.created_at
+		SELECT m.id::text, m.conversation_id::text, m.role, m.content, m.reaction_emoji, m.created_at
 		FROM message_embeddings me
 		JOIN messages m ON m.id = me.message_id
 		WHERE me.conversation_id = $1::uuid

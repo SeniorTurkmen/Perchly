@@ -11,11 +11,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { requireSessionToken } from "@/lib/auth";
-import { adminListPersonas } from "@/lib/backend";
+import { adminListLLMModels, adminListPersonas } from "@/lib/backend";
 
 export default async function PersonasPage() {
   const token = await requireSessionToken();
-  const personas = await adminListPersonas(token);
+  const [personas, models] = await Promise.all([
+    adminListPersonas(token),
+    adminListLLMModels(token),
+  ]);
+  const modelNameById = new Map(models.map((m) => [m.id, m.display_name]));
 
   return (
     <div className="space-y-6">
@@ -35,6 +39,7 @@ export default async function PersonasPage() {
             <TableRow>
               <TableHead>Persona</TableHead>
               <TableHead>Kategori</TableHead>
+              <TableHead>Model</TableHead>
               <TableHead>Durum</TableHead>
               <TableHead>Sıra</TableHead>
               <TableHead className="text-right">Düzenle</TableHead>
@@ -48,6 +53,11 @@ export default async function PersonasPage() {
                   <div className="text-sm text-muted-foreground">{persona.slug}</div>
                 </TableCell>
                 <TableCell>{persona.category}</TableCell>
+                <TableCell className="text-muted-foreground">
+                  {persona.llm_model_id
+                    ? (modelNameById.get(persona.llm_model_id) ?? "bilinmeyen model")
+                    : "Varsayılan"}
+                </TableCell>
                 <TableCell>
                   <Badge variant={persona.is_active ? "default" : "secondary"}>
                     {persona.is_active ? "Aktif" : "Pasif"}

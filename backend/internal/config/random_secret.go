@@ -14,3 +14,13 @@ func randomSecret(n int) (string, error) {
 	}
 	return hex.EncodeToString(b), nil
 }
+
+// randomKeyBytes returns n raw random bytes, used as a fallback
+// LLM_TOKEN_ENCRYPTION_KEY when that env var isn't set.
+func randomKeyBytes(n int) ([]byte, error) {
+	b := make([]byte, n)
+	if _, err := rand.Read(b); err != nil {
+		return nil, err
+	}
+	return b, nil
+}

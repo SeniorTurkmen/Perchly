@@ -91,6 +91,9 @@ const (
 	ErrCodeAdminPersonasListFailed  = apierror.CodeAdminPersonasListFailed
 	ErrCodeAdminPersonaCreateFailed = apierror.CodeAdminPersonaCreateFailed
 	ErrCodeAdminPersonaUpdateFailed = apierror.CodeAdminPersonaUpdateFailed
+	ErrCodeInvalidPersonaLLMModelID = apierror.CodeInvalidPersonaLLMModelID
+	ErrCodePersonaLLMModelNotFound  = apierror.CodePersonaLLMModelNotFound
+	ErrCodePersonaLLMModelInactive  = apierror.CodePersonaLLMModelInactive
 
 	ErrCodeAdminMetricsFailed = apierror.CodeAdminMetricsFailed
 
@@ -103,6 +106,22 @@ const (
 	ErrCodeAdminActivityListFailed = apierror.CodeAdminActivityListFailed
 
 	ErrCodeAdminOnboardingInsightsFailed = apierror.CodeAdminOnboardingInsightsFailed
+
+	ErrCodeInvalidLLMCredentialInput      = apierror.CodeInvalidLLMCredentialInput
+	ErrCodeLLMCredentialNotFound          = apierror.CodeLLMCredentialNotFound
+	ErrCodeLLMCredentialInUse             = apierror.CodeLLMCredentialInUse
+	ErrCodeAdminLLMCredentialsListFailed  = apierror.CodeAdminLLMCredentialsListFailed
+	ErrCodeAdminLLMCredentialFetchFailed  = apierror.CodeAdminLLMCredentialFetchFailed
+	ErrCodeAdminLLMCredentialCreateFailed = apierror.CodeAdminLLMCredentialCreateFailed
+	ErrCodeAdminLLMCredentialUpdateFailed = apierror.CodeAdminLLMCredentialUpdateFailed
+	ErrCodeAdminLLMCredentialDeleteFailed = apierror.CodeAdminLLMCredentialDeleteFailed
+	ErrCodeInvalidLLMModelInput           = apierror.CodeInvalidLLMModelInput
+	ErrCodeLLMModelNotFound               = apierror.CodeLLMModelNotFound
+	ErrCodeLLMCredentialInactive          = apierror.CodeLLMCredentialInactive
+	ErrCodeAdminLLMModelsListFailed       = apierror.CodeAdminLLMModelsListFailed
+	ErrCodeAdminLLMModelCreateFailed      = apierror.CodeAdminLLMModelCreateFailed
+	ErrCodeAdminLLMModelUpdateFailed      = apierror.CodeAdminLLMModelUpdateFailed
+	ErrCodeAdminLLMModelDeleteFailed      = apierror.CodeAdminLLMModelDeleteFailed
 )
 
 func writeJSON(w http.ResponseWriter, status int, payload any) {

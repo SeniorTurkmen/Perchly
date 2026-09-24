@@ -11,6 +11,7 @@ import (
 
 	"perchly-backend/internal/auth"
 	"perchly-backend/internal/config"
+	"perchly-backend/internal/crypto"
 	"perchly-backend/internal/email"
 	"perchly-backend/internal/embedding"
 	"perchly-backend/internal/handler"
@@ -39,6 +40,9 @@ func main() {
 	if cfg.JWTSecretIsEphemeral {
 		log.Printf("warning: JWT_SECRET not set, using a random per-process secret — tokens won't survive a restart")
 	}
+	if cfg.LLMTokenEncryptionKeyIsEphemeral {
+		log.Printf("warning: LLM_TOKEN_ENCRYPTION_KEY not set, using a random per-process key — stored LLM credentials won't survive a restart")
+	}
 
 	ctx := context.Background()
 	pool, err := repository.NewPostgresPool(ctx, cfg.DSN())
@@ -46,6 +50,11 @@ func main() {
 		log.Fatalf("create postgres pool: %v", err)
 	}
 	defer pool.Close()
+
+	llmTokenBox, err := crypto.NewSecretBox(cfg.LLMTokenEncryptionKey)
+	if err != nil {
+		log.Fatalf("build LLM token secret box: %v", err)
+	}
 
 	healthService := service.NewHealthService(pool)
 	healthHandler := handler.NewHealthHandler(healthService)
@@ -128,8 +137,15 @@ func main() {
 	quotaResetJob := service.NewQuotaResetJob(quotaRepo, cfg.QuotaResetInterval)
 	go quotaResetJob.Run(ctx)
 
+	// llmCredentialRepo/llmModelRepo back both llmClientFactory (which
+	// chat turns resolve a persona's model through) and the admin LLM
+	// API further down — declared here, once, rather than twice.
+	llmCredentialRepo := repository.NewLLMCredentialRepository(pool)
+	llmModelRepo := repository.NewLLMModelRepository(pool)
+	llmClientFactory := service.NewLLMClientFactory(llmCredentialRepo, llmModelRepo, llmTokenBox, llmClient)
+
 	chatService := service.NewChatService(
-		messageRepo, personaRepo, personaTraitsRepo, onboardingProfileRepo, llmClient,
+		messageRepo, personaRepo, personaTraitsRepo, onboardingProfileRepo, llmClientFactory,
 		embeddingService, summaryService, contextBuilder, quotaService,
 	)
 	messageHandler := handler.NewMessageHandler(chatService)
@@ -151,7 +167,7 @@ func main() {
 	adminUserService := service.NewAdminUserService(userRepo, quotaRepo, creditRepo, adminAuditLogRepo)
 	adminUserHandler := handler.NewAdminUserHandler(adminUserService)
 
-	adminPersonaService := service.NewAdminPersonaService(personaRepo, adminAuditLogRepo)
+	adminPersonaService := service.NewAdminPersonaService(personaRepo, llmModelRepo, llmCredentialRepo, adminAuditLogRepo)
 	adminPersonaHandler := handler.NewAdminPersonaHandler(adminPersonaService)
 
 	adminMetricsRepo := repository.NewAdminMetricsRepository(pool)
@@ -170,6 +186,9 @@ func main() {
 	adminOnboardingInsightsRepo := repository.NewAdminOnboardingInsightsRepository(pool)
 	adminOnboardingService := service.NewAdminOnboardingService(adminOnboardingInsightsRepo)
 	adminOnboardingHandler := handler.NewAdminOnboardingHandler(adminOnboardingService)
+
+	adminLLMService := service.NewAdminLLMService(llmCredentialRepo, llmModelRepo, llmTokenBox, adminAuditLogRepo, llmClientFactory)
+	adminLLMHandler := handler.NewAdminLLMHandler(adminLLMService)
 
 	r := chi.NewRouter()
 	// requestlog.Middleware is mounted before Recoverer deliberately —
@@ -265,6 +284,22 @@ func main() {
 			r.Get("/logs", adminLogHandler.List)
 			r.Get("/activity", adminActivityHandler.List)
 			r.Get("/onboarding/insights", adminOnboardingHandler.Insights)
+
+			r.Route("/llm", func(r chi.Router) {
+				r.Route("/credentials", func(r chi.Router) {
+					r.Get("/", adminLLMHandler.ListCredentials)
+					r.Get("/{id}", adminLLMHandler.GetCredential)
+					r.Post("/", adminLLMHandler.CreateCredential)
+					r.Put("/{id}", adminLLMHandler.UpdateCredential)
+					r.Delete("/{id}", adminLLMHandler.DeleteCredential)
+				})
+				r.Route("/models", func(r chi.Router) {
+					r.Get("/", adminLLMHandler.ListModels)
+					r.Post("/", adminLLMHandler.CreateModel)
+					r.Put("/{id}", adminLLMHandler.UpdateModel)
+					r.Delete("/{id}", adminLLMHandler.DeleteModel)
+				})
+			})
 		})
 	})
 
