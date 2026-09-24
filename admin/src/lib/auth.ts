@@ -17,3 +17,13 @@ export async function requireAdmin(): Promise<AdminUser> {
     redirect("/login");
   }
 }
+
+// For pages under (dashboard) — the layout's requireAdmin() already
+// validated the session for this request before any page renders, so
+// a page only needs the raw token back to make its own backend calls,
+// not another GET /admin/auth/me round trip.
+export async function requireSessionToken(): Promise<string> {
+  const token = await getSessionToken();
+  if (!token) redirect("/login");
+  return token;
+}
