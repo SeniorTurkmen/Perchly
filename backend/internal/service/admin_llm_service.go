@@ -25,6 +25,7 @@ var knownLLMProviders = map[string]bool{
 	"openai":      true,
 	"gemini":      true,
 	"huggingface": true,
+	"deepseek":    true,
 }
 
 type AdminLLMCredentialRepo interface {
