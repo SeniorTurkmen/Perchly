@@ -137,8 +137,15 @@ func main() {
 	quotaResetJob := service.NewQuotaResetJob(quotaRepo, cfg.QuotaResetInterval)
 	go quotaResetJob.Run(ctx)
 
+	// llmCredentialRepo/llmModelRepo back both llmClientFactory (which
+	// chat turns resolve a persona's model through) and the admin LLM
+	// API further down — declared here, once, rather than twice.
+	llmCredentialRepo := repository.NewLLMCredentialRepository(pool)
+	llmModelRepo := repository.NewLLMModelRepository(pool)
+	llmClientFactory := service.NewLLMClientFactory(llmCredentialRepo, llmModelRepo, llmTokenBox, llmClient)
+
 	chatService := service.NewChatService(
-		messageRepo, personaRepo, personaTraitsRepo, onboardingProfileRepo, llmClient,
+		messageRepo, personaRepo, personaTraitsRepo, onboardingProfileRepo, llmClientFactory,
 		embeddingService, summaryService, contextBuilder, quotaService,
 	)
 	messageHandler := handler.NewMessageHandler(chatService)
@@ -160,9 +167,6 @@ func main() {
 	adminUserService := service.NewAdminUserService(userRepo, quotaRepo, creditRepo, adminAuditLogRepo)
 	adminUserHandler := handler.NewAdminUserHandler(adminUserService)
 
-	llmCredentialRepo := repository.NewLLMCredentialRepository(pool)
-	llmModelRepo := repository.NewLLMModelRepository(pool)
-
 	adminPersonaService := service.NewAdminPersonaService(personaRepo, llmModelRepo, llmCredentialRepo, adminAuditLogRepo)
 	adminPersonaHandler := handler.NewAdminPersonaHandler(adminPersonaService)
 
@@ -183,7 +187,7 @@ func main() {
 	adminOnboardingService := service.NewAdminOnboardingService(adminOnboardingInsightsRepo)
 	adminOnboardingHandler := handler.NewAdminOnboardingHandler(adminOnboardingService)
 
-	adminLLMService := service.NewAdminLLMService(llmCredentialRepo, llmModelRepo, llmTokenBox, adminAuditLogRepo)
+	adminLLMService := service.NewAdminLLMService(llmCredentialRepo, llmModelRepo, llmTokenBox, adminAuditLogRepo, llmClientFactory)
 	adminLLMHandler := handler.NewAdminLLMHandler(adminLLMService)
 
 	r := chi.NewRouter()
