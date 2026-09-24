@@ -13,7 +13,13 @@ import (
 
 const (
 	openAIDefaultBaseURL = "https://api.openai.com"
-	openAIMaxTokens      = 1024
+	// openAIMaxTokens bounds a single reply. Reasoning-capable models
+	// (e.g. DeepSeek's deepseek-flash, routed through this same client —
+	// see deepseek.go) spend an invisible, variable chunk of this same
+	// budget on reasoning_content before any visible content — observed
+	// up to ~70% of total tokens for an ordinary question — so this
+	// needs real headroom, not just enough for the visible reply text.
+	openAIMaxTokens = 4096
 )
 
 // OpenAIClient implements Client against OpenAI's Chat Completions API

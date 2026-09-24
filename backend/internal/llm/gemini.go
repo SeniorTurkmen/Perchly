@@ -15,7 +15,11 @@ import (
 const (
 	geminiDefaultBaseURL = "https://generativelanguage.googleapis.com"
 	geminiDefaultModel   = "gemini-2.5-flash"
-	geminiMaxTokens      = 1024
+	// geminiMaxTokens bounds a single reply — see openAIMaxTokens' doc
+	// comment for why this was raised from the original 1024. Applies
+	// here too: Gemini 2.5 Flash has "thinking" on by default, and
+	// thinking tokens count against maxOutputTokens the same way.
+	geminiMaxTokens = 4096
 )
 
 // GeminiClient implements Client against Gemini's generateContent API
