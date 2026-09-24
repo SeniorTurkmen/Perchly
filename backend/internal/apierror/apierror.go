@@ -106,6 +106,12 @@ const (
 	CodeAdminConversationsListFailed Code = "admin_conversations_list_failed"
 	CodeAdminConversationFetchFailed Code = "admin_conversation_fetch_failed"
 	CodeAdminMessageDeleteFailed     Code = "admin_message_delete_failed"
+
+	// Admin dashboard — request logs.
+	CodeAdminLogsListFailed Code = "admin_logs_list_failed"
+
+	// Admin dashboard — own activity log.
+	CodeAdminActivityListFailed Code = "admin_activity_list_failed"
 )
 
 // Response is the standard JSON error envelope every failed endpoint

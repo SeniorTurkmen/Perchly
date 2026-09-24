@@ -97,6 +97,10 @@ const (
 	ErrCodeAdminConversationsListFailed = apierror.CodeAdminConversationsListFailed
 	ErrCodeAdminConversationFetchFailed = apierror.CodeAdminConversationFetchFailed
 	ErrCodeAdminMessageDeleteFailed     = apierror.CodeAdminMessageDeleteFailed
+
+	ErrCodeAdminLogsListFailed = apierror.CodeAdminLogsListFailed
+
+	ErrCodeAdminActivityListFailed = apierror.CodeAdminActivityListFailed
 )
 
 func writeJSON(w http.ResponseWriter, status int, payload any) {
