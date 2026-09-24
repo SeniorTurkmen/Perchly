@@ -49,7 +49,7 @@ type openAIRequest struct {
 	Model     string          `json:"model"`
 	Messages  []openAIMessage `json:"messages"`
 	Stream    bool            `json:"stream"`
-	MaxTokens int             `json:"max_tokens"`
+	MaxTokens int             `json:"max_completion_tokens"`
 }
 
 type openAIMessage struct {
