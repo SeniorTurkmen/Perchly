@@ -253,3 +253,84 @@ export async function adminUpdatePersona(
     ...jsonBody(input),
   });
 }
+
+// --- Conversations & moderation ---
+
+export type Message = {
+  id: string;
+  conversation_id: string;
+  role: "user" | "assistant";
+  content: string;
+  reaction_emoji?: string | null;
+  created_at: string;
+};
+
+export type ConversationPreview = {
+  id: string;
+  user_id: string;
+  persona_id: string;
+  created_at: string;
+  updated_at: string;
+  persona: Persona;
+  last_message: Message | null;
+};
+
+export type ConversationsPage = {
+  conversations: ConversationPreview[];
+  total: number;
+};
+
+export async function adminListConversations(
+  sessionToken: string,
+  params: {
+    userId?: string;
+    personaId?: string;
+    search?: string;
+    limit?: number;
+    offset?: number;
+  } = {},
+): Promise<ConversationsPage> {
+  const qs = new URLSearchParams();
+  if (params.userId) qs.set("user_id", params.userId);
+  if (params.personaId) qs.set("persona_id", params.personaId);
+  if (params.search) qs.set("search", params.search);
+  if (params.limit) qs.set("limit", String(params.limit));
+  if (params.offset) qs.set("offset", String(params.offset));
+  const query = qs.toString();
+  return authedFetch<ConversationsPage>(
+    `/admin/conversations${query ? `?${query}` : ""}`,
+    sessionToken,
+  );
+}
+
+export type Conversation = {
+  id: string;
+  user_id: string;
+  persona_id: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ConversationDetail = {
+  conversation: Conversation;
+  messages: Message[];
+};
+
+export async function adminGetConversation(
+  sessionToken: string,
+  id: string,
+): Promise<ConversationDetail> {
+  return authedFetch<ConversationDetail>(`/admin/conversations/${id}`, sessionToken);
+}
+
+export async function adminDeleteMessage(
+  sessionToken: string,
+  conversationId: string,
+  messageId: string,
+): Promise<void> {
+  await authedFetch<{ success: boolean }>(
+    `/admin/conversations/${conversationId}/messages/${messageId}`,
+    sessionToken,
+    { method: "DELETE" },
+  );
+}
