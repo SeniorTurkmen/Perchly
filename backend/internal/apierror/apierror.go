@@ -115,6 +115,23 @@ const (
 
 	// Admin dashboard — onboarding insights.
 	CodeAdminOnboardingInsightsFailed Code = "admin_onboarding_insights_failed"
+
+	// Admin dashboard — LLM provider credentials & models.
+	CodeInvalidLLMCredentialInput      Code = "invalid_llm_credential_input"
+	CodeLLMCredentialNotFound          Code = "llm_credential_not_found"
+	CodeLLMCredentialInUse             Code = "llm_credential_in_use"
+	CodeAdminLLMCredentialsListFailed  Code = "admin_llm_credentials_list_failed"
+	CodeAdminLLMCredentialFetchFailed  Code = "admin_llm_credential_fetch_failed"
+	CodeAdminLLMCredentialCreateFailed Code = "admin_llm_credential_create_failed"
+	CodeAdminLLMCredentialUpdateFailed Code = "admin_llm_credential_update_failed"
+	CodeAdminLLMCredentialDeleteFailed Code = "admin_llm_credential_delete_failed"
+	CodeInvalidLLMModelInput           Code = "invalid_llm_model_input"
+	CodeLLMModelNotFound               Code = "llm_model_not_found"
+	CodeLLMCredentialInactive          Code = "llm_credential_inactive"
+	CodeAdminLLMModelsListFailed       Code = "admin_llm_models_list_failed"
+	CodeAdminLLMModelCreateFailed      Code = "admin_llm_model_create_failed"
+	CodeAdminLLMModelUpdateFailed      Code = "admin_llm_model_update_failed"
+	CodeAdminLLMModelDeleteFailed      Code = "admin_llm_model_delete_failed"
 )
 
 // Response is the standard JSON error envelope every failed endpoint
