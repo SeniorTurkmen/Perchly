@@ -75,6 +75,46 @@ const (
 	CodeQuotaCheckFailed Code = "quota_check_failed"
 	CodeQuotaExceeded    Code = "quota_exceeded"
 	CodeChatEnergyFailed Code = "chat_energy_failed"
+
+	// Admin dashboard auth — entirely separate from the app-user codes
+	// above so a client can never confuse the two.
+	CodeAdminInvalidCredentials Code = "admin_invalid_credentials"
+	CodeAdminLoginFailed        Code = "admin_login_failed"
+	CodeAdminUnauthorized       Code = "admin_unauthorized"
+	CodeAdminLogoutFailed       Code = "admin_logout_failed"
+	CodeAdminMeFailed           Code = "admin_me_failed"
+
+	// Admin dashboard — users.
+	CodeInvalidUserID            Code = "invalid_user_id"
+	CodeAdminUsersListFailed     Code = "admin_users_list_failed"
+	CodeAdminUserFetchFailed     Code = "admin_user_fetch_failed"
+	CodeInvalidDailyLimit        Code = "invalid_daily_limit"
+	CodeAdminQuotaUpdateFailed   Code = "admin_quota_update_failed"
+	CodeInvalidCreditAmount      Code = "invalid_credit_amount"
+	CodeAdminCreditsUpdateFailed Code = "admin_credits_update_failed"
+
+	// Admin dashboard — personas.
+	CodeInvalidPersonaInput      Code = "invalid_persona_input"
+	CodeAdminPersonasListFailed  Code = "admin_personas_list_failed"
+	CodeAdminPersonaCreateFailed Code = "admin_persona_create_failed"
+	CodeAdminPersonaUpdateFailed Code = "admin_persona_update_failed"
+
+	// Admin dashboard — home metrics.
+	CodeAdminMetricsFailed Code = "admin_metrics_failed"
+
+	// Admin dashboard — conversations & moderation.
+	CodeAdminConversationsListFailed Code = "admin_conversations_list_failed"
+	CodeAdminConversationFetchFailed Code = "admin_conversation_fetch_failed"
+	CodeAdminMessageDeleteFailed     Code = "admin_message_delete_failed"
+
+	// Admin dashboard — request logs.
+	CodeAdminLogsListFailed Code = "admin_logs_list_failed"
+
+	// Admin dashboard — own activity log.
+	CodeAdminActivityListFailed Code = "admin_activity_list_failed"
+
+	// Admin dashboard — onboarding insights.
+	CodeAdminOnboardingInsightsFailed Code = "admin_onboarding_insights_failed"
 )
 
 // Response is the standard JSON error envelope every failed endpoint

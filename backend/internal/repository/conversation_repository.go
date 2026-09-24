@@ -111,6 +111,90 @@ func (r *ConversationRepository) ListByUserID(ctx context.Context, userID string
 	return previews, nil
 }
 
+// AdminConversationFilter narrows ListForAdmin. A nil UserID/PersonaID
+// or empty Search means "don't filter on that". Limit is clamped to
+// [1, 100] (default 50); Offset below 0 is treated as 0.
+type AdminConversationFilter struct {
+	UserID    *string
+	PersonaID *string
+	Search    string
+	Limit     int
+	Offset    int
+}
+
+// ListForAdmin returns a page of conversations across every user (not
+// just one, unlike ListByUserID), newest activity first, joined with
+// persona and most recent message the same way ListByUserID is — plus
+// the total row count matching the filter, for pagination. Like
+// ListByUserID, a conversation with no messages yet doesn't appear
+// (nothing to moderate or review there).
+func (r *ConversationRepository) ListForAdmin(ctx context.Context, filter AdminConversationFilter) ([]model.ConversationPreview, int, error) {
+	limit := filter.Limit
+	if limit <= 0 || limit > 100 {
+		limit = 50
+	}
+	offset := filter.Offset
+	if offset < 0 {
+		offset = 0
+	}
+
+	const where = `
+		($1::uuid IS NULL OR c.user_id = $1::uuid)
+		AND ($2::uuid IS NULL OR c.persona_id = $2::uuid)
+		AND ($3 = '' OR EXISTS (
+			SELECT 1 FROM messages msg WHERE msg.conversation_id = c.id AND msg.content ILIKE '%' || $3 || '%'
+		))
+		AND m.id IS NOT NULL
+	`
+
+	var total int
+	if err := r.pool.QueryRow(ctx, `
+		SELECT count(*)
+		FROM conversations c
+		LEFT JOIN LATERAL (
+			SELECT id FROM messages WHERE conversation_id = c.id ORDER BY created_at DESC LIMIT 1
+		) m ON true
+		WHERE `+where,
+		filter.UserID, filter.PersonaID, filter.Search,
+	).Scan(&total); err != nil {
+		return nil, 0, err
+	}
+
+	rows, err := r.pool.Query(ctx, `
+		SELECT
+			c.id::text, c.user_id::text, c.persona_id::text, c.created_at, c.updated_at,
+			`+previewPersonaColumns+`,
+			m.id::text, m.conversation_id::text, m.role, m.content, m.reaction_emoji, m.created_at
+		FROM conversations c
+		JOIN personas p ON p.id = c.persona_id
+		LEFT JOIN LATERAL (
+			SELECT id, conversation_id, role, content, reaction_emoji, created_at
+			FROM messages WHERE conversation_id = c.id
+			ORDER BY created_at DESC LIMIT 1
+		) m ON true
+		WHERE `+where+`
+		ORDER BY m.created_at DESC
+		LIMIT $4 OFFSET $5
+	`, filter.UserID, filter.PersonaID, filter.Search, limit, offset)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	previews := make([]model.ConversationPreview, 0)
+	for rows.Next() {
+		preview, err := scanConversationPreview(rows)
+		if err != nil {
+			return nil, 0, err
+		}
+		previews = append(previews, preview)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, 0, err
+	}
+	return previews, total, nil
+}
+
 // Aliased so the join's persona columns don't clash with c.id etc.
 const previewPersonaColumns = `
 	p.id::text, p.slug, p.name, p.category, p.short_description, p.system_prompt,

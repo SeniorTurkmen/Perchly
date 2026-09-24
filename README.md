@@ -11,10 +11,12 @@ the conversation.
 ```
 backend/   Go API (chi, PostgreSQL + pgvector)
 ios/       SwiftUI iOS app (MVVM, Liquid Glass design language)
+admin/     Internal admin/ops + engineering dashboard (Next.js, shadcn/ui)
 ```
 
-Each half is independently runnable; the iOS app talks to the backend
-over plain HTTP + Server-Sent Events, nothing shared beyond the wire
+Each part is independently runnable; the iOS app talks to the backend
+over plain HTTP + Server-Sent Events, and the admin dashboard talks to
+the backend's separate `/admin/*` API — nothing shared beyond the wire
 protocol.
 
 ## Features
@@ -85,6 +87,24 @@ Point the app at a locally running backend (default `localhost:8080`)
 and run the `Perchly` scheme on a simulator. `PerchlyTests` covers unit
 and integration-style tests against a running backend; `PerchlyUITests`
 covers end-to-end flows (auth, onboarding, reactions) via XCUITest.
+
+## Admin dashboard
+
+Next.js (App Router, TypeScript, Tailwind, shadcn/ui) — internal tool
+for operating the app (users, personas, quotas/credits, conversation
+moderation, request logs) and tracking engineering work. Not part of
+the public product; talks to the backend's separate `/admin/*` API,
+entirely server-side.
+
+```bash
+./scripts/dev-admin.sh   # backend infra + API on :8080, dashboard on :3000
+```
+
+Boots colima/Postgres, applies migrations, prompts to create an admin
+account the first time (or set `ADMIN_EMAIL`/`ADMIN_PASSWORD`), then
+runs both servers until Ctrl+C. Safe to re-run — every step is
+idempotent. See `admin/README.md` for the auth model and current build
+status.
 
 ## Contributing
 

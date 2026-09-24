@@ -72,6 +72,37 @@ const (
 	ErrCodeQuotaCheckFailed = apierror.CodeQuotaCheckFailed
 	ErrCodeQuotaExceeded    = apierror.CodeQuotaExceeded
 	ErrCodeChatEnergyFailed = apierror.CodeChatEnergyFailed
+
+	ErrCodeAdminInvalidCredentials = apierror.CodeAdminInvalidCredentials
+	ErrCodeAdminLoginFailed        = apierror.CodeAdminLoginFailed
+	ErrCodeAdminUnauthorized       = apierror.CodeAdminUnauthorized
+	ErrCodeAdminLogoutFailed       = apierror.CodeAdminLogoutFailed
+	ErrCodeAdminMeFailed           = apierror.CodeAdminMeFailed
+
+	ErrCodeInvalidUserID            = apierror.CodeInvalidUserID
+	ErrCodeAdminUsersListFailed     = apierror.CodeAdminUsersListFailed
+	ErrCodeAdminUserFetchFailed     = apierror.CodeAdminUserFetchFailed
+	ErrCodeInvalidDailyLimit        = apierror.CodeInvalidDailyLimit
+	ErrCodeAdminQuotaUpdateFailed   = apierror.CodeAdminQuotaUpdateFailed
+	ErrCodeInvalidCreditAmount      = apierror.CodeInvalidCreditAmount
+	ErrCodeAdminCreditsUpdateFailed = apierror.CodeAdminCreditsUpdateFailed
+
+	ErrCodeInvalidPersonaInput      = apierror.CodeInvalidPersonaInput
+	ErrCodeAdminPersonasListFailed  = apierror.CodeAdminPersonasListFailed
+	ErrCodeAdminPersonaCreateFailed = apierror.CodeAdminPersonaCreateFailed
+	ErrCodeAdminPersonaUpdateFailed = apierror.CodeAdminPersonaUpdateFailed
+
+	ErrCodeAdminMetricsFailed = apierror.CodeAdminMetricsFailed
+
+	ErrCodeAdminConversationsListFailed = apierror.CodeAdminConversationsListFailed
+	ErrCodeAdminConversationFetchFailed = apierror.CodeAdminConversationFetchFailed
+	ErrCodeAdminMessageDeleteFailed     = apierror.CodeAdminMessageDeleteFailed
+
+	ErrCodeAdminLogsListFailed = apierror.CodeAdminLogsListFailed
+
+	ErrCodeAdminActivityListFailed = apierror.CodeAdminActivityListFailed
+
+	ErrCodeAdminOnboardingInsightsFailed = apierror.CodeAdminOnboardingInsightsFailed
 )
 
 func writeJSON(w http.ResponseWriter, status int, payload any) {

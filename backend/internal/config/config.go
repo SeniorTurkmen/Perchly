@@ -41,6 +41,13 @@ type Config struct {
 	AccessTokenTTL       time.Duration
 	RefreshTokenTTL      time.Duration
 
+	// AdminSessionTTL is how long an admin dashboard login lasts before
+	// requiring another login — there's no refresh flow for admin
+	// sessions (unlike user access/refresh tokens), just a longer-lived
+	// opaque token, since admin accounts are few and it's fine to just
+	// log in again after it lapses.
+	AdminSessionTTL time.Duration
+
 	// SMTP* configure the verification-code email sender. If
 	// SMTPUsername or SMTPPassword is empty, the server falls back to
 	// logging codes to stdout instead of sending real email (see
@@ -92,6 +99,11 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("parse REFRESH_TOKEN_TTL: %w", err)
 	}
 
+	adminSessionTTL, err := time.ParseDuration(getEnv("ADMIN_SESSION_TTL", "168h")) // 7 days
+	if err != nil {
+		return nil, fmt.Errorf("parse ADMIN_SESSION_TTL: %w", err)
+	}
+
 	smtpPort, err := strconv.Atoi(getEnv("SMTP_PORT", "587"))
 	if err != nil {
 		return nil, fmt.Errorf("parse SMTP_PORT: %w", err)
@@ -135,6 +147,7 @@ func Load() (*Config, error) {
 		JWTSecretIsEphemeral: ephemeral,
 		AccessTokenTTL:       accessTokenTTL,
 		RefreshTokenTTL:      refreshTokenTTL,
+		AdminSessionTTL:      adminSessionTTL,
 
 		SMTPHost:     getEnv("SMTP_HOST", "smtp.gmail.com"),
 		SMTPPort:     smtpPort,

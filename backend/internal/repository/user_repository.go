@@ -102,6 +102,50 @@ func (r *UserRepository) UpdateDisplayName(ctx context.Context, userID, displayN
 	return nil
 }
 
+// ListForAdmin returns a page of users for the admin dashboard, newest
+// first, optionally filtered by a case-insensitive match against email
+// or display_name (empty search returns everyone). Also returns the
+// total row count matching the filter, for pagination.
+func (r *UserRepository) ListForAdmin(ctx context.Context, search string, limit, offset int) ([]model.User, int, error) {
+	if limit <= 0 || limit > 100 {
+		limit = 50
+	}
+	if offset < 0 {
+		offset = 0
+	}
+
+	const filter = `$1 = '' OR email ILIKE '%' || $1 || '%' OR display_name ILIKE '%' || $1 || '%'`
+
+	var total int
+	if err := r.pool.QueryRow(ctx, `SELECT count(*) FROM users WHERE `+filter, search).Scan(&total); err != nil {
+		return nil, 0, err
+	}
+
+	rows, err := r.pool.Query(ctx, `
+		SELECT `+userColumns+` FROM users
+		WHERE `+filter+`
+		ORDER BY created_at DESC
+		LIMIT $2 OFFSET $3
+	`, search, limit, offset)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	users := make([]model.User, 0)
+	for rows.Next() {
+		u, err := scanUser(rows)
+		if err != nil {
+			return nil, 0, err
+		}
+		users = append(users, u)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, 0, err
+	}
+	return users, total, nil
+}
+
 func normalizeTimezone(timezone string) string {
 	if _, err := time.LoadLocation(timezone); timezone == "" || err != nil {
 		return "UTC"

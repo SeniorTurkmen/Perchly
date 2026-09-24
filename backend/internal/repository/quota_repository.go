@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"perchly-backend/internal/model"
@@ -84,6 +85,59 @@ func (r *QuotaRepository) IncrementMessageCount(ctx context.Context, userID, per
 		WHERE user_id = $1::uuid AND persona_id = $2::uuid
 	`, userID, personaID)
 	return err
+}
+
+// ListForUser returns every persona this user has a quota row for —
+// used by the admin dashboard's user detail view. A persona the user
+// has never messaged has no row and so doesn't appear here.
+func (r *QuotaRepository) ListForUser(ctx context.Context, userID string) ([]model.UserQuota, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT user_id::text, persona_id::text, message_count_today, daily_limit, last_reset_at
+		FROM user_quotas
+		WHERE user_id = $1::uuid
+		ORDER BY last_reset_at DESC
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	quotas := make([]model.UserQuota, 0)
+	for rows.Next() {
+		var q model.UserQuota
+		if err := rows.Scan(&q.UserID, &q.PersonaID, &q.MessageCountToday, &q.DailyLimit, &q.LastResetAt); err != nil {
+			return nil, err
+		}
+		quotas = append(quotas, q)
+	}
+	return quotas, rows.Err()
+}
+
+// SetDailyLimit overrides a user's daily message limit for one persona
+// — the exact operation user_quotas.daily_limit's own doc comment
+// anticipates ("a future admin dashboard can grant an individual
+// override by updating this column directly"). Creates the row if the
+// user has never messaged that persona yet, since there's nothing to
+// override before that. Returns ErrPersonaNotFound if personaID
+// doesn't exist.
+func (r *QuotaRepository) SetDailyLimit(ctx context.Context, userID, personaID string, dailyLimit int) (model.UserQuota, error) {
+	row := r.pool.QueryRow(ctx, `
+		INSERT INTO user_quotas (user_id, persona_id, daily_limit)
+		VALUES ($1::uuid, $2::uuid, $3)
+		ON CONFLICT (user_id, persona_id) DO UPDATE SET daily_limit = excluded.daily_limit
+		RETURNING user_id::text, persona_id::text, message_count_today, daily_limit, last_reset_at
+	`, userID, personaID, dailyLimit)
+
+	var q model.UserQuota
+	err := row.Scan(&q.UserID, &q.PersonaID, &q.MessageCountToday, &q.DailyLimit, &q.LastResetAt)
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "23503" { // foreign_key_violation
+			return model.UserQuota{}, ErrPersonaNotFound
+		}
+		return model.UserQuota{}, err
+	}
+	return q, nil
 }
 
 // ResetDueForNewLocalDay zeroes message_count_today for every quota row

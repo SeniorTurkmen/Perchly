@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "backend: postgres up + migrate",
+      "type": "shell",
+      "command": "docker compose up -d && make migrate-up",
+      "options": { "cwd": "${workspaceFolder}/backend" },
+      "presentation": { "reveal": "silent", "panel": "shared" },
+      "problemMatcher": []
+    }
+  ]
+}

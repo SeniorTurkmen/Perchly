@@ -26,6 +26,42 @@ func isSensitiveField(name string) bool {
 	return false
 }
 
+// sensitiveHeaderNames is a separate, narrower list for header redaction
+// — reusing sensitiveFieldNames' "content" entry (there for body/query
+// fields like message content) would also catch harmless headers like
+// Content-Type or Content-Length, which carry no secret.
+var sensitiveHeaderNames = []string{
+	"authorization",
+	"cookie",
+}
+
+func isSensitiveHeader(name string) bool {
+	lower := strings.ToLower(name)
+	for _, s := range sensitiveHeaderNames {
+		if strings.Contains(lower, s) {
+			return true
+		}
+	}
+	return false
+}
+
+// redactHeaders replaces the value of any header matching
+// isSensitiveHeader with "[REDACTED]" — a header map's values are
+// always scalars (or an array of scalars for a repeated header, e.g.
+// Set-Cookie), never nested objects, so unlike redactSensitiveFields
+// this doesn't need to recurse.
+func redactHeaders(headers map[string]any) map[string]any {
+	result := make(map[string]any, len(headers))
+	for k, v := range headers {
+		if isSensitiveHeader(k) {
+			result[k] = "[REDACTED]"
+		} else {
+			result[k] = v
+		}
+	}
+	return result
+}
+
 // redactSensitiveFields walks a decoded JSON value (as produced by
 // encoding/json's default unmarshal-into-any: map[string]any, []any, or
 // a scalar) and replaces the value of any object key matching
