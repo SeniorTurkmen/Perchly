@@ -27,6 +27,14 @@ type Persona struct {
 	// what a user gets before they've ever customized anything for it.
 	// See PersonaTraits and user_persona_traits.
 	DefaultTraits PersonaTraits `json:"default_traits"`
-	CreatedAt     time.Time     `json:"created_at"`
-	UpdatedAt     time.Time     `json:"updated_at"`
+	// LLMModelID optionally pins this persona to a specific stored
+	// llm_models row (see internal/service.AdminLLMService) instead of
+	// the process-wide LLM_PROVIDER/LLM_MODEL default. Nil means "use
+	// the default". Excluded from JSON for the same reason as
+	// SystemPrompt: it's an internal routing detail, never meant for the
+	// public API — the admin dashboard's own response DTO
+	// (adminPersonaResponse) exposes it explicitly instead.
+	LLMModelID *string   `json:"-"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }

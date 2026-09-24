@@ -42,12 +42,14 @@ func (r *PersonaRepository) Create(ctx context.Context, p model.Persona) (model.
 		INSERT INTO personas (
 			slug, name, category, short_description, system_prompt, tone_description,
 			avatar_url, accent_color, is_minor_appropriate, is_active, sort_order,
-			default_warmth, default_humor, default_wisdom, default_directness, default_energy
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+			default_warmth, default_humor, default_wisdom, default_directness, default_energy,
+			llm_model_id
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17::uuid)
 		RETURNING `+personaColumns,
 		p.Slug, p.Name, p.Category, p.ShortDescription, p.SystemPrompt, p.ToneDescription,
 		p.AvatarURL, p.AccentColor, p.IsMinorAppropriate, p.IsActive, p.SortOrder,
 		p.DefaultTraits.Warmth, p.DefaultTraits.Humor, p.DefaultTraits.Wisdom, p.DefaultTraits.Directness, p.DefaultTraits.Energy,
+		p.LLMModelID,
 	)
 	return scanPersona(row)
 }
@@ -63,12 +65,14 @@ func (r *PersonaRepository) Update(ctx context.Context, p model.Persona) (model.
 			slug = $2, name = $3, category = $4, short_description = $5, system_prompt = $6,
 			tone_description = $7, avatar_url = $8, accent_color = $9, is_minor_appropriate = $10,
 			is_active = $11, sort_order = $12,
-			default_warmth = $13, default_humor = $14, default_wisdom = $15, default_directness = $16, default_energy = $17
+			default_warmth = $13, default_humor = $14, default_wisdom = $15, default_directness = $16, default_energy = $17,
+			llm_model_id = $18::uuid
 		WHERE id = $1::uuid
 		RETURNING `+personaColumns,
 		p.ID, p.Slug, p.Name, p.Category, p.ShortDescription, p.SystemPrompt,
 		p.ToneDescription, p.AvatarURL, p.AccentColor, p.IsMinorAppropriate, p.IsActive, p.SortOrder,
 		p.DefaultTraits.Warmth, p.DefaultTraits.Humor, p.DefaultTraits.Wisdom, p.DefaultTraits.Directness, p.DefaultTraits.Energy,
+		p.LLMModelID,
 	)
 	updated, err := scanPersona(row)
 	if err != nil {
@@ -95,7 +99,7 @@ const personaColumns = `
 	id::text, slug, name, category, short_description, system_prompt,
 	tone_description, avatar_url, accent_color, is_minor_appropriate, is_active, sort_order,
 	default_warmth, default_humor, default_wisdom, default_directness, default_energy,
-	created_at, updated_at`
+	llm_model_id::text, created_at, updated_at`
 
 // List returns active personas ordered for display.
 func (r *PersonaRepository) List(ctx context.Context) ([]model.Persona, error) {
@@ -154,7 +158,7 @@ func scanPersona(row rowScanner) (model.Persona, error) {
 		&p.ID, &p.Slug, &p.Name, &p.Category, &p.ShortDescription, &p.SystemPrompt,
 		&p.ToneDescription, &p.AvatarURL, &p.AccentColor, &p.IsMinorAppropriate, &p.IsActive, &p.SortOrder,
 		&p.DefaultTraits.Warmth, &p.DefaultTraits.Humor, &p.DefaultTraits.Wisdom, &p.DefaultTraits.Directness, &p.DefaultTraits.Energy,
-		&p.CreatedAt, &p.UpdatedAt,
+		&p.LLMModelID, &p.CreatedAt, &p.UpdatedAt,
 	)
 	return p, err
 }
