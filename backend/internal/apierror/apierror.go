@@ -83,6 +83,24 @@ const (
 	CodeAdminUnauthorized       Code = "admin_unauthorized"
 	CodeAdminLogoutFailed       Code = "admin_logout_failed"
 	CodeAdminMeFailed           Code = "admin_me_failed"
+
+	// Admin dashboard — users.
+	CodeInvalidUserID            Code = "invalid_user_id"
+	CodeAdminUsersListFailed     Code = "admin_users_list_failed"
+	CodeAdminUserFetchFailed     Code = "admin_user_fetch_failed"
+	CodeInvalidDailyLimit        Code = "invalid_daily_limit"
+	CodeAdminQuotaUpdateFailed   Code = "admin_quota_update_failed"
+	CodeInvalidCreditAmount      Code = "invalid_credit_amount"
+	CodeAdminCreditsUpdateFailed Code = "admin_credits_update_failed"
+
+	// Admin dashboard — personas.
+	CodeInvalidPersonaInput      Code = "invalid_persona_input"
+	CodeAdminPersonasListFailed  Code = "admin_personas_list_failed"
+	CodeAdminPersonaCreateFailed Code = "admin_persona_create_failed"
+	CodeAdminPersonaUpdateFailed Code = "admin_persona_update_failed"
+
+	// Admin dashboard — home metrics.
+	CodeAdminMetricsFailed Code = "admin_metrics_failed"
 )
 
 // Response is the standard JSON error envelope every failed endpoint
