@@ -443,6 +443,142 @@ export async function adminGetOnboardingInsights(
   return authedFetch<AdminOnboardingInsights>("/admin/onboarding/insights", sessionToken);
 }
 
+// --- LLM provider credentials & models ---
+
+export type LLMProvider = "openai" | "anthropic" | "gemini" | "huggingface";
+
+export type LLMCredential = {
+  id: string;
+  provider: LLMProvider;
+  label: string;
+  api_key_preview: string;
+  base_url: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CreateLLMCredentialInput = {
+  provider: LLMProvider;
+  label: string;
+  api_key: string;
+  base_url: string | null;
+  is_active: boolean;
+};
+
+export type UpdateLLMCredentialInput = {
+  label: string;
+  api_key: string | null;
+  base_url: string | null;
+  is_active: boolean;
+};
+
+export async function adminListLLMCredentials(
+  sessionToken: string,
+): Promise<LLMCredential[]> {
+  return authedFetch<LLMCredential[]>("/admin/llm/credentials", sessionToken);
+}
+
+export async function adminGetLLMCredential(
+  sessionToken: string,
+  id: string,
+): Promise<LLMCredential> {
+  return authedFetch<LLMCredential>(`/admin/llm/credentials/${id}`, sessionToken);
+}
+
+export async function adminCreateLLMCredential(
+  sessionToken: string,
+  input: CreateLLMCredentialInput,
+): Promise<LLMCredential> {
+  return authedFetch<LLMCredential>("/admin/llm/credentials", sessionToken, {
+    method: "POST",
+    ...jsonBody(input),
+  });
+}
+
+export async function adminUpdateLLMCredential(
+  sessionToken: string,
+  id: string,
+  input: UpdateLLMCredentialInput,
+): Promise<LLMCredential> {
+  return authedFetch<LLMCredential>(`/admin/llm/credentials/${id}`, sessionToken, {
+    method: "PUT",
+    ...jsonBody(input),
+  });
+}
+
+export async function adminDeleteLLMCredential(
+  sessionToken: string,
+  id: string,
+): Promise<void> {
+  await authedFetch<{ success: boolean }>(`/admin/llm/credentials/${id}`, sessionToken, {
+    method: "DELETE",
+  });
+}
+
+export type LLMModel = {
+  id: string;
+  credential_id: string;
+  model_name: string;
+  display_name: string;
+  is_default: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CreateLLMModelInput = {
+  credential_id: string;
+  model_name: string;
+  display_name: string;
+  is_default: boolean;
+  is_active: boolean;
+};
+
+export type UpdateLLMModelInput = {
+  display_name: string;
+  is_default: boolean;
+  is_active: boolean;
+};
+
+export async function adminListLLMModels(
+  sessionToken: string,
+  credentialId?: string,
+): Promise<LLMModel[]> {
+  const query = credentialId ? `?credential_id=${credentialId}` : "";
+  return authedFetch<LLMModel[]>(`/admin/llm/models${query}`, sessionToken);
+}
+
+export async function adminCreateLLMModel(
+  sessionToken: string,
+  input: CreateLLMModelInput,
+): Promise<LLMModel> {
+  return authedFetch<LLMModel>("/admin/llm/models", sessionToken, {
+    method: "POST",
+    ...jsonBody(input),
+  });
+}
+
+export async function adminUpdateLLMModel(
+  sessionToken: string,
+  id: string,
+  input: UpdateLLMModelInput,
+): Promise<LLMModel> {
+  return authedFetch<LLMModel>(`/admin/llm/models/${id}`, sessionToken, {
+    method: "PUT",
+    ...jsonBody(input),
+  });
+}
+
+export async function adminDeleteLLMModel(
+  sessionToken: string,
+  id: string,
+): Promise<void> {
+  await authedFetch<{ success: boolean }>(`/admin/llm/models/${id}`, sessionToken, {
+    method: "DELETE",
+  });
+}
+
 // --- Backend health (public, no session token — same as the iOS app's
 // own health check) ---
 
