@@ -46,6 +46,14 @@ type AdminLLMModelRepo interface {
 	ClearDefault(ctx context.Context, credentialID string) error
 }
 
+// LLMClientCache is the cache-invalidation slice of LLMClientFactory
+// this service needs — a credential or model mutation here must never
+// leave a chat turn answered by a client built from a since-replaced
+// API key or a since-deactivated/deleted model.
+type LLMClientCache interface {
+	InvalidateAll()
+}
+
 // AdminLLMService is the admin dashboard's CRUD over LLM provider
 // credentials and the models made callable through them. Every stored
 // API key is encrypted with box before it ever reaches the repository
@@ -56,10 +64,17 @@ type AdminLLMService struct {
 	models      AdminLLMModelRepo
 	box         *crypto.SecretBox
 	auditLog    AdminAuditLogRepo
+	clientCache LLMClientCache
 }
 
-func NewAdminLLMService(credentials AdminLLMCredentialRepo, models AdminLLMModelRepo, box *crypto.SecretBox, auditLog AdminAuditLogRepo) *AdminLLMService {
-	return &AdminLLMService{credentials: credentials, models: models, box: box, auditLog: auditLog}
+func NewAdminLLMService(
+	credentials AdminLLMCredentialRepo,
+	models AdminLLMModelRepo,
+	box *crypto.SecretBox,
+	auditLog AdminAuditLogRepo,
+	clientCache LLMClientCache,
+) *AdminLLMService {
+	return &AdminLLMService{credentials: credentials, models: models, box: box, auditLog: auditLog, clientCache: clientCache}
 }
 
 // --- Credentials ---
@@ -113,6 +128,7 @@ func (s *AdminLLMService) CreateCredential(ctx context.Context, adminUserID stri
 		"provider": created.Provider,
 		"label":    created.Label,
 	})
+	s.clientCache.InvalidateAll()
 
 	return created, nil
 }
@@ -160,6 +176,7 @@ func (s *AdminLLMService) UpdateCredential(ctx context.Context, adminUserID, id 
 		"label":            updated.Label,
 		"api_key_replaced": replaceAPIKey,
 	})
+	s.clientCache.InvalidateAll()
 
 	return updated, nil
 }
@@ -169,6 +186,7 @@ func (s *AdminLLMService) DeleteCredential(ctx context.Context, adminUserID, id 
 		return err
 	}
 	_ = s.auditLog.Create(ctx, adminUserID, "admin.llm_credential.delete", "llm_credential", &id, nil)
+	s.clientCache.InvalidateAll()
 	return nil
 }
 
@@ -217,6 +235,7 @@ func (s *AdminLLMService) CreateModel(ctx context.Context, adminUserID string, m
 		"credential_id": created.CredentialID,
 		"model_name":    created.ModelName,
 	})
+	s.clientCache.InvalidateAll()
 
 	return created, nil
 }
@@ -246,6 +265,7 @@ func (s *AdminLLMService) UpdateModel(ctx context.Context, adminUserID string, m
 	_ = s.auditLog.Create(ctx, adminUserID, "admin.llm_model.update", "llm_model", &updated.ID, map[string]any{
 		"display_name": updated.DisplayName,
 	})
+	s.clientCache.InvalidateAll()
 
 	return updated, nil
 }
@@ -255,6 +275,7 @@ func (s *AdminLLMService) DeleteModel(ctx context.Context, adminUserID, id strin
 		return err
 	}
 	_ = s.auditLog.Create(ctx, adminUserID, "admin.llm_model.delete", "llm_model", &id, nil)
+	s.clientCache.InvalidateAll()
 	return nil
 }
 
