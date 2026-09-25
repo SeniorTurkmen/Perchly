@@ -21,7 +21,7 @@ struct NameHitapStepView: View {
                     Text("Sana nasıl seslenelim?")
                         .font(PerchlyTypography.Discover.headlineLG)
                         .foregroundStyle(PerchlyPalette.Discover.onSurface)
-                    Text("Perchmate’inin sana seçtiğin isimle hitap etmesini isteyebilirsin. Anonim devam edersen sohbette hiçbir isimle seslenilmez.")
+                    Text("Perchmate'inin sana seçtiğin isimle hitap etmesini isteyebilirsin. Anonim devam edersen sohbette hiçbir isimle seslenilmez.")
                         .font(PerchlyTypography.Discover.bodyMD)
                         .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
                 }

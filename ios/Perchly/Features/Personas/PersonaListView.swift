@@ -109,9 +109,9 @@ struct PersonaListView: View {
             conversationInbox
         case .journal:
             comingSoon(
-                title: "Günlük",
+                title: LocalizedStringKey("Günlük"),
                 systemImage: "book.fill",
-                message: "Günlük düşüncelerin için sakin bir yer hazırlıyoruz."
+                message: LocalizedStringKey("Günlük düşüncelerin için sakin bir yer hazırlıyoruz.")
             )
         }
     }
@@ -224,9 +224,9 @@ struct PersonaListView: View {
             case .loaded:
                 if viewModel.conversations.isEmpty {
                     comingSoon(
-                        title: "Sohbetler",
+                        title: LocalizedStringKey("Sohbetler"),
                         systemImage: "bubble.left.and.bubble.right.fill",
-                        message: "Henüz sohbet yok. Personalar’dan biriyle konuşmaya başla."
+                        message: LocalizedStringKey("Henüz sohbet yok. Personalar'dan biriyle konuşmaya başla.")
                     )
                 } else {
                     conversationList
@@ -361,7 +361,7 @@ struct PersonaListView: View {
     private var categoryFilters: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                filterPill(title: "Tümü", isSelected: viewModel.selectedCategory == nil, leading: .chevron) {
+                filterPill(title: String(localized: "Tümü"), isSelected: viewModel.selectedCategory == nil, leading: .chevron) {
                     viewModel.selectCategory(nil)
                 }
                 ForEach(viewModel.availableCategories, id: \.self) { category in
@@ -433,7 +433,7 @@ struct PersonaListView: View {
         .background(PerchlyPalette.Discover.surfaceLow.opacity(0.7), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
-    private func comingSoon(title: String, systemImage: String, message: String) -> some View {
+    private func comingSoon(title: LocalizedStringKey, systemImage: String, message: LocalizedStringKey) -> some View {
         VStack(spacing: 12) {
             Image(systemName: systemImage)
                 .font(.system(size: 28))
@@ -514,11 +514,11 @@ private struct DiscoverTabBar: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            tabButton("Personalar", systemImage: "circle.grid.2x2.fill", tab: .personas)
-            tabButton("Sohbetler", systemImage: "bubble.left.and.bubble.right.fill", tab: .chats)
-            tabButton("Günlük", systemImage: "book.fill", tab: .journal)
+            tabButton(LocalizedStringKey("Personalar"), systemImage: "circle.grid.2x2.fill", tab: .personas)
+            tabButton(LocalizedStringKey("Sohbetler"), systemImage: "bubble.left.and.bubble.right.fill", tab: .chats)
+            tabButton(LocalizedStringKey("Günlük"), systemImage: "book.fill", tab: .journal)
             Button(action: onProfile) {
-                tabLabel("Samimi Kulüp", systemImage: "heart.fill", isSelected: false)
+                tabLabel(LocalizedStringKey("Samimi Kulüp"), systemImage: "heart.fill", isSelected: false)
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("clubTabButton")
@@ -532,7 +532,7 @@ private struct DiscoverTabBar: View {
         .padding(.bottom, 12)
     }
 
-    private func tabButton(_ title: String, systemImage: String, tab: DiscoverTab) -> some View {
+    private func tabButton(_ title: LocalizedStringKey, systemImage: String, tab: DiscoverTab) -> some View {
         Button {
             selectedTab = tab
         } label: {
@@ -541,7 +541,7 @@ private struct DiscoverTabBar: View {
         .buttonStyle(.plain)
     }
 
-    private func tabLabel(_ title: String, systemImage: String, isSelected: Bool) -> some View {
+    private func tabLabel(_ title: LocalizedStringKey, systemImage: String, isSelected: Bool) -> some View {
         VStack(spacing: 2) {
             Image(systemName: systemImage)
                 .font(.system(size: 18))
