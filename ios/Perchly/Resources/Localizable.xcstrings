@@ -1,6 +1,456 @@
 {
   "sourceLanguage" : "tr",
   "strings" : {
+    "%@ bir sonraki adımı düşünüyor..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is thinking about the next step..."
+          }
+        }
+      }
+    },
+    "%@ dinliyor..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is listening..."
+          }
+        }
+      }
+    },
+    "%@ ne diyeceğini düşünüyor..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is thinking about what to say..."
+          }
+        }
+      }
+    },
+    "Aktif dinleme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active listening"
+          }
+        }
+      }
+    },
+    "Alçakgönüllü öneriler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Humble suggestions"
+          }
+        }
+      }
+    },
+    "Bir hedefe odaklanmak istiyorum" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I want to focus on a goal"
+          }
+        }
+      }
+    },
+    "Bir kitaptan bahsetmek istiyorum" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I want to talk about a book"
+          }
+        }
+      }
+    },
+    "Biraz anlatayım..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let me explain a bit..."
+          }
+        }
+      }
+    },
+    "Biraz cesaretlendirilmeye ihtiyacım var" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I need some encouragement"
+          }
+        }
+      }
+    },
+    "Biraz dinlenmek istiyorum" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I want to rest a little"
+          }
+        }
+      }
+    },
+    "Bugün küçük bir adım atmak istiyorum" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I want to take a small step today"
+          }
+        }
+      }
+    },
+    "Cesaretlendirici" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encouraging"
+          }
+        }
+      }
+    },
+    "Dayatmadan önerir, meraklı kalır." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggests without pushing, stays curious."
+          }
+        }
+      }
+    },
+    "Disiplinli ama sıcak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disciplined but warm"
+          }
+        }
+      }
+    },
+    "Düşük enerjili günler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low-energy days"
+          }
+        }
+      }
+    },
+    "Duygusal Destek" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emotional Support"
+          }
+        }
+      }
+    },
+    "Empatik & Derin Dinleme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empathetic & Deep Listening"
+          }
+        }
+      }
+    },
+    "Empatik dinleme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empathetic listening"
+          }
+        }
+      }
+    },
+    "Film veya dizi konuşalım" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let's talk about a movie or show"
+          }
+        }
+      }
+    },
+    "Gizlilik Öncelikli" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy First"
+          }
+        }
+      }
+    },
+    "Gündelik dil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everyday language"
+          }
+        }
+      }
+    },
+    "Günlük Sohbet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily Chat"
+          }
+        }
+      }
+    },
+    "Günümü anlatmak istiyorum" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I want to talk about my day"
+          }
+        }
+      }
+    },
+    "Hobi & Kitap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hobby & Books"
+          }
+        }
+      }
+    },
+    "Hobimden konuşalım" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let's talk about my hobby"
+          }
+        }
+      }
+    },
+    "Kitap & film" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Books & movies"
+          }
+        }
+      }
+    },
+    "Kitap & Hobi Partneri" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Book & Hobby Partner"
+          }
+        }
+      }
+    },
+    "Kitap, film ve hobiler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Books, movies, and hobbies"
+          }
+        }
+      }
+    },
+    "Kitap, film ve hobiler için hazır." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready for books, movies, and hobbies."
+          }
+        }
+      }
+    },
+    "Küçük adımları kutlar, asla küçümsemez." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celebrates small steps, never belittles."
+          }
+        }
+      }
+    },
+    "Küçük adımlar, somut öneriler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Small steps, concrete suggestions"
+          }
+        }
+      }
+    },
+    "Küçük bir adım atmak için hazır." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready to take a small step."
+          }
+        }
+      }
+    },
+    "Meraklı sorular" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Curious questions"
+          }
+        }
+      }
+    },
+    "Motivasyon & Koç" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motivation & Coach"
+          }
+        }
+      }
+    },
+    "Motivasyon Koçu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motivation Coach"
+          }
+        }
+      }
+    },
+    "Sadece sohbet etmek istiyorum" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I just want to chat"
+          }
+        }
+      }
+    },
+    "Sakin bir sohbet molası için hazır." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready for a calm chat break."
+          }
+        }
+      }
+    },
+    "Samimi Dinleyici" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warm Listener"
+          }
+        }
+      }
+    },
+    "Sohbet Arkadaşı" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chat Companion"
+          }
+        }
+      }
+    },
+    "Somut küçük adımlar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concrete small steps"
+          }
+        }
+      }
+    },
+    "Tavsiye değil, dinlenmek istiyorum" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I want to be heard, not advised"
+          }
+        }
+      }
+    },
+    "Tavsiye vermeden eşlik" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Companionship without advice"
+          }
+        }
+      }
+    },
+    "Yargılamadan dinler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listens without judgment"
+          }
+        }
+      }
+    },
+    "Yargılamadan eşlik" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non-judgmental companionship"
+          }
+        }
+      }
+    },
+    "Yargılamadan, olduğun gibi dinler." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listens without judgment, just as you are."
+          }
+        }
+      }
+    },
     "(%@)" : {
       "localizations" : {
         "en" : {
