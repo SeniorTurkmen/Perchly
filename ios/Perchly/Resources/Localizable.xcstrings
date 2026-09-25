@@ -1,0 +1,116 @@
+{
+  "sourceLanguage" : "tr",
+  "strings" : {
+    "Dil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        }
+      }
+    },
+    "E-posta adresin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your email address"
+          }
+        }
+      }
+    },
+    "E-posta ile Bağlan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect with Email"
+          }
+        }
+      }
+    },
+    "Hesabın" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your account"
+          }
+        }
+      }
+    },
+    "Hesabını bağla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect your account"
+          }
+        }
+      }
+    },
+    "Hesabını e-posta ile bağla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect your account with email"
+          }
+        }
+      }
+    },
+    "Kod Gönder" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send Code"
+          }
+        }
+      }
+    },
+    "Profil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile"
+          }
+        }
+      }
+    },
+    "Sistem Dili" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System Language"
+          }
+        }
+      }
+    },
+    "Verilerini kaybetme, cihaz değiştirdiğinde de seninle kalsın." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don't lose your data — keep it with you when you switch devices."
+          }
+        }
+      }
+    },
+    "E-postanı doğrula, cihaz değiştirsen de verilerin seninle kalsın." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verify your email so your data stays with you even if you switch devices."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
