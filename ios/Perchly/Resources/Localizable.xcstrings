@@ -1,12 +1,432 @@
 {
   "sourceLanguage" : "tr",
   "strings" : {
+    "(%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(%@)"
+          }
+        }
+      }
+    },
+    "%@ - Aktif Seans" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ - Active Session"
+          }
+        }
+      }
+    },
+    "%@ - Bağlanıyor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ - Connecting"
+          }
+        }
+      }
+    },
+    "%@ Aktif Nitelik" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Active Traits"
+          }
+        }
+      }
+    },
+    "%@ adresine gönderdiğimiz 6 haneli kodu gir." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter the 6-digit code we sent to %@."
+          }
+        }
+      }
+    },
+    "%@ Hakkında" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About %@"
+          }
+        }
+      }
+    },
+    "%@ İstersen başka birini seçebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ You can choose someone else if you'd like."
+          }
+        }
+      }
+    },
+    "%@ ile konuş" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "talk to %@"
+          }
+        }
+      }
+    },
+    "%@ ile Sohbete Başla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Chatting with %@"
+          }
+        }
+      }
+    },
+    "%@ ile sohbete başla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "start chatting with %@"
+          }
+        }
+      }
+    },
+    "%@ Olarak Devam Et" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue as %@"
+          }
+        }
+      }
+    },
+    "%@'ın sana nasıl karşılık verdiğini kendine göre ayarla. Örneğin sıcaklığı yükseltip doğrudanlığı düşürerek daha yumuşak, ya da tam tersini yaparak daha sert yanıtlar alabilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adjust how %@ responds to you. For example, raise warmth and lower directness for softer replies, or do the opposite for sharper ones."
+          }
+        }
+      }
+    },
+    "%@, gerçek insan bağlarını ikame etmez; duygu dünyanı düzenlemene yardımcı olan destekleyici bir yoldaştır." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is not a substitute for real human connections; it's a supportive companion that helps you manage your emotional world."
+          }
+        }
+      }
+    },
+    "%@ • %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ • %@"
+          }
+        }
+      }
+    },
+    "Adım %@ / %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Step %@ / %@"
+          }
+        }
+      }
+    },
+    "Adın" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your name"
+          }
+        }
+      }
+    },
+    "Aktif" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        }
+      }
+    },
+    "Aktif Seans" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active Session"
+          }
+        }
+      }
+    },
+    "Anonim Olarak Devam Et" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue Anonymously"
+          }
+        }
+      }
+    },
+    "Aynı konuşmada kaldığın sürece mesajların burada durur." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your messages stay here for as long as you remain in the same conversation."
+          }
+        }
+      }
+    },
+    "Bildirim" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
+    "Bilgelik" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wisdom"
+          }
+        }
+      }
+    },
+    "Bilinmeyen hata" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown error"
+          }
+        }
+      }
+    },
+    "Bir şeyler ters gitti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong"
+          }
+        }
+      }
+    },
+    "Bir şeyler ters gitti, birazdan tekrar dene." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong, try again in a moment."
+          }
+        }
+      }
+    },
+    "Biri sana yanıt verdiğinde haber verelim. İzni daha sonra ayarlardan değiştirebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We'll let you know when someone replies to you. You can change this permission later in Settings."
+          }
+        }
+      }
+    },
+    "Bu cihazdaki oturum, bağlı e-posta ve cihaz kimliği silinir; sıfırdan anonim bir oturum açılır. Sadece geliştirme için kullan." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The session, linked email, and device id on this device will be deleted; a fresh anonymous session will start. For development use only."
+          }
+        }
+      }
+    },
+    "Bu görünen ad kullanılamıyor. Farklı bir ad dener misin?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This display name can't be used. Want to try a different one?"
+          }
+        }
+      }
+    },
+    "Bu isim sohbetlerinde ve profilinde görünecek." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This name will appear in your chats and profile."
+          }
+        }
+      }
+    },
+    "Bugün %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today %@"
+          }
+        }
+      }
+    },
+    "Bugün kiminle dertleşmek istersin?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Who do you want to talk to today?"
+          }
+        }
+      }
+    },
+    "Çok fazla deneme yaptın, biraz sonra tekrar dene." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've made too many attempts, try again in a bit."
+          }
+        }
+      }
+    },
+    "Çok fazla hatalı deneme yaptın. Yeni bir kod istemen gerekiyor." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've made too many incorrect attempts. You'll need to request a new code."
+          }
+        }
+      }
+    },
+    "Daha samimi bir bağ için dilediğin hitabı yaz. Takma ad üretilmez; yalnızca senin yazdığın kullanılır." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write whatever form of address you'd like for a closer connection. No nickname is generated — only what you write is used."
+          }
+        }
+      }
+    },
+    "Denge & Günlük Dinlenme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balance & Everyday Ease"
+          }
+        }
+      }
+    },
+    "Deneyimi yaşına göre kişiselleştirebilmemiz için yaş aralığını seçebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can pick your age range so we can personalize the experience for you."
+          }
+        }
+      }
+    },
+    "Detayı aç" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open detail"
+          }
+        }
+      }
+    },
+    "Devam Et" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        }
+      }
+    },
     "Dil" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Language"
+          }
+        }
+      }
+    },
+    "Dilediğin gibi yaz, burası güvenli bir alan..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write whatever you like, this is a safe space..."
+          }
+        }
+      }
+    },
+    "Dinamik & Paylaşımcı" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dynamic & Sharing"
+          }
+        }
+      }
+    },
+    "Dingin & Olgun Sohbetler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calm & Mature Conversations"
+          }
+        }
+      }
+    },
+    "Doğrudanlık" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Directness"
           }
         }
       }
@@ -27,6 +447,166 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Connect with Email"
+          }
+        }
+      }
+    },
+    "E-postanı doğrula, cihaz değiştirsen de verilerin seninle kalsın." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verify your email so your data stays with you even if you switch devices."
+          }
+        }
+      }
+    },
+    "Enerji" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energy"
+          }
+        }
+      }
+    },
+    "Espri" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Humor"
+          }
+        }
+      }
+    },
+    "Geçersiz URL." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid URL."
+          }
+        }
+      }
+    },
+    "Genç & Samimi Bakış" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Young & Close-Knit Outlook"
+          }
+        }
+      }
+    },
+    "Geri" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
+    "Gizlilik Sözü" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy Promise"
+          }
+        }
+      }
+    },
+    "Gündelik Sohbet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily Chat"
+          }
+        }
+      }
+    },
+    "Gündelik sohbet aradığın için bu eşleşmeyi öne çıkardık. İstersen başka birini seçebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We highlighted this match because you were looking for daily chat. You can choose someone else if you'd like."
+          }
+        }
+      }
+    },
+    "Günün nasıl geçtiğini paylaş" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share how your day went"
+          }
+        }
+      }
+    },
+    "Günün Sohbet Enerjisi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today's Chat Energy"
+          }
+        }
+      }
+    },
+    "Günün sohbet enerjisi %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today's chat energy %@, %@"
+          }
+        }
+      }
+    },
+    "Günlük" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Journal"
+          }
+        }
+      }
+    },
+    "Günlük düşüncelerin için sakin bir yer hazırlıyoruz." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We're preparing a calm space for your daily thoughts."
+          }
+        }
+      }
+    },
+    "Güvenli ve Bireysel Alan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Safe, Personal Space"
+          }
+        }
+      }
+    },
+    "Güvenli ve Gizli Liman" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Safe and Private Harbor"
           }
         }
       }
@@ -61,12 +641,372 @@
         }
       }
     },
+    "Henüz mesaj yok" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No messages yet"
+          }
+        }
+      }
+    },
+    "Henüz sohbet yok. Personalar'dan biriyle konuşmaya başla." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No chats yet. Start talking with one of the personas."
+          }
+        }
+      }
+    },
+    "Hitap" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Form of Address"
+          }
+        }
+      }
+    },
+    "Hitap en fazla %@ karakter olabilir." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The form of address can be at most %@ characters."
+          }
+        }
+      }
+    },
+    "Hobi paylaşmak istediğin için bu eşleşmeyi öne çıkardık. İstersen başka birini seçebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We highlighted this match because you wanted to share a hobby. You can choose someone else if you'd like."
+          }
+        }
+      }
+    },
+    "Hobi Paylaşmak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sharing a Hobby"
+          }
+        }
+      }
+    },
+    "İlk Adım" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Step"
+          }
+        }
+      }
+    },
+    "İletişim" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Communication"
+          }
+        }
+      }
+    },
+    "İletişim Tarzı & Nitelikler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Communication Style & Traits"
+          }
+        }
+      }
+    },
+    "İnsan ilişkilerinin tamamlayıcısı, her an yanında sakin bir sığınak." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A complement to human relationships — a calm refuge always by your side."
+          }
+        }
+      }
+    },
+    "İsminle Hitap Edilsin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Be Addressed by Your Name"
+          }
+        }
+      }
+    },
+    "İstersen bunu atlayabilirsin; istediğin zaman değiştirebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can skip this if you like; you can change it anytime."
+          }
+        }
+      }
+    },
+    "İzin Ver" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow"
+          }
+        }
+      }
+    },
+    "Keşfet Personalar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discover Personas"
+          }
+        }
+      }
+    },
+    "Kişilik Ayarları" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personality Settings"
+          }
+        }
+      }
+    },
+    "Kitap, film ve tutkular" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Books, movies, and passions"
+          }
+        }
+      }
+    },
+    "Kod Doğrulama" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code Verification"
+          }
+        }
+      }
+    },
+    "Kod geçersiz. Tekrar dener misin?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid code. Want to try again?"
+          }
+        }
+      }
+    },
     "Kod Gönder" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Send Code"
+          }
+        }
+      }
+    },
+    "Kod %@ içinde geçersiz olacak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code expires in %@"
+          }
+        }
+      }
+    },
+    "Kodu doğrula" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verify code"
+          }
+        }
+      }
+    },
+    "Kodun süresi doldu. Yeni bir kod isteyebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your code has expired. You can request a new one."
+          }
+        }
+      }
+    },
+    "Konuş" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talk"
+          }
+        }
+      }
+    },
+    "konuşma beklenen persona ile eşleşmedi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the conversation didn't match the expected persona"
+          }
+        }
+      }
+    },
+    "Kayıt Tamamla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Complete Registration"
+          }
+        }
+      }
+    },
+    "Küçük adımlar, somut cesaret" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Small steps, concrete courage"
+          }
+        }
+      }
+    },
+    "Motive Olmak" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Getting Motivated"
+          }
+        }
+      }
+    },
+    "Motive olmak istediğin için bu eşleşmeyi öne çıkardık. İstersen başka birini seçebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We highlighted this match because you wanted to feel motivated. You can choose someone else if you'd like."
+          }
+        }
+      }
+    },
+    "Örn: Deniz, Ece, Can..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e.g. Alex, Sam, Jordan..."
+          }
+        }
+      }
+    },
+    "Önerilen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recommended"
+          }
+        }
+      }
+    },
+    "Önerilen eşleşme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recommended match"
+          }
+        }
+      }
+    },
+    "Pasif" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inactive"
+          }
+        }
+      }
+    },
+    "Perchmate'inin sana seçtiğin isimle hitap etmesini isteyebilirsin. Anonim devam edersen sohbette hiçbir isimle seslenilmez." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can have your Perchmate address you by the name you choose. If you continue anonymously, no name will be used in chat."
+          }
+        }
+      }
+    },
+    "Personalar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personas"
+          }
+        }
+      }
+    },
+    "Persona Detay & Uyum" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Persona Detail & Compatibility"
+          }
+        }
+      }
+    },
+    "Persona Sohbet Seansı" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Persona Chat Session"
+          }
+        }
+      }
+    },
+    "Popüler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Popular"
           }
         }
       }
@@ -81,12 +1021,302 @@
         }
       }
     },
+    "Ruh Hali" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mood"
+          }
+        }
+      }
+    },
+    "Sadece geliştirme içindir. Cihazdaki oturumu, bağlı e-postayı ve cihaz kimliğini siler." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For development only. Deletes the session, linked email, and device id on this device."
+          }
+        }
+      }
+    },
+    "Samimi Kulüp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intimate Club"
+          }
+        }
+      }
+    },
+    "Sana bir Perchmate önerdik" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We suggested a Perchmate for you"
+          }
+        }
+      }
+    },
+    "Sana en uygun Perchmate'i bulalım." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let's find the Perchmate that's right for you."
+          }
+        }
+      }
+    },
+    "Sana nasıl seslenelim?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How should we address you?"
+          }
+        }
+      }
+    },
+    "Seçimini istediğin zaman değiştirebilirsin." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can change your choice anytime."
+          }
+        }
+      }
+    },
+    "Seni dinlemeye hazır" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready to listen to you"
+          }
+        }
+      }
+    },
+    "Seni dinlemeye her zaman hazır, sakin bir dost var." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A calm friend is always ready to listen to you."
+          }
+        }
+      }
+    },
+    "Seni haberdar edelim mi?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Should we notify you?"
+          }
+        }
+      }
+    },
+    "Seni nasıl çağıralım?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What should we call you?"
+          }
+        }
+      }
+    },
+    "Sıcaklık" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warmth"
+          }
+        }
+      }
+    },
+    "Sıfır yargı" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zero judgment"
+          }
+        }
+      }
+    },
+    "Sıfırla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset"
+          }
+        }
+      }
+    },
     "Sistem Dili" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "System Language"
+          }
+        }
+      }
+    },
+    "Sohbet kaydı" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chat history"
+          }
+        }
+      }
+    },
+    "Sohbet tonu bu seçime göre şekillenecektir." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tone of the conversation will be shaped by this choice."
+          }
+        }
+      }
+    },
+    "Sohbetler" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chats"
+          }
+        }
+      }
+    },
+    "Sunucu hatası (%@)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server error (%@)."
+          }
+        }
+      }
+    },
+    "Sunucudan geçersiz yanıt alındı." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Received an invalid response from the server."
+          }
+        }
+      }
+    },
+    "Şimdi değil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Now"
+          }
+        }
+      }
+    },
+    "Şimdilik Atla" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip for Now"
+          }
+        }
+      }
+    },
+    "Şu an nasıl bir sohbet arıyorsun?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What kind of conversation are you looking for right now?"
+          }
+        }
+      }
+    },
+    "Tamam" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "Tekrar dene" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        }
+      }
+    },
+    "Temizle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear"
+          }
+        }
+      }
+    },
+    "Tepki: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reaction: %@"
+          }
+        }
+      }
+    },
+    "Tümü" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
+    },
+    "Varsayılana Döndür" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset to Default"
+          }
+        }
+      }
+    },
+    "Vazgeç" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
           }
         }
       }
@@ -101,12 +1331,92 @@
         }
       }
     },
-    "E-postanı doğrula, cihaz değiştirsen de verilerin seninle kalsın." : {
+    "Yanıt çözümlenemedi." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verify your email so your data stays with you even if you switch devices."
+            "value" : "Could not decode the response."
+          }
+        }
+      }
+    },
+    "Yargısız, Şefkatli Alan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Judgment-Free, Caring Space"
+          }
+        }
+      }
+    },
+    "Yaş bilgin gizli tutulur ve yalnızca eşleşme uyumunu artırmak için kullanılır." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your age is kept private and only used to improve match quality."
+          }
+        }
+      }
+    },
+    "Yaş Seçimi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Age Selection"
+          }
+        }
+      }
+    },
+    "Yazdığın hitap yalnızca sohbette sana seslenmek için kullanılır; satılmaz ve üçüncü partilerle paylaşılmaz. Anonim devam edersen hiçbir isim kaydedilmez." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What you write is used only to address you in chat; it is never sold or shared with third parties. If you continue anonymously, no name is stored."
+          }
+        }
+      }
+    },
+    "Yeni Kod İste" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request New Code"
+          }
+        }
+      }
+    },
+    "Yerel Verileri Sıfırla (Debug)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset Local Data (Debug)"
+          }
+        }
+      }
+    },
+    "Yerel verileri sıfırla?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset local data?"
+          }
+        }
+      }
+    },
+    "“%@”" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”"
           }
         }
       }
