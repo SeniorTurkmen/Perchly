@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "dashboard": "Panel",
+    "users": "Kullanıcılar",
+    "personas": "Personalar",
+    "conversations": "Konuşmalar",
+    "quotas": "Kota & Kredi",
+    "providers": "AI Sağlayıcıları",
+    "onboarding": "Onboarding",
+    "logs": "Loglar",
+    "engineering": "Mühendislik"
+  },
+  "login": {
+    "title": "Perchly Admin",
+    "subtitle": "Devam etmek için giriş yapın.",
+    "email": "E-posta",
+    "password": "Şifre",
+    "submit": "Giriş yap",
+    "submitting": "Giriş yapılıyor…"
+  },
+  "common": {
+    "logout": "Çıkış yap",
+    "language": "Dil"
+  }
+}

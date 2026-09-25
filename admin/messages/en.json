@@ -1,0 +1,25 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "personas": "Personas",
+    "conversations": "Conversations",
+    "quotas": "Quota & Credits",
+    "providers": "AI Providers",
+    "onboarding": "Onboarding",
+    "logs": "Logs",
+    "engineering": "Engineering"
+  },
+  "login": {
+    "title": "Perchly Admin",
+    "subtitle": "Sign in to continue.",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…"
+  },
+  "common": {
+    "logout": "Sign out",
+    "language": "Language"
+  }
+}
