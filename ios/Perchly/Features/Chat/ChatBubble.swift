@@ -197,7 +197,9 @@ struct ChatBubble: View {
 
     private static let formatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "tr_TR")
+        // Was hardcoded to Locale(identifier: "tr_TR") — forced Turkish
+        // formatting regardless of the device's actual language.
+        formatter.locale = .autoupdatingCurrent
         formatter.dateFormat = "HH:mm"
         return formatter
     }()

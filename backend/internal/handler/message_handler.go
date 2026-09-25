@@ -68,7 +68,7 @@ func (h *MessageHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		// QuotaMiddleware guarantees this on every route that mounts this
 		// handler; a miss means the route is wired up wrong, not a client error.
-		writeError(w, http.StatusInternalServerError, ErrCodeConversationContextMissing, "konuşma bağlamı bulunamadı")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeConversationContextMissing, "konuşma bağlamı bulunamadı")
 		return
 	}
 	userID, _ := auth.UserIDFromContext(r.Context())
@@ -76,13 +76,13 @@ func (h *MessageHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	var req createMessageRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || strings.TrimSpace(req.Content) == "" {
-		writeError(w, http.StatusBadRequest, ErrCodeMessageContentRequired, "content alanı zorunludur")
+		writeError(w, r, http.StatusBadRequest, ErrCodeMessageContentRequired, "content alanı zorunludur")
 		return
 	}
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
-		writeError(w, http.StatusInternalServerError, ErrCodeStreamingUnsupported, "streaming desteklenmiyor")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeStreamingUnsupported, "streaming desteklenmiyor")
 		return
 	}
 

@@ -39,10 +39,12 @@
 		69F3A538AB605C70404AF7A7 /* PerchlyPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A4FDA36831DA31CF01B /* PerchlyPalette.swift */; };
 		6EBEBDE53B31B19BC35B3E8C /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4ADBA9E0D9B9D665658026 /* AuthManager.swift */; };
 		6F1ACD5486238153285271F6 /* OnboardingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCECFBAD7F310008F332348F /* OnboardingCoordinator.swift */; };
+		719F3D789C00E231A8B7E924 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 131A9C1CC3711C45F3E17880 /* Localizable.xcstrings */; };
 		7BDB6ABAFC8FB65F36DDD3D5 /* PersonaTraitsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DDB7706A29C2872C88150A /* PersonaTraitsUITests.swift */; };
 		7F8AB5E190D60C237EEB86B3 /* CodeEntryField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82FEA37849BC7377389A1ABD /* CodeEntryField.swift */; };
 		80FEBCEC8C749F4C6B805E17 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AFAF31FCAD28765D6BB54C6 /* ChatMessage.swift */; };
 		8282E81FD2695DF23C7517B1 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 739B4DA2F5CB222B7776D592 /* AppIcon.icon */; };
+		84F5ECE9D70CCBC2DBC1754C /* LanguagePreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16F93EE4AE0C840749568DF /* LanguagePreference.swift */; };
 		8BBE4C1591880886DEB23448 /* AuthFlowDurumAUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71AB7CA9BEC7CF6BA94D0295 /* AuthFlowDurumAUITests.swift */; };
 		945941490F7F4433F5F1A31D /* AuthState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B83C8F6D75F3033FD75EE2 /* AuthState.swift */; };
 		9553272887C2A2AEF38D3EF6 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5605AE2E4D04DE8CB838E298 /* Color+Hex.swift */; };
@@ -63,10 +65,12 @@
 		C7C82DF43E21A50B46DFA939 /* AccessTokenClaims.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACF3263EC0AD5B98E0B98114 /* AccessTokenClaims.swift */; };
 		CAF21DA82A3970289B6B128A /* GlassTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72563841319CCE35028A940F /* GlassTextField.swift */; };
 		D29E729F2739816C1B400722 /* SSEEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFB3EF371714ECF8FF8E828 /* SSEEvent.swift */; };
+		D2AFC9D940C6E74C75FE7F1A /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAAD38A35893FDB28FB27E9D /* AppLanguage.swift */; };
 		D30D9FDC4A62ACA7A4DEBE24 /* OnboardingProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB4E752C90EEC4DAFDFA8EE /* OnboardingProfile.swift */; };
 		D34AB210541D0A7F3940CD84 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D465416A3C73966072A6DAF /* GlassCard.swift */; };
 		D56A25B417BD66FBF900FD79 /* CodeVerificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C74FDFE492DE64641299BAF /* CodeVerificationViewModel.swift */; };
 		D8FD7C4BC5EA0C2D122CDF80 /* PersonaCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8B05EC7F829FE440FD2630 /* PersonaCard.swift */; };
+		E24ABD6A121E29DFF803B8F3 /* LanguagePreferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB5F6C2E2ADD733CF6313F1 /* LanguagePreferenceTests.swift */; };
 		E4D06CF032D6C83310AFFD91 /* OnboardingSkipUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D1FCD21A6709508616BA12 /* OnboardingSkipUITests.swift */; };
 		EB3B5452D0D3E0715E50E3B9 /* CodeVerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BECD95A2C4DE8820A4B8A0 /* CodeVerificationView.swift */; };
 		EB60C874A71F277246884004 /* OnboardingStatusStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED55A5FB6B8C69BA2FCACF30 /* OnboardingStatusStore.swift */; };
@@ -99,8 +103,10 @@
 		06A4238123785848A338926C /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		078CBCD0AB424B41448091FD /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		0A62112F4F3105D39D5A8572 /* RegisterCompleteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterCompleteView.swift; sourceTree = "<group>"; };
+		0AB5F6C2E2ADD733CF6313F1 /* LanguagePreferenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePreferenceTests.swift; sourceTree = "<group>"; };
 		0B16D86E4255A02A868FE195 /* OnboardingFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowUITests.swift; sourceTree = "<group>"; };
 		125C2044F609AEA5C1767A2B /* XCTestCase+Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Onboarding.swift"; sourceTree = "<group>"; };
+		131A9C1CC3711C45F3E17880 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		19EC6447B1EA6ABE949394A4 /* OnboardingScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingScaffold.swift; sourceTree = "<group>"; };
 		1C74FDFE492DE64641299BAF /* CodeVerificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeVerificationViewModel.swift; sourceTree = "<group>"; };
 		2412889F74D2DBD87C717A40 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -111,17 +117,23 @@
 		3CADEC2E99A26FB0C3E69B20 /* TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenStorage.swift; sourceTree = "<group>"; };
 		3CFC686AC3A0ECB8FE8E6A4D /* MessageReactionUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionUITests.swift; sourceTree = "<group>"; };
 		42F83262427C6832D9BB5F2D /* PersonaDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaDetailView.swift; sourceTree = "<group>"; };
+		4453F8267D0E7C61D9046FFD /* .gitkeep */ = {isa = PBXFileReference; name = .gitkeep; path = fr.lproj/.gitkeep; sourceTree = "<group>"; };
 		46D1FCD21A6709508616BA12 /* OnboardingSkipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSkipUITests.swift; sourceTree = "<group>"; };
+		4900A43E6227BC37217C7CFD /* .gitkeep */ = {isa = PBXFileReference; name = .gitkeep; path = ar.lproj/.gitkeep; sourceTree = "<group>"; };
 		4CFB3EF371714ECF8FF8E828 /* SSEEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEEvent.swift; sourceTree = "<group>"; };
 		5605AE2E4D04DE8CB838E298 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		56A214CD7717DC67E3CDEFEC /* .gitkeep */ = {isa = PBXFileReference; name = .gitkeep; path = es.lproj/.gitkeep; sourceTree = "<group>"; };
 		57435CA8C932D2A8F92DBDDE /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		58EDF4B2B660316E2F694C76 /* ChatStreamingIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatStreamingIntegrationTests.swift; sourceTree = "<group>"; };
 		59DDB7706A29C2872C88150A /* PersonaTraitsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonaTraitsUITests.swift; sourceTree = "<group>"; };
 		5ACEA36F1D3657651AE396D4 /* Persona.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persona.swift; sourceTree = "<group>"; };
 		5D465416A3C73966072A6DAF /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
 		5E4ADBA9E0D9B9D665658026 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		62CB9E5757BD6EC76C0A2D25 /* .gitkeep */ = {isa = PBXFileReference; name = .gitkeep; path = "zh-Hans.lproj/.gitkeep"; sourceTree = "<group>"; };
 		6323DB12826F037931F8CB5E /* AnonymousBootstrapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnonymousBootstrapView.swift; sourceTree = "<group>"; };
 		632CEC3FEFB34B80DA76440F /* ChatEnergy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatEnergy.swift; sourceTree = "<group>"; };
+		63B0645CCBCC4B08475F9193 /* .gitkeep */ = {isa = PBXFileReference; name = .gitkeep; path = en.lproj/.gitkeep; sourceTree = "<group>"; };
+		694866AA2F8AD8E69D9A53B3 /* .gitkeep */ = {isa = PBXFileReference; name = .gitkeep; path = ru.lproj/.gitkeep; sourceTree = "<group>"; };
 		71AB7CA9BEC7CF6BA94D0295 /* AuthFlowDurumAUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowDurumAUITests.swift; sourceTree = "<group>"; };
 		72563841319CCE35028A940F /* GlassTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassTextField.swift; sourceTree = "<group>"; };
 		72D1BEB51F601C9910184951 /* PerchlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerchlyApp.swift; sourceTree = "<group>"; };
@@ -130,6 +142,7 @@
 		796C36C19E4FC4CDBC5122E3 /* TypingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingIndicator.swift; sourceTree = "<group>"; };
 		7AFAF31FCAD28765D6BB54C6 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		81D48417CA311ED919C04F0B /* EmailEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailEntryView.swift; sourceTree = "<group>"; };
+		82C1BD205F7FA5D83EE81E68 /* .gitkeep */ = {isa = PBXFileReference; name = .gitkeep; path = de.lproj/.gitkeep; sourceTree = "<group>"; };
 		82FEA37849BC7377389A1ABD /* CodeEntryField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeEntryField.swift; sourceTree = "<group>"; };
 		834F938E2A7F53B385E07107 /* PerchlyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PerchlyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		866BD5D8A0D008FD99A23F19 /* AgeRangeStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgeRangeStepView.swift; sourceTree = "<group>"; };
@@ -150,6 +163,8 @@
 		B98E799D6B58EC128C06BE2D /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		BCD387AA4920C5BD468785B2 /* RegisterCompleteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterCompleteViewModel.swift; sourceTree = "<group>"; };
 		BEAC5BE29CC0F02E75C0F954 /* APIErrorCodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIErrorCodeTests.swift; sourceTree = "<group>"; };
+		C16F93EE4AE0C840749568DF /* LanguagePreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePreference.swift; sourceTree = "<group>"; };
+		CAAD38A35893FDB28FB27E9D /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		CB98ED2D49BAC220A9CC72E2 /* Perchly.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Perchly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCECFBAD7F310008F332348F /* OnboardingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCoordinator.swift; sourceTree = "<group>"; };
 		D0EDFC85E740F1BDBC5DBDCE /* NameHitapStepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameHitapStepView.swift; sourceTree = "<group>"; };
@@ -172,6 +187,13 @@
 		01AC89E042D419EFFDFF48A1 /* Perchly */ = {
 			isa = PBXGroup;
 			children = (
+				4900A43E6227BC37217C7CFD /* .gitkeep */,
+				82C1BD205F7FA5D83EE81E68 /* .gitkeep */,
+				63B0645CCBCC4B08475F9193 /* .gitkeep */,
+				56A214CD7717DC67E3CDEFEC /* .gitkeep */,
+				4453F8267D0E7C61D9046FFD /* .gitkeep */,
+				694866AA2F8AD8E69D9A53B3 /* .gitkeep */,
+				62CB9E5757BD6EC76C0A2D25 /* .gitkeep */,
 				72D1BEB51F601C9910184951 /* PerchlyApp.swift */,
 				2412889F74D2DBD87C717A40 /* RootView.swift */,
 				A66A5FF8F4E76F9927C596DD /* Core */,
@@ -232,6 +254,7 @@
 				BEAC5BE29CC0F02E75C0F954 /* APIErrorCodeTests.swift */,
 				8A9DF9F3E591C53B4C41FF7F /* AuthInterceptorIntegrationTests.swift */,
 				58EDF4B2B660316E2F694C76 /* ChatStreamingIntegrationTests.swift */,
+				0AB5F6C2E2ADD733CF6313F1 /* LanguagePreferenceTests.swift */,
 			);
 			path = PerchlyTests;
 			sourceTree = "<group>";
@@ -256,6 +279,7 @@
 			children = (
 				739B4DA2F5CB222B7776D592 /* AppIcon.icon */,
 				8D78512173C5CB7B85059371 /* Assets.xcassets */,
+				131A9C1CC3711C45F3E17880 /* Localizable.xcstrings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -321,6 +345,7 @@
 			isa = PBXGroup;
 			children = (
 				C18AA1B5F92E440E11974892 /* Auth */,
+				F971C5E9A8309AF7CC82FDF0 /* Localization */,
 				DAE937DCA8D01A8BD30AE2BE /* Models */,
 				286E228A35D484973E3E4EFE /* Networking */,
 				F244C9F7BD03744CAA19119D /* Onboarding */,
@@ -406,6 +431,15 @@
 			path = Onboarding;
 			sourceTree = "<group>";
 		};
+		F971C5E9A8309AF7CC82FDF0 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				CAAD38A35893FDB28FB27E9D /* AppLanguage.swift */,
+				C16F93EE4AE0C840749568DF /* LanguagePreference.swift */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -478,11 +512,18 @@
 				};
 			};
 			buildConfigurationList = D4253199010A1FFBDFCF580E /* Build configuration list for PBXProject "Perchly" */;
-			developmentRegion = en;
+			developmentRegion = tr;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
+				ar,
+				de,
 				en,
+				es,
+				fr,
+				ru,
+				tr,
+				"zh-Hans",
 			);
 			mainGroup = 081E8CAD9C95276DB691B762;
 			minimizedProjectReferenceProxies = 1;
@@ -505,6 +546,7 @@
 			files = (
 				8282E81FD2695DF23C7517B1 /* AppIcon.icon in Resources */,
 				BC4052CCD8624134CC2E7CA3 /* Assets.xcassets in Resources */,
+				719F3D789C00E231A8B7E924 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,6 +564,7 @@
 				C7C82DF43E21A50B46DFA939 /* AccessTokenClaims.swift in Sources */,
 				1B1616319D02A0E97B59DD6F /* AgeRangeStepView.swift in Sources */,
 				F70258C8862056E629CD97E5 /* AnonymousBootstrapView.swift in Sources */,
+				D2AFC9D940C6E74C75FE7F1A /* AppLanguage.swift in Sources */,
 				6EBEBDE53B31B19BC35B3E8C /* AuthManager.swift in Sources */,
 				945941490F7F4433F5F1A31D /* AuthState.swift in Sources */,
 				55D9DED2187B2C60CD8C24F5 /* ChatBubble.swift in Sources */,
@@ -541,6 +584,7 @@
 				D34AB210541D0A7F3940CD84 /* GlassCard.swift in Sources */,
 				CAF21DA82A3970289B6B128A /* GlassTextField.swift in Sources */,
 				3E6635116EF361CCE3BB1333 /* HTTPMethod.swift in Sources */,
+				84F5ECE9D70CCBC2DBC1754C /* LanguagePreference.swift in Sources */,
 				5A121F4465EF63EE8E8FAEBE /* MessageReaction.swift in Sources */,
 				4E71E85A221693C864C9D298 /* MoodPreferenceStepView.swift in Sources */,
 				F5C7307FB1F4AACDC292129F /* NameHitapStepView.swift in Sources */,
@@ -595,6 +639,7 @@
 				37F19C177D73EEF3B8F40B83 /* APIErrorCodeTests.swift in Sources */,
 				F3AEC8DCFB73E136FEEDB8F8 /* AuthInterceptorIntegrationTests.swift in Sources */,
 				51EC1D751FDFD7E56FE9C73A /* ChatStreamingIntegrationTests.swift in Sources */,
+				E24ABD6A121E29DFF803B8F3 /* LanguagePreferenceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

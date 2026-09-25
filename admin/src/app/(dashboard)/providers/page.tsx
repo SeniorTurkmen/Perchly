@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import {
 import { requireSessionToken } from "@/lib/auth";
 import { adminListLLMCredentials } from "@/lib/backend";
 
+// Brand/product names — never translated.
 const PROVIDER_LABELS: Record<string, string> = {
   openai: "OpenAI",
   anthropic: "Anthropic",
@@ -24,36 +26,37 @@ const PROVIDER_LABELS: Record<string, string> = {
 export default async function ProvidersPage() {
   const token = await requireSessionToken();
   const credentials = await adminListLLMCredentials(token);
+  const t = await getTranslations("providers");
+  const tc = await getTranslations("common");
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">AI Sağlayıcıları</h1>
+          <h1 className="text-2xl font-semibold">{t("title")}</h1>
           <p className="text-muted-foreground">
-            {credentials.length} kayıtlı kimlik bilgisi — token&apos;lar veritabanında
-            şifrelenmiş saklanır.
+            {t("subtitle", { count: credentials.length })}
           </p>
         </div>
-        <Button render={<Link href="/providers/new" />}>Kimlik bilgisi ekle</Button>
+        <Button render={<Link href="/providers/new" />}>{t("addCredential")}</Button>
       </div>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Sağlayıcı</TableHead>
-              <TableHead>Etiket</TableHead>
-              <TableHead>Token</TableHead>
-              <TableHead>Durum</TableHead>
-              <TableHead className="text-right">Yönet</TableHead>
+              <TableHead>{t("provider")}</TableHead>
+              <TableHead>{t("label")}</TableHead>
+              <TableHead>{t("token")}</TableHead>
+              <TableHead>{tc("status")}</TableHead>
+              <TableHead className="text-right">{t("manage")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {credentials.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  Henüz bir kimlik bilgisi eklenmedi.
+                  {t("noCredentialsYet")}
                 </TableCell>
               </TableRow>
             )}
@@ -68,7 +71,7 @@ export default async function ProvidersPage() {
                 </TableCell>
                 <TableCell>
                   <Badge variant={credential.is_active ? "default" : "secondary"}>
-                    {credential.is_active ? "Aktif" : "Pasif"}
+                    {credential.is_active ? tc("active") : tc("inactive")}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
@@ -77,7 +80,7 @@ export default async function ProvidersPage() {
                     variant="ghost"
                     size="sm"
                   >
-                    Yönet
+                    {t("manage")}
                   </Button>
                 </TableCell>
               </TableRow>

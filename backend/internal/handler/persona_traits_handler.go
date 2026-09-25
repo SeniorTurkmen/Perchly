@@ -53,18 +53,18 @@ type personaTraitsResponse struct {
 func (h *PersonaTraitsHandler) Get(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 	personaID := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(personaID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
 		return
 	}
 
 	traits, isCustomized, err := h.traits.Get(r.Context(), userID, personaID)
 	if err != nil {
-		writePersonaTraitsError(w, err)
+		writePersonaTraitsError(w, r, err)
 		return
 	}
 	writeJSON(w, http.StatusOK, personaTraitsResponse{Traits: traits, IsCustomized: isCustomized})
@@ -99,18 +99,18 @@ type setPersonaTraitsRequest struct {
 func (h *PersonaTraitsHandler) Set(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 	personaID := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(personaID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
 		return
 	}
 
 	var req setPersonaTraitsRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 	traits := model.PersonaTraits{
@@ -119,7 +119,7 @@ func (h *PersonaTraitsHandler) Set(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.traits.Set(r.Context(), userID, personaID, traits); err != nil {
-		writePersonaTraitsError(w, err)
+		writePersonaTraitsError(w, r, err)
 		return
 	}
 	writeJSON(w, http.StatusOK, personaTraitsResponse{Traits: traits, IsCustomized: true})
@@ -143,34 +143,34 @@ func (h *PersonaTraitsHandler) Set(w http.ResponseWriter, r *http.Request) {
 func (h *PersonaTraitsHandler) Reset(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 	personaID := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(personaID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
 		return
 	}
 
 	if err := h.traits.Reset(r.Context(), userID, personaID); err != nil {
-		writePersonaTraitsError(w, err)
+		writePersonaTraitsError(w, r, err)
 		return
 	}
 	traits, _, err := h.traits.Get(r.Context(), userID, personaID)
 	if err != nil {
-		writePersonaTraitsError(w, err)
+		writePersonaTraitsError(w, r, err)
 		return
 	}
 	writeJSON(w, http.StatusOK, personaTraitsResponse{Traits: traits, IsCustomized: false})
 }
 
-func writePersonaTraitsError(w http.ResponseWriter, err error) {
+func writePersonaTraitsError(w http.ResponseWriter, r *http.Request, err error) {
 	switch {
 	case errors.Is(err, repository.ErrPersonaNotFound):
-		writeError(w, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
+		writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
 	case errors.Is(err, model.ErrPersonaTraitOutOfRange):
-		writeError(w, http.StatusBadRequest, ErrCodePersonaTraitOutOfRange, "kişilik değerleri 0-100 arasında olmalıdır")
+		writeError(w, r, http.StatusBadRequest, ErrCodePersonaTraitOutOfRange, "kişilik değerleri 0-100 arasında olmalıdır")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodePersonaTraitsFailed, "kişilik ayarları işlenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodePersonaTraitsFailed, "kişilik ayarları işlenemedi")
 	}
 }

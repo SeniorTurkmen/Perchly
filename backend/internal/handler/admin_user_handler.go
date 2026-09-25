@@ -59,7 +59,7 @@ func (h *AdminUserHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	users, total, err := h.list.List(r.Context(), q.Get("search"), limit, offset)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminUsersListFailed, "kullanıcılar listelenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminUsersListFailed, "kullanıcılar listelenemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, adminUsersListResponse{Users: users, Total: total})
@@ -70,17 +70,17 @@ func (h *AdminUserHandler) List(w http.ResponseWriter, r *http.Request) {
 func (h *AdminUserHandler) Get(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz kullanıcı id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz kullanıcı id")
 		return
 	}
 
 	detail, err := h.get.Get(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, repository.ErrUserNotFound) {
-			writeError(w, http.StatusNotFound, ErrCodeUserNotFound, "kullanıcı bulunamadı")
+			writeError(w, r, http.StatusNotFound, ErrCodeUserNotFound, "kullanıcı bulunamadı")
 			return
 		}
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminUserFetchFailed, "kullanıcı getirilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminUserFetchFailed, "kullanıcı getirilemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, detail)
@@ -96,17 +96,17 @@ type adminSetQuotaRequest struct {
 func (h *AdminUserHandler) SetQuota(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(userID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz kullanıcı id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz kullanıcı id")
 		return
 	}
 
 	var req adminSetQuotaRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 	if _, err := uuid.Parse(req.PersonaID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
 		return
 	}
 
@@ -117,11 +117,11 @@ func (h *AdminUserHandler) SetQuota(w http.ResponseWriter, r *http.Request) {
 	case err == nil:
 		writeJSON(w, http.StatusOK, quota)
 	case errors.Is(err, service.ErrInvalidDailyLimit):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidDailyLimit, "günlük limit 0 veya daha büyük olmalı")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidDailyLimit, "günlük limit 0 veya daha büyük olmalı")
 	case errors.Is(err, repository.ErrPersonaNotFound):
-		writeError(w, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
+		writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminQuotaUpdateFailed, "kota güncellenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminQuotaUpdateFailed, "kota güncellenemedi")
 	}
 }
 
@@ -134,13 +134,13 @@ type adminSetCreditsRequest struct {
 func (h *AdminUserHandler) SetCredits(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(userID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz kullanıcı id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz kullanıcı id")
 		return
 	}
 
 	var req adminSetCreditsRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -151,8 +151,8 @@ func (h *AdminUserHandler) SetCredits(w http.ResponseWriter, r *http.Request) {
 	case err == nil:
 		writeJSON(w, http.StatusOK, map[string]int{"credits": balance})
 	case errors.Is(err, service.ErrInvalidCreditAmount):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidCreditAmount, "kredi miktarı 0 veya daha büyük olmalı")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidCreditAmount, "kredi miktarı 0 veya daha büyük olmalı")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminCreditsUpdateFailed, "kredi güncellenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminCreditsUpdateFailed, "kredi güncellenemedi")
 	}
 }

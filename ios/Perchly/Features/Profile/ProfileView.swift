@@ -3,6 +3,7 @@ import SwiftUI
 struct ProfileView: View {
     @ObservedObject private var authManager = AuthManager.shared
     @StateObject private var viewModel = ProfileViewModel()
+    @ObservedObject private var languagePreference = LanguagePreference.shared
     #if DEBUG
     @State private var isShowingResetConfirmation = false
     @State private var isResetting = false
@@ -13,6 +14,7 @@ struct ProfileView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     accountSection
+                    languageSection
                     #if DEBUG
                     debugSection
                     #endif
@@ -63,6 +65,31 @@ struct ProfileView: View {
             .buttonStyle(.plain)
             .accessibilityIdentifier("linkAccountCard")
         }
+    }
+
+    private var languageSection: some View {
+        GlassCard {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Dil")
+                    .font(PerchlyTypography.title)
+                Picker("Dil", selection: languageSelection) {
+                    Text("Sistem Dili").tag(AppLanguage?.none)
+                    ForEach(AppLanguage.allCases) { language in
+                        Text(language.displayName).tag(AppLanguage?.some(language))
+                    }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                .accessibilityIdentifier("languagePicker")
+            }
+        }
+    }
+
+    private var languageSelection: Binding<AppLanguage?> {
+        Binding(
+            get: { languagePreference.override },
+            set: { languagePreference.setOverride($0) }
+        )
     }
 
     #if DEBUG

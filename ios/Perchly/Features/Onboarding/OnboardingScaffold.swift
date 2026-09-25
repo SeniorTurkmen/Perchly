@@ -75,7 +75,7 @@ struct OnboardingScaffold<Content: View, Footer: View>: View {
                         }
                     }
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Adım \(stepIndex) / \(totalSteps)")
+                    .accessibilityLabel("Adım \(String(stepIndex)) / \(String(totalSteps))")
                 }
 
                 Spacer(minLength: 8)
@@ -88,7 +88,7 @@ struct OnboardingScaffold<Content: View, Footer: View>: View {
                 Circle()
                     .fill(PerchlyPalette.Discover.primary)
                     .frame(width: 6, height: 6)
-                Text("Adım \(stepIndex) / \(totalSteps)")
+                Text("Adım \(String(stepIndex)) / \(String(totalSteps))")
                 Text("•")
                     .opacity(0.4)
                 Text(stepLabel)
@@ -108,7 +108,9 @@ struct OnboardingScaffold<Content: View, Footer: View>: View {
 }
 
 struct OnboardingPrimaryButton: View {
-    let title: String
+    // LocalizedStringKey, not String: Text(String) is verbatim and
+    // skips the string catalog.
+    let title: LocalizedStringKey
     var isDisabled: Bool = false
     var isLoading: Bool = false
     let action: () -> Void

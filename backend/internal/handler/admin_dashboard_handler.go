@@ -25,7 +25,7 @@ func NewAdminDashboardHandler(dashboard *service.AdminDashboardService) *AdminDa
 func (h *AdminDashboardHandler) Metrics(w http.ResponseWriter, r *http.Request) {
 	metrics, err := h.metrics.Metrics(r.Context())
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminMetricsFailed, "metrikler getirilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminMetricsFailed, "metrikler getirilemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, metrics)

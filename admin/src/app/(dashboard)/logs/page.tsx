@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 import { LocalDateTime } from "@/components/local-date-time";
@@ -18,12 +19,6 @@ import { adminListLogs } from "@/lib/backend";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 50;
-
-const STATUS_FILTERS = [
-  { label: "Tümü", value: "0" },
-  { label: "4xx+", value: "400" },
-  { label: "5xx", value: "500" },
-] as const;
 
 function statusVariant(status: number): "default" | "secondary" | "destructive" {
   if (status >= 500) return "destructive";
@@ -96,6 +91,14 @@ export default async function LogsPage({
 }) {
   const params = await searchParams;
   const token = await requireSessionToken();
+  const t = await getTranslations("logs");
+  const tc = await getTranslations("common");
+
+  const STATUS_FILTERS = [
+    { label: tc("all"), value: "0" },
+    { label: "4xx+", value: "400" },
+    { label: "5xx", value: "500" },
+  ] as const;
 
   const search = params.search ?? "";
   const statusMin = Number(params.status_min) || 0;
@@ -123,10 +126,9 @@ export default async function LogsPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Loglar</h1>
+        <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="text-muted-foreground">
-          {total} istek{userId ? " — bu kullanıcıya göre filtrelendi" : ""} — route veya
-          path&apos;e göre ara.
+          {t("subtitleRequests", { count: total })}{userId ? ` — ${t("filteredByUser")}` : ""}
         </p>
       </div>
 
@@ -134,10 +136,10 @@ export default async function LogsPage({
 
       <div className="flex flex-wrap items-center gap-4">
         <form className="flex max-w-sm gap-2">
-          <Input name="search" defaultValue={search} placeholder="Route veya path ara..." />
+          <Input name="search" defaultValue={search} placeholder={t("searchRoutePlaceholder")} />
           {statusMin ? <input type="hidden" name="status_min" value={statusMin} /> : null}
           {userId ? <input type="hidden" name="user_id" value={userId} /> : null}
-          <Button type="submit">Ara</Button>
+          <Button type="submit">{tc("search")}</Button>
         </form>
         <div className="flex gap-1">
           {STATUS_FILTERS.map((filter) => (
@@ -153,7 +155,7 @@ export default async function LogsPage({
         </div>
         {userId && (
           <Button render={<Link href="/logs" />} variant="ghost" size="sm">
-            Kullanıcı filtresini kaldır
+            {t("clearUserFilter")}
           </Button>
         )}
       </div>
@@ -162,19 +164,19 @@ export default async function LogsPage({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>İstek</TableHead>
-              <TableHead>Kullanıcı</TableHead>
-              <TableHead>Durum</TableHead>
-              <TableHead>Süre</TableHead>
-              <TableHead>Platform</TableHead>
-              <TableHead>Zaman</TableHead>
+              <TableHead>{t("request")}</TableHead>
+              <TableHead>{t("colUser")}</TableHead>
+              <TableHead>{tc("status")}</TableHead>
+              <TableHead>{t("duration")}</TableHead>
+              <TableHead>{t("platform")}</TableHead>
+              <TableHead>{t("time")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {logs.length === 0 && (
               <TableRow>
                 <TableCell colSpan={6} className="text-center text-muted-foreground">
-                  Sonuç bulunamadı.
+                  {tc("noResults")}
                 </TableCell>
               </TableRow>
             )}
@@ -186,7 +188,7 @@ export default async function LogsPage({
                   {(log.body || log.query_params || log.request_headers) && (
                     <details className="mt-1">
                       <summary className="cursor-pointer text-xs text-muted-foreground">
-                        İstek nasıl atıldı?
+                        {t("howWasItSent")}
                       </summary>
                       <pre className={codeBlockClass}>
                         {formatJson({
@@ -200,7 +202,7 @@ export default async function LogsPage({
                   {(log.response_headers || log.response_body) && (
                     <details className="mt-1">
                       <summary className="cursor-pointer text-xs text-muted-foreground">
-                        Ne döndü?
+                        {t("whatCameBack")}
                       </summary>
                       <pre className={codeBlockClass}>
                         {formatJson({ headers: log.response_headers })}
@@ -214,7 +216,7 @@ export default async function LogsPage({
                 <TableCell className="text-sm">
                   {log.user_id ? (
                     <Link href={`/users/${log.user_id}`} className="hover:underline">
-                      {log.user_display_name ?? log.user_email ?? "Anonim kullanıcı"}
+                      {log.user_display_name ?? log.user_email ?? t("anonymousUser")}
                     </Link>
                   ) : (
                     <span className="text-muted-foreground">—</span>
@@ -241,7 +243,7 @@ export default async function LogsPage({
       <div className="flex items-center justify-between">
         {offset === 0 ? (
           <Button variant="outline" size="sm" disabled>
-            Önceki
+            {tc("previous")}
           </Button>
         ) : (
           <Button
@@ -249,7 +251,7 @@ export default async function LogsPage({
             variant="outline"
             size="sm"
           >
-            Önceki
+            {tc("previous")}
           </Button>
         )}
         <span className="text-sm text-muted-foreground">
@@ -257,7 +259,7 @@ export default async function LogsPage({
         </span>
         {offset + PAGE_SIZE >= total ? (
           <Button variant="outline" size="sm" disabled>
-            Sonraki
+            {tc("next")}
           </Button>
         ) : (
           <Button
@@ -265,7 +267,7 @@ export default async function LogsPage({
             variant="outline"
             size="sm"
           >
-            Sonraki
+            {tc("next")}
           </Button>
         )}
       </div>

@@ -7,7 +7,10 @@ import SwiftUI
 /// option groups (e.g. onboarding's age-range picker) where a button
 /// doubles as a toggle rather than a one-shot action.
 struct GlassButton: View {
-    let title: String
+    // LocalizedStringKey, not String: Text(String) is verbatim and
+    // skips the string catalog — only Text(LocalizedStringKey) resolves
+    // through Localizable.xcstrings.
+    let title: LocalizedStringKey
     var isDisabled: Bool = false
     var isLoading: Bool = false
     var isSelected: Bool = false

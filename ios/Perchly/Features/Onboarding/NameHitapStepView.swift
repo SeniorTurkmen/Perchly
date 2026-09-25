@@ -21,7 +21,7 @@ struct NameHitapStepView: View {
                     Text("Sana nasıl seslenelim?")
                         .font(PerchlyTypography.Discover.headlineLG)
                         .foregroundStyle(PerchlyPalette.Discover.onSurface)
-                    Text("Perchmate’inin sana seçtiğin isimle hitap etmesini isteyebilirsin. Anonim devam edersen sohbette hiçbir isimle seslenilmez.")
+                    Text("Perchmate'inin sana seçtiğin isimle hitap etmesini isteyebilirsin. Anonim devam edersen sohbette hiçbir isimle seslenilmez.")
                         .font(PerchlyTypography.Discover.bodyMD)
                         .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
                 }
@@ -100,7 +100,7 @@ struct NameHitapStepView: View {
             .background(PerchlyPalette.Discover.surfaceLow, in: Capsule())
 
             if trimmedName.count > PreferredNameRules.maxLength {
-                Text("Hitap en fazla \(PreferredNameRules.maxLength) karakter olabilir.")
+                Text("Hitap en fazla \(String(PreferredNameRules.maxLength)) karakter olabilir.")
                     .font(PerchlyTypography.Discover.bodySM)
                     .foregroundStyle(PerchlyPalette.Discover.secondary)
             }

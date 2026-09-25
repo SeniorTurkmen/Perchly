@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -24,6 +25,7 @@ export default async function ConversationDetailPage({
   const { id } = await params;
   const { error } = await searchParams;
   const token = await requireSessionToken();
+  const t = await getTranslations("conversations");
 
   let detail;
   try {
@@ -44,18 +46,18 @@ export default async function ConversationDetailPage({
       )}
 
       <div>
-        <h1 className="text-2xl font-semibold">{persona.name} ile konuşma</h1>
+        <h1 className="text-2xl font-semibold">{t("conversationWith", { persona: persona.name })}</h1>
         <Link
           href={`/users/${detail.conversation.user_id}`}
           className="text-sm text-muted-foreground hover:underline"
         >
-          Kullanıcıyı görüntüle
+          {t("viewUser")}
         </Link>
       </div>
 
       <div className="space-y-3">
         {detail.messages.length === 0 && (
-          <p className="text-muted-foreground">Bu konuşmada mesaj kalmadı.</p>
+          <p className="text-muted-foreground">{t("noMessagesLeft")}</p>
         )}
         {detail.messages.map((message) => (
           <div
@@ -68,7 +70,7 @@ export default async function ConversationDetailPage({
             <div className="mb-2 flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm">
                 <Badge variant={message.role === "user" ? "secondary" : "default"}>
-                  {message.role === "user" ? "Kullanıcı" : "Persona"}
+                  {message.role === "user" ? t("userRole") : t("personaRole")}
                 </Badge>
                 {message.reaction_emoji && <span>{message.reaction_emoji}</span>}
                 <span className="text-muted-foreground">

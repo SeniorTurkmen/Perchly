@@ -1,11 +1,13 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { cn } from "@/lib/utils";
 
-export function LogsTabs({ active }: { active: "requests" | "admin" }) {
+export async function LogsTabs({ active }: { active: "requests" | "admin" }) {
+  const t = await getTranslations("logs");
   const tabs = [
-    { key: "requests", label: "Kullanıcı İstekleri", href: "/logs" },
-    { key: "admin", label: "Admin İşlemleri", href: "/logs/admin" },
+    { key: "requests", label: t("tabRequests"), href: "/logs" },
+    { key: "admin", label: t("tabAdmin"), href: "/logs/admin" },
   ] as const;
 
   return (

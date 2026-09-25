@@ -48,12 +48,12 @@ func (h *PersonaHandler) List(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("recommend") == "true" {
 		userID, ok := auth.UserIDFromContext(r.Context())
 		if !ok {
-			writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+			writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 			return
 		}
 		recommended, err := h.personas.ListWithRecommendation(r.Context(), userID)
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, ErrCodePersonasListFailed, "personas listelenemedi")
+			writeError(w, r, http.StatusInternalServerError, ErrCodePersonasListFailed, "personas listelenemedi")
 			return
 		}
 		writeJSON(w, http.StatusOK, recommended)
@@ -62,7 +62,7 @@ func (h *PersonaHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	personas, err := h.personas.List(r.Context())
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodePersonasListFailed, "personas listelenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodePersonasListFailed, "personas listelenemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, personas)
@@ -82,17 +82,17 @@ func (h *PersonaHandler) List(w http.ResponseWriter, r *http.Request) {
 func (h *PersonaHandler) Get(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
 		return
 	}
 
 	persona, err := h.personas.GetByID(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, repository.ErrPersonaNotFound) {
-			writeError(w, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
+			writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
 			return
 		}
-		writeError(w, http.StatusInternalServerError, ErrCodePersonaFetchFailed, "persona getirilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodePersonaFetchFailed, "persona getirilemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, persona)

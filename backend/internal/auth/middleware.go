@@ -27,13 +27,13 @@ func Middleware(tokens TokenVerifier) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token, ok := bearerToken(r)
 			if !ok {
-				writeUnauthorized(w)
+				writeUnauthorized(w, r)
 				return
 			}
 
 			claims, err := tokens.Verify(token)
 			if err != nil {
-				writeUnauthorized(w)
+				writeUnauthorized(w, r)
 				return
 			}
 
@@ -79,8 +79,9 @@ func bearerToken(r *http.Request) (string, bool) {
 	return token, token != ""
 }
 
-func writeUnauthorized(w http.ResponseWriter) {
+func writeUnauthorized(w http.ResponseWriter, r *http.Request) {
+	locale := apierror.LocaleFromContext(r.Context())
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusUnauthorized)
-	json.NewEncoder(w).Encode(apierror.New(apierror.CodeUnauthorized, "giriş gerekli"))
+	json.NewEncoder(w).Encode(apierror.New(apierror.CodeUnauthorized, apierror.Message(apierror.CodeUnauthorized, locale, "giriş gerekli")))
 }

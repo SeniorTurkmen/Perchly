@@ -60,14 +60,14 @@ func (h *AdminConversationHandler) List(w http.ResponseWriter, r *http.Request) 
 	}
 	if userID := q.Get("user_id"); userID != "" {
 		if _, err := uuid.Parse(userID); err != nil {
-			writeError(w, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz kullanıcı id")
+			writeError(w, r, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz kullanıcı id")
 			return
 		}
 		filter.UserID = &userID
 	}
 	if personaID := q.Get("persona_id"); personaID != "" {
 		if _, err := uuid.Parse(personaID); err != nil {
-			writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+			writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
 			return
 		}
 		filter.PersonaID = &personaID
@@ -75,7 +75,7 @@ func (h *AdminConversationHandler) List(w http.ResponseWriter, r *http.Request) 
 
 	conversations, total, err := h.list.List(r.Context(), filter)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminConversationsListFailed, "konuşmalar listelenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminConversationsListFailed, "konuşmalar listelenemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, adminConversationsListResponse{Conversations: conversations, Total: total})
@@ -86,17 +86,17 @@ func (h *AdminConversationHandler) List(w http.ResponseWriter, r *http.Request) 
 func (h *AdminConversationHandler) Get(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz konuşma id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz konuşma id")
 		return
 	}
 
 	detail, err := h.get.Get(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, repository.ErrConversationNotFound) {
-			writeError(w, http.StatusNotFound, ErrCodeConversationNotFound, "konuşma bulunamadı")
+			writeError(w, r, http.StatusNotFound, ErrCodeConversationNotFound, "konuşma bulunamadı")
 			return
 		}
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminConversationFetchFailed, "konuşma getirilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminConversationFetchFailed, "konuşma getirilemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, detail)
@@ -108,11 +108,11 @@ func (h *AdminConversationHandler) DeleteMessage(w http.ResponseWriter, r *http.
 	conversationID := chi.URLParam(r, "id")
 	messageID := chi.URLParam(r, "messageID")
 	if _, err := uuid.Parse(conversationID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz konuşma id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz konuşma id")
 		return
 	}
 	if _, err := uuid.Parse(messageID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidMessageID, "geçersiz mesaj id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidMessageID, "geçersiz mesaj id")
 		return
 	}
 
@@ -123,8 +123,8 @@ func (h *AdminConversationHandler) DeleteMessage(w http.ResponseWriter, r *http.
 	case err == nil:
 		writeJSON(w, http.StatusOK, map[string]bool{"success": true})
 	case errors.Is(err, repository.ErrMessageNotFound), errors.Is(err, service.ErrMessageNotInConversation):
-		writeError(w, http.StatusNotFound, ErrCodeMessageNotFound, "mesaj bulunamadı")
+		writeError(w, r, http.StatusNotFound, ErrCodeMessageNotFound, "mesaj bulunamadı")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminMessageDeleteFailed, "mesaj silinemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminMessageDeleteFailed, "mesaj silinemedi")
 	}
 }

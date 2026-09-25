@@ -130,6 +130,12 @@ func writeJSON(w http.ResponseWriter, status int, payload any) {
 	json.NewEncoder(w).Encode(payload)
 }
 
-func writeError(w http.ResponseWriter, status int, code ErrorCode, message string) {
-	writeJSON(w, status, apierror.New(code, message))
+// writeError writes the standard error envelope, translating message
+// via apierror.Message when the request's resolved locale (see
+// LocaleMiddleware) isn't Turkish — message itself stays the Turkish
+// text every call site has always passed, both the LocaleTR case and
+// the fallback for any locale/code with no translation yet.
+func writeError(w http.ResponseWriter, r *http.Request, status int, code ErrorCode, message string) {
+	locale := apierror.LocaleFromContext(r.Context())
+	writeJSON(w, status, apierror.New(code, apierror.Message(code, locale, message)))
 }

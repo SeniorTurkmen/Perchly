@@ -69,7 +69,7 @@ final class ChatViewModel: ObservableObject {
             let request = APIRequest(path: "/conversations", method: .post, body: body)
             let conversation: ConversationResponse = try await apiClient.send(request)
             guard conversation.personaID == persona.id else {
-                errorMessage = "konuşma beklenen persona ile eşleşmedi"
+                errorMessage = String(localized: "konuşma beklenen persona ile eşleşmedi")
                 return
             }
             conversationID = conversation.id
@@ -141,7 +141,7 @@ final class ChatViewModel: ObservableObject {
                 case "reaction":
                     setReactionEmoji(try event.decodedText(), on: userMessageID)
                 case "error":
-                    errorMessage = (try? event.decodedText()) ?? "Bilinmeyen hata"
+                    errorMessage = (try? event.decodedText()) ?? String(localized: "Bilinmeyen hata")
                 case "done":
                     if let data = event.data.data(using: .utf8),
                        let payload = try? JSONDecoder().decode(DoneEventPayload.self, from: data) {

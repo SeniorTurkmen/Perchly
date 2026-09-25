@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 import { requireSessionToken } from "@/lib/auth";
@@ -14,8 +15,8 @@ export async function setQuotaAction(userId: string, formData: FormData) {
   try {
     await adminSetQuota(token, userId, personaId, dailyLimit);
   } catch (err) {
-    const message =
-      err instanceof AdminApiError ? err.message : "Kota güncellenemedi.";
+    const t = await getTranslations("users");
+    const message = err instanceof AdminApiError ? err.message : t("errors.quotaUpdateFailed");
     redirect(`/users/${userId}?error=${encodeURIComponent(message)}`);
   }
 
@@ -29,8 +30,8 @@ export async function setCreditsAction(userId: string, formData: FormData) {
   try {
     await adminSetCredits(token, userId, amount);
   } catch (err) {
-    const message =
-      err instanceof AdminApiError ? err.message : "Kredi güncellenemedi.";
+    const t = await getTranslations("users");
+    const message = err instanceof AdminApiError ? err.message : t("errors.creditsUpdateFailed");
     redirect(`/users/${userId}?error=${encodeURIComponent(message)}`);
   }
 

@@ -25,7 +25,7 @@ func NewAdminOnboardingHandler(onboarding *service.AdminOnboardingService) *Admi
 func (h *AdminOnboardingHandler) Insights(w http.ResponseWriter, r *http.Request) {
 	insights, err := h.insights.Insights(r.Context())
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminOnboardingInsightsFailed, "onboarding analitiği getirilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminOnboardingInsightsFailed, "onboarding analitiği getirilemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, insights)

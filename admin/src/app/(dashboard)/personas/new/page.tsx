@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { requireSessionToken } from "@/lib/auth";
 import { adminListLLMCredentials, adminListLLMModels } from "@/lib/backend";
 
@@ -11,6 +13,7 @@ export default async function NewPersonaPage({
 }) {
   const { error } = await searchParams;
   const token = await requireSessionToken();
+  const t = await getTranslations("personas");
   const [models, credentials] = await Promise.all([
     adminListLLMModels(token),
     adminListLLMCredentials(token),
@@ -19,15 +22,15 @@ export default async function NewPersonaPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Yeni persona</h1>
+        <h1 className="text-2xl font-semibold">{t("newTitle")}</h1>
         <p className="text-muted-foreground">
-          Yeni bir persona oluştur — tüm alanlar zorunlu, dial değerleri 0-100.
+          {t("newSubtitle")}
         </p>
       </div>
       <PersonaForm
-        modelOptions={buildModelOptions(models, credentials)}
+        modelOptions={await buildModelOptions(models, credentials)}
         action={createPersonaAction}
-        submitLabel="Oluştur"
+        submitLabel={t("create")}
         error={error}
       />
     </div>

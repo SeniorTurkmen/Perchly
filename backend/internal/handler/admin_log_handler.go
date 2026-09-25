@@ -39,7 +39,7 @@ func (h *AdminLogHandler) List(w http.ResponseWriter, r *http.Request) {
 	var userID *string
 	if raw := q.Get("user_id"); raw != "" {
 		if _, err := uuid.Parse(raw); err != nil {
-			writeError(w, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz kullanıcı id")
+			writeError(w, r, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz kullanıcı id")
 			return
 		}
 		userID = &raw
@@ -47,7 +47,7 @@ func (h *AdminLogHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	logs, total, err := h.list.List(r.Context(), q.Get("search"), statusMin, userID, limit, offset)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLogsListFailed, "loglar listelenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLogsListFailed, "loglar listelenemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, adminLogsListResponse{Logs: logs, Total: total})

@@ -101,7 +101,7 @@ func (h *AuthHandler) CreateAnonymousSession(w http.ResponseWriter, r *http.Requ
 
 	tokens, user, err := h.anonymous.CreateAnonymousSession(r.Context(), req.DeviceID, req.Timezone)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeSessionCreateFailed, "oturum oluşturulamadı")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeSessionCreateFailed, "oturum oluşturulamadı")
 		return
 	}
 
@@ -141,7 +141,7 @@ type requestEmailCodeRequest struct {
 func (h *AuthHandler) RequestEmailCode(w http.ResponseWriter, r *http.Request) {
 	var req requestEmailCodeRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -150,9 +150,9 @@ func (h *AuthHandler) RequestEmailCode(w http.ResponseWriter, r *http.Request) {
 	case err == nil:
 		writeJSON(w, http.StatusOK, map[string]bool{"success": true})
 	case errors.Is(err, service.ErrInvalidEmail):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidEmail, "geçersiz e-posta adresi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidEmail, "geçersiz e-posta adresi")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeEmailCodeSendFailed, "kod gönderilemedi, lütfen tekrar deneyin")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeEmailCodeSendFailed, "kod gönderilemedi, lütfen tekrar deneyin")
 	}
 }
 
@@ -187,7 +187,7 @@ type verifyEmailCodeResponse struct {
 func (h *AuthHandler) VerifyEmailCode(w http.ResponseWriter, r *http.Request) {
 	var req verifyEmailCodeRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -203,15 +203,15 @@ func (h *AuthHandler) VerifyEmailCode(w http.ResponseWriter, r *http.Request) {
 			IsNewRegistration: isNew,
 		})
 	case errors.Is(err, service.ErrInvalidEmail):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidEmail, "geçersiz e-posta adresi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidEmail, "geçersiz e-posta adresi")
 	case errors.Is(err, service.ErrTooManyAttempts):
-		writeError(w, http.StatusTooManyRequests, ErrCodeTooManyAttempts, "çok fazla hatalı deneme, yeni kod isteyin")
+		writeError(w, r, http.StatusTooManyRequests, ErrCodeTooManyAttempts, "çok fazla hatalı deneme, yeni kod isteyin")
 	case errors.Is(err, service.ErrCodeExpired):
-		writeError(w, http.StatusUnauthorized, ErrCodeVerificationExpired, "kodun süresi doldu, yeni kod isteyin")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeVerificationExpired, "kodun süresi doldu, yeni kod isteyin")
 	case errors.Is(err, service.ErrInvalidCode):
-		writeError(w, http.StatusUnauthorized, ErrCodeInvalidCode, "kod geçersiz")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeInvalidCode, "kod geçersiz")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeVerificationFailed, "doğrulama başarısız oldu")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeVerificationFailed, "doğrulama başarısız oldu")
 	}
 }
 
@@ -238,13 +238,13 @@ type completeRegistrationRequest struct {
 func (h *AuthHandler) CompleteRegistration(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	var req completeRegistrationRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -253,11 +253,11 @@ func (h *AuthHandler) CompleteRegistration(w http.ResponseWriter, r *http.Reques
 	case err == nil:
 		writeJSON(w, http.StatusOK, map[string]bool{"success": true})
 	case errors.Is(err, service.ErrInvalidDisplayName):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidDisplayName, "geçersiz görünen ad")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidDisplayName, "geçersiz görünen ad")
 	case errors.Is(err, repository.ErrUserNotFound):
-		writeError(w, http.StatusNotFound, ErrCodeUserNotFound, "kullanıcı bulunamadı")
+		writeError(w, r, http.StatusNotFound, ErrCodeUserNotFound, "kullanıcı bulunamadı")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeProfileUpdateFailed, "profil güncellenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeProfileUpdateFailed, "profil güncellenemedi")
 	}
 }
 
@@ -282,7 +282,7 @@ type refreshSessionRequest struct {
 func (h *AuthHandler) RefreshSession(w http.ResponseWriter, r *http.Request) {
 	var req refreshSessionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -295,9 +295,9 @@ func (h *AuthHandler) RefreshSession(w http.ResponseWriter, r *http.Request) {
 			HasCompletedOnboarding: tokens.HasCompletedOnboarding,
 		})
 	case errors.Is(err, service.ErrInvalidRefreshToken), errors.Is(err, service.ErrRefreshTokenExpired):
-		writeError(w, http.StatusUnauthorized, ErrCodeInvalidRefreshToken, "oturum geçersiz, tekrar giriş yapın")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeInvalidRefreshToken, "oturum geçersiz, tekrar giriş yapın")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeSessionRefreshFailed, "oturum yenilenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeSessionRefreshFailed, "oturum yenilenemedi")
 	}
 }
 
@@ -320,12 +320,12 @@ type logoutRequest struct {
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	var req logoutRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
 	if err := h.logout.Logout(r.Context(), req.RefreshToken); err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeLogoutFailed, "çıkış yapılamadı")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeLogoutFailed, "çıkış yapılamadı")
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]bool{"success": true})

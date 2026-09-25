@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -8,23 +9,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function QuotasPage() {
+export default async function QuotasPage() {
+  const t = await getTranslations("quotas");
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Kota & Kredi</h1>
+      <h1 className="text-2xl font-semibold">{t("title")}</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Kullanıcı başına düzenleniyor</CardTitle>
-          <CardDescription>
-            Bir kullanıcının persona başına günlük limitini veya kredi
-            bakiyesini değiştirmek için Kullanıcılar → ilgili kullanıcının
-            detay sayfasına git. Buradaki tüm-kullanıcılar tablo görünümü
-            (toplu düzenleme) sonraki bir fazda eklenecek.
-          </CardDescription>
+          <CardTitle>{t("cardTitle")}</CardTitle>
+          <CardDescription>{t("cardDescription")}</CardDescription>
         </CardHeader>
       </Card>
       <Button render={<Link href="/users" />} variant="outline">
-        Kullanıcılara git
+        {t("goToUsers")}
       </Button>
     </div>
   );

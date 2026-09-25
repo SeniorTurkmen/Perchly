@@ -17,7 +17,7 @@ struct AgeRangeStepView: View {
         OnboardingScaffold(stepIndex: 2, stepLabel: "Yaş Seçimi", onBack: coordinator.goBack) {
             VStack(spacing: 20) {
                 VStack(spacing: 8) {
-                    Text("Sana en uygun Perchmate’i bulalım.")
+                    Text("Sana en uygun Perchmate'i bulalım.")
                         .font(PerchlyTypography.Discover.headlineLG)
                         .foregroundStyle(PerchlyPalette.Discover.onSurface)
                         .multilineTextAlignment(.center)

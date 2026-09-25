@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 import { requireSessionToken } from "@/lib/auth";
@@ -37,7 +38,7 @@ export async function createCredentialAction(formData: FormData) {
     });
   } catch (err) {
     const message =
-      err instanceof AdminApiError ? err.message : "Kimlik bilgisi oluşturulamadı.";
+      err instanceof AdminApiError ? err.message : (await getTranslations("providers"))("errors.credentialCreateFailed");
     redirect(`/providers/new?error=${encodeURIComponent(message)}`);
   }
 
@@ -60,7 +61,7 @@ export async function updateCredentialAction(credentialId: string, formData: For
     });
   } catch (err) {
     const message =
-      err instanceof AdminApiError ? err.message : "Kimlik bilgisi güncellenemedi.";
+      err instanceof AdminApiError ? err.message : (await getTranslations("providers"))("errors.credentialUpdateFailed");
     redirect(`/providers/${credentialId}?error=${encodeURIComponent(message)}`);
   }
 
@@ -76,7 +77,7 @@ export async function deleteCredentialAction(credentialId: string) {
     await adminDeleteLLMCredential(token, credentialId);
   } catch (err) {
     const message =
-      err instanceof AdminApiError ? err.message : "Kimlik bilgisi silinemedi.";
+      err instanceof AdminApiError ? err.message : (await getTranslations("providers"))("errors.credentialDeleteFailed");
     redirect(`/providers/${credentialId}?error=${encodeURIComponent(message)}`);
   }
 
@@ -96,7 +97,7 @@ export async function createModelAction(credentialId: string, formData: FormData
       is_active: formData.get("is_active") === "on",
     });
   } catch (err) {
-    const message = err instanceof AdminApiError ? err.message : "Model eklenemedi.";
+    const message = err instanceof AdminApiError ? err.message : (await getTranslations("providers"))("errors.modelCreateFailed");
     redirect(`/providers/${credentialId}?error=${encodeURIComponent(message)}`);
   }
 
@@ -118,7 +119,7 @@ export async function updateModelAction(
       is_active: formData.get("is_active") === "on",
     });
   } catch (err) {
-    const message = err instanceof AdminApiError ? err.message : "Model güncellenemedi.";
+    const message = err instanceof AdminApiError ? err.message : (await getTranslations("providers"))("errors.modelUpdateFailed");
     redirect(`/providers/${credentialId}?error=${encodeURIComponent(message)}`);
   }
 
@@ -132,7 +133,7 @@ export async function deleteModelAction(credentialId: string, modelId: string) {
   try {
     await adminDeleteLLMModel(token, modelId);
   } catch (err) {
-    const message = err instanceof AdminApiError ? err.message : "Model silinemedi.";
+    const message = err instanceof AdminApiError ? err.message : (await getTranslations("providers"))("errors.modelDeleteFailed");
     redirect(`/providers/${credentialId}?error=${encodeURIComponent(message)}`);
   }
 

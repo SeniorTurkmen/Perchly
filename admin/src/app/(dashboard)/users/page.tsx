@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { LocalDateTime } from "@/components/local-date-time";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,8 @@ export default async function UsersPage({
 }) {
   const params = await searchParams;
   const token = await requireSessionToken();
+  const t = await getTranslations("users");
+  const tc = await getTranslations("common");
 
   const search = params.search ?? "";
   const offset = Math.max(0, Number(params.offset) || 0);
@@ -44,9 +47,9 @@ export default async function UsersPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Kullanıcılar</h1>
+        <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="text-muted-foreground">
-          {total} kullanıcı — e-posta veya görünen ada göre ara.
+          {t("subtitle", { count: total })}
         </p>
       </div>
 
@@ -54,26 +57,26 @@ export default async function UsersPage({
         <Input
           name="search"
           defaultValue={search}
-          placeholder="E-posta veya ad ara..."
+          placeholder={t("searchPlaceholder")}
         />
-        <Button type="submit">Ara</Button>
+        <Button type="submit">{tc("search")}</Button>
       </form>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Kullanıcı</TableHead>
-              <TableHead>Tür</TableHead>
-              <TableHead>Oluşturulma</TableHead>
-              <TableHead className="text-right">Detay</TableHead>
+              <TableHead>{t("colUser")}</TableHead>
+              <TableHead>{t("colType")}</TableHead>
+              <TableHead>{t("colCreated")}</TableHead>
+              <TableHead className="text-right">{t("colDetail")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-center text-muted-foreground">
-                  Sonuç bulunamadı.
+                  {tc("noResults")}
                 </TableCell>
               </TableRow>
             )}
@@ -81,7 +84,7 @@ export default async function UsersPage({
               <TableRow key={user.id}>
                 <TableCell>
                   <div className="font-medium">
-                    {user.display_name ?? user.email ?? "İsimsiz kullanıcı"}
+                    {user.display_name ?? user.email ?? t("unnamedUser")}
                   </div>
                   {user.email && (
                     <div className="text-sm text-muted-foreground">{user.email}</div>
@@ -89,7 +92,7 @@ export default async function UsersPage({
                 </TableCell>
                 <TableCell>
                   <Badge variant={user.is_anonymous ? "secondary" : "default"}>
-                    {user.is_anonymous ? "Anonim" : "Kayıtlı"}
+                    {user.is_anonymous ? t("anonymous") : t("registered")}
                   </Badge>
                 </TableCell>
                 <TableCell>
@@ -101,7 +104,7 @@ export default async function UsersPage({
                     variant="ghost"
                     size="sm"
                   >
-                    Görüntüle
+                    {tc("view")}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -113,7 +116,7 @@ export default async function UsersPage({
       <div className="flex items-center justify-between">
         {offset === 0 ? (
           <Button variant="outline" size="sm" disabled>
-            Önceki
+            {tc("previous")}
           </Button>
         ) : (
           <Button
@@ -121,7 +124,7 @@ export default async function UsersPage({
             variant="outline"
             size="sm"
           >
-            Önceki
+            {tc("previous")}
           </Button>
         )}
         <span className="text-sm text-muted-foreground">
@@ -129,7 +132,7 @@ export default async function UsersPage({
         </span>
         {offset + PAGE_SIZE >= total ? (
           <Button variant="outline" size="sm" disabled>
-            Sonraki
+            {tc("next")}
           </Button>
         ) : (
           <Button
@@ -137,7 +140,7 @@ export default async function UsersPage({
             variant="outline"
             size="sm"
           >
-            Sonraki
+            {tc("next")}
           </Button>
         )}
       </div>

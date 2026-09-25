@@ -90,7 +90,7 @@ func toAdminPersonaResponse(p model.Persona) adminPersonaResponse {
 func (h *AdminPersonaHandler) List(w http.ResponseWriter, r *http.Request) {
 	personas, err := h.list.List(r.Context())
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminPersonasListFailed, "personalar listelenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminPersonasListFailed, "personalar listelenemedi")
 		return
 	}
 
@@ -106,17 +106,17 @@ func (h *AdminPersonaHandler) List(w http.ResponseWriter, r *http.Request) {
 func (h *AdminPersonaHandler) Get(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
 		return
 	}
 
 	persona, err := h.get.Get(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, repository.ErrPersonaNotFound) {
-			writeError(w, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
+			writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
 			return
 		}
-		writeError(w, http.StatusInternalServerError, ErrCodePersonaFetchFailed, "persona getirilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodePersonaFetchFailed, "persona getirilemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, toAdminPersonaResponse(persona))
@@ -175,11 +175,11 @@ func (req adminPersonaRequest) toPersona(id string) model.Persona {
 func (h *AdminPersonaHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var req adminPersonaRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 	if !validPersonaLLMModelID(req.LLMModelID) {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaLLMModelID, "geçersiz model id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaLLMModelID, "geçersiz model id")
 		return
 	}
 
@@ -190,13 +190,13 @@ func (h *AdminPersonaHandler) Create(w http.ResponseWriter, r *http.Request) {
 	case err == nil:
 		writeJSON(w, http.StatusCreated, toAdminPersonaResponse(created))
 	case errors.Is(err, service.ErrInvalidPersonaInput), errors.Is(err, model.ErrPersonaTraitOutOfRange):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaInput, "geçersiz persona girdisi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaInput, "geçersiz persona girdisi")
 	case errors.Is(err, service.ErrPersonaLLMModelNotFound):
-		writeError(w, http.StatusBadRequest, ErrCodePersonaLLMModelNotFound, "seçilen model bulunamadı")
+		writeError(w, r, http.StatusBadRequest, ErrCodePersonaLLMModelNotFound, "seçilen model bulunamadı")
 	case errors.Is(err, service.ErrPersonaLLMModelInactive):
-		writeError(w, http.StatusBadRequest, ErrCodePersonaLLMModelInactive, "seçilen model veya kimlik bilgisi pasif durumda")
+		writeError(w, r, http.StatusBadRequest, ErrCodePersonaLLMModelInactive, "seçilen model veya kimlik bilgisi pasif durumda")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminPersonaCreateFailed, "persona oluşturulamadı")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminPersonaCreateFailed, "persona oluşturulamadı")
 	}
 }
 
@@ -217,17 +217,17 @@ func validPersonaLLMModelID(id *string) bool {
 func (h *AdminPersonaHandler) Update(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
 		return
 	}
 
 	var req adminPersonaRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 	if !validPersonaLLMModelID(req.LLMModelID) {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaLLMModelID, "geçersiz model id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaLLMModelID, "geçersiz model id")
 		return
 	}
 
@@ -238,14 +238,14 @@ func (h *AdminPersonaHandler) Update(w http.ResponseWriter, r *http.Request) {
 	case err == nil:
 		writeJSON(w, http.StatusOK, toAdminPersonaResponse(updated))
 	case errors.Is(err, service.ErrInvalidPersonaInput), errors.Is(err, model.ErrPersonaTraitOutOfRange):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaInput, "geçersiz persona girdisi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaInput, "geçersiz persona girdisi")
 	case errors.Is(err, service.ErrPersonaLLMModelNotFound):
-		writeError(w, http.StatusBadRequest, ErrCodePersonaLLMModelNotFound, "seçilen model bulunamadı")
+		writeError(w, r, http.StatusBadRequest, ErrCodePersonaLLMModelNotFound, "seçilen model bulunamadı")
 	case errors.Is(err, service.ErrPersonaLLMModelInactive):
-		writeError(w, http.StatusBadRequest, ErrCodePersonaLLMModelInactive, "seçilen model veya kimlik bilgisi pasif durumda")
+		writeError(w, r, http.StatusBadRequest, ErrCodePersonaLLMModelInactive, "seçilen model veya kimlik bilgisi pasif durumda")
 	case errors.Is(err, repository.ErrPersonaNotFound):
-		writeError(w, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
+		writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminPersonaUpdateFailed, "persona güncellenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminPersonaUpdateFailed, "persona güncellenemedi")
 	}
 }

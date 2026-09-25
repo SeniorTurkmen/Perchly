@@ -56,18 +56,18 @@ type saveOnboardingProfileRequest struct {
 func (h *OnboardingHandler) SaveProfile(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	var req saveOnboardingProfileRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 	if req.SelectedPersonaID != nil {
 		if _, err := uuid.Parse(*req.SelectedPersonaID); err != nil {
-			writeError(w, http.StatusBadRequest, ErrCodeInvalidSelectedPersonaID, "geçersiz selected_persona_id")
+			writeError(w, r, http.StatusBadRequest, ErrCodeInvalidSelectedPersonaID, "geçersiz selected_persona_id")
 			return
 		}
 	}
@@ -85,15 +85,15 @@ func (h *OnboardingHandler) SaveProfile(w http.ResponseWriter, r *http.Request) 
 	case err == nil:
 		writeJSON(w, http.StatusOK, saved)
 	case errors.Is(err, service.ErrInvalidAgeRange):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidAgeRange, "geçersiz yaş aralığı")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidAgeRange, "geçersiz yaş aralığı")
 	case errors.Is(err, service.ErrInvalidMoodPreference):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidMoodPreference, "geçersiz mod tercihi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidMoodPreference, "geçersiz mod tercihi")
 	case errors.Is(err, service.ErrPreferredNameRequired):
-		writeError(w, http.StatusBadRequest, ErrCodePreferredNameRequired, "preferred_name gerekli veya skip_hitap=true gönderin")
+		writeError(w, r, http.StatusBadRequest, ErrCodePreferredNameRequired, "preferred_name gerekli veya skip_hitap=true gönderin")
 	case errors.Is(err, service.ErrPreferredNameInvalid):
-		writeError(w, http.StatusBadRequest, ErrCodePreferredNameInvalid, "preferred_name 1-40 karakter olmalı ve kontrol karakteri içermemeli")
+		writeError(w, r, http.StatusBadRequest, ErrCodePreferredNameInvalid, "preferred_name 1-40 karakter olmalı ve kontrol karakteri içermemeli")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeOnboardingSaveFailed, "profil kaydedilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeOnboardingSaveFailed, "profil kaydedilemedi")
 	}
 }
 
@@ -111,17 +111,17 @@ func (h *OnboardingHandler) SaveProfile(w http.ResponseWriter, r *http.Request) 
 func (h *OnboardingHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	profile, err := h.profiles.GetByUserID(r.Context(), userID)
 	if err != nil {
 		if errors.Is(err, repository.ErrOnboardingProfileNotFound) {
-			writeError(w, http.StatusNotFound, ErrCodeOnboardingProfileNotFound, "onboarding profili bulunamadı")
+			writeError(w, r, http.StatusNotFound, ErrCodeOnboardingProfileNotFound, "onboarding profili bulunamadı")
 			return
 		}
-		writeError(w, http.StatusInternalServerError, ErrCodeOnboardingFetchFailed, "profil getirilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeOnboardingFetchFailed, "profil getirilemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, profile)

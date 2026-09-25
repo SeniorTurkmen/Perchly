@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 import { requireSessionToken } from "@/lib/auth";
@@ -12,7 +13,8 @@ export async function deleteMessageAction(conversationId: string, messageId: str
   try {
     await adminDeleteMessage(token, conversationId, messageId);
   } catch (err) {
-    const message = err instanceof AdminApiError ? err.message : "Mesaj silinemedi.";
+    const t = await getTranslations("conversations");
+    const message = err instanceof AdminApiError ? err.message : t("errors.messageDeleteFailed");
     redirect(`/conversations/${conversationId}?error=${encodeURIComponent(message)}`);
   }
 

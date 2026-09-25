@@ -69,10 +69,10 @@ struct PersonaCategoryStyle: Equatable {
         case "daily_companion":
             PersonaCategoryStyle(
                 id: category,
-                filterTitle: "Günlük Sohbet",
-                badgeTitle: "Günlük Sohbet",
-                roleTitle: "Sohbet Arkadaşı",
-                skillTitle: "Yargılamadan dinler",
+                filterTitle: String(localized: "Günlük Sohbet"),
+                badgeTitle: String(localized: "Günlük Sohbet"),
+                roleTitle: String(localized: "Sohbet Arkadaşı"),
+                skillTitle: String(localized: "Yargılamadan dinler"),
                 skillSymbol: "bubble.left.fill",
                 accent: PerchlyPalette.Discover.primary,
                 glow: PerchlyPalette.Discover.primaryFixedDim.opacity(0.4),
@@ -86,10 +86,10 @@ struct PersonaCategoryStyle: Equatable {
         case "motivational_coach":
             PersonaCategoryStyle(
                 id: category,
-                filterTitle: "Motivasyon & Koç",
-                badgeTitle: "Motivasyon & Koç",
-                roleTitle: "Motivasyon Koçu",
-                skillTitle: "Küçük adımlar, somut öneriler",
+                filterTitle: String(localized: "Motivasyon & Koç"),
+                badgeTitle: String(localized: "Motivasyon & Koç"),
+                roleTitle: String(localized: "Motivasyon Koçu"),
+                skillTitle: String(localized: "Küçük adımlar, somut öneriler"),
                 skillSymbol: "flag.fill",
                 accent: PerchlyPalette.Discover.tertiary,
                 glow: PerchlyPalette.Discover.tertiaryFixed.opacity(0.5),
@@ -103,10 +103,10 @@ struct PersonaCategoryStyle: Equatable {
         case "hobby_book_club":
             PersonaCategoryStyle(
                 id: category,
-                filterTitle: "Hobi & Kitap",
-                badgeTitle: "Hobi & Kitap",
-                roleTitle: "Kitap & Hobi Partneri",
-                skillTitle: "Kitap, film ve hobiler",
+                filterTitle: String(localized: "Hobi & Kitap"),
+                badgeTitle: String(localized: "Hobi & Kitap"),
+                roleTitle: String(localized: "Kitap & Hobi Partneri"),
+                skillTitle: String(localized: "Kitap, film ve hobiler"),
                 skillSymbol: "book.fill",
                 accent: PerchlyPalette.Discover.onSurfaceVariant,
                 glow: PerchlyPalette.Discover.surfaceContainerHigh.opacity(0.7),
@@ -120,10 +120,10 @@ struct PersonaCategoryStyle: Equatable {
         default:
             PersonaCategoryStyle(
                 id: category,
-                filterTitle: "Duygusal Destek",
-                badgeTitle: "Duygusal Destek",
-                roleTitle: "Samimi Dinleyici",
-                skillTitle: "Empatik & Derin Dinleme",
+                filterTitle: String(localized: "Duygusal Destek"),
+                badgeTitle: String(localized: "Duygusal Destek"),
+                roleTitle: String(localized: "Samimi Dinleyici"),
+                skillTitle: String(localized: "Empatik & Derin Dinleme"),
                 skillSymbol: "brain.head.profile",
                 accent: PerchlyPalette.Discover.secondary,
                 glow: PerchlyPalette.Discover.secondaryFixedDim.opacity(0.45),
@@ -152,27 +152,27 @@ extension Persona {
         switch category {
         case "motivational_coach":
             [
-                ("Bir hedefe odaklanmak istiyorum", "flag.fill"),
-                ("Bugün küçük bir adım atmak istiyorum", "figure.walk"),
-                ("Biraz cesaretlendirilmeye ihtiyacım var", "sparkles"),
+                (String(localized: "Bir hedefe odaklanmak istiyorum"), "flag.fill"),
+                (String(localized: "Bugün küçük bir adım atmak istiyorum"), "figure.walk"),
+                (String(localized: "Biraz cesaretlendirilmeye ihtiyacım var"), "sparkles"),
             ]
         case "daily_companion":
             [
-                ("Günümü anlatmak istiyorum", "text.bubble"),
-                ("Sadece sohbet etmek istiyorum", "cup.and.saucer.fill"),
-                ("Biraz dinlenmek istiyorum", "leaf"),
+                (String(localized: "Günümü anlatmak istiyorum"), "text.bubble"),
+                (String(localized: "Sadece sohbet etmek istiyorum"), "cup.and.saucer.fill"),
+                (String(localized: "Biraz dinlenmek istiyorum"), "leaf"),
             ]
         case "hobby_book_club":
             [
-                ("Bir kitaptan bahsetmek istiyorum", "book.fill"),
-                ("Film veya dizi konuşalım", "film"),
-                ("Hobimden konuşalım", "paintpalette.fill"),
+                (String(localized: "Bir kitaptan bahsetmek istiyorum"), "book.fill"),
+                (String(localized: "Film veya dizi konuşalım"), "film"),
+                (String(localized: "Hobimden konuşalım"), "paintpalette.fill"),
             ]
         default:
             [
-                ("Biraz anlatayım...", "square.and.pencil"),
-                ("Sadece sohbet etmek istiyorum", "bubble.left"),
-                ("Tavsiye değil, dinlenmek istiyorum", "leaf"),
+                (String(localized: "Biraz anlatayım..."), "square.and.pencil"),
+                (String(localized: "Sadece sohbet etmek istiyorum"), "bubble.left"),
+                (String(localized: "Tavsiye değil, dinlenmek istiyorum"), "leaf"),
             ]
         }
     }
@@ -180,11 +180,11 @@ extension Persona {
     var listeningCue: String {
         switch category {
         case "motivational_coach":
-            "\(name) bir sonraki adımı düşünüyor..."
+            String(localized: "\(name) bir sonraki adımı düşünüyor...")
         case "hobby_book_club":
-            "\(name) ne diyeceğini düşünüyor..."
+            String(localized: "\(name) ne diyeceğini düşünüyor...")
         default:
-            "\(name) dinliyor..."
+            String(localized: "\(name) dinliyor...")
         }
     }
 
@@ -194,31 +194,31 @@ extension Persona {
         switch category {
         case "motivational_coach":
             [
-                ("Somut küçük adımlar", "flag.fill", PerchlyPalette.Discover.tertiary),
-                ("Cesaretlendirici", "sparkles", PerchlyPalette.Discover.primary),
-                ("Disiplinli ama sıcak", "flame.fill", PerchlyPalette.Discover.secondary),
-                ("Gizlilik Öncelikli", "lock.fill", PerchlyPalette.Discover.primary),
+                (String(localized: "Somut küçük adımlar"), "flag.fill", PerchlyPalette.Discover.tertiary),
+                (String(localized: "Cesaretlendirici"), "sparkles", PerchlyPalette.Discover.primary),
+                (String(localized: "Disiplinli ama sıcak"), "flame.fill", PerchlyPalette.Discover.secondary),
+                (String(localized: "Gizlilik Öncelikli"), "lock.fill", PerchlyPalette.Discover.primary),
             ]
         case "hobby_book_club":
             [
-                ("Meraklı sorular", "questionmark.circle.fill", PerchlyPalette.Discover.secondary),
-                ("Kitap & film", "book.fill", PerchlyPalette.Discover.primary),
-                ("Alçakgönüllü öneriler", "leaf.fill", PerchlyPalette.Discover.tertiary),
-                ("Gizlilik Öncelikli", "lock.fill", PerchlyPalette.Discover.primary),
+                (String(localized: "Meraklı sorular"), "questionmark.circle.fill", PerchlyPalette.Discover.secondary),
+                (String(localized: "Kitap & film"), "book.fill", PerchlyPalette.Discover.primary),
+                (String(localized: "Alçakgönüllü öneriler"), "leaf.fill", PerchlyPalette.Discover.tertiary),
+                (String(localized: "Gizlilik Öncelikli"), "lock.fill", PerchlyPalette.Discover.primary),
             ]
         case "daily_companion":
             [
-                ("Aktif dinleme", "ear.fill", PerchlyPalette.Discover.secondary),
-                ("Yargılamadan eşlik", "heart.fill", PerchlyPalette.Discover.primary),
-                ("Gündelik dil", "text.bubble.fill", PerchlyPalette.Discover.tertiary),
-                ("Gizlilik Öncelikli", "lock.fill", PerchlyPalette.Discover.primary),
+                (String(localized: "Aktif dinleme"), "ear.fill", PerchlyPalette.Discover.secondary),
+                (String(localized: "Yargılamadan eşlik"), "heart.fill", PerchlyPalette.Discover.primary),
+                (String(localized: "Gündelik dil"), "text.bubble.fill", PerchlyPalette.Discover.tertiary),
+                (String(localized: "Gizlilik Öncelikli"), "lock.fill", PerchlyPalette.Discover.primary),
             ]
         default:
             [
-                ("Empatik dinleme", "ear.fill", PerchlyPalette.Discover.secondary),
-                ("Tavsiye vermeden eşlik", "brain.head.profile", PerchlyPalette.Discover.primary),
-                ("Düşük enerjili günler", "bolt.fill", PerchlyPalette.Discover.tertiary),
-                ("Gizlilik Öncelikli", "lock.fill", PerchlyPalette.Discover.primary),
+                (String(localized: "Empatik dinleme"), "ear.fill", PerchlyPalette.Discover.secondary),
+                (String(localized: "Tavsiye vermeden eşlik"), "brain.head.profile", PerchlyPalette.Discover.primary),
+                (String(localized: "Düşük enerjili günler"), "bolt.fill", PerchlyPalette.Discover.tertiary),
+                (String(localized: "Gizlilik Öncelikli"), "lock.fill", PerchlyPalette.Discover.primary),
             ]
         }
     }
@@ -226,22 +226,22 @@ extension Persona {
     var detailAtmosphereLine: String {
         switch category {
         case "motivational_coach":
-            "Küçük bir adım atmak için hazır."
+            String(localized: "Küçük bir adım atmak için hazır.")
         case "hobby_book_club":
-            "Kitap, film ve hobiler için hazır."
+            String(localized: "Kitap, film ve hobiler için hazır.")
         default:
-            "Sakin bir sohbet molası için hazır."
+            String(localized: "Sakin bir sohbet molası için hazır.")
         }
     }
 
     var detailZeroJudgmentLine: String {
         switch category {
         case "motivational_coach":
-            "Küçük adımları kutlar, asla küçümsemez."
+            String(localized: "Küçük adımları kutlar, asla küçümsemez.")
         case "hobby_book_club":
-            "Dayatmadan önerir, meraklı kalır."
+            String(localized: "Dayatmadan önerir, meraklı kalır.")
         default:
-            "Yargılamadan, olduğun gibi dinler."
+            String(localized: "Yargılamadan, olduğun gibi dinler.")
         }
     }
 }

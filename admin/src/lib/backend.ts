@@ -1,4 +1,5 @@
 import { BACKEND_URL } from "@/lib/config";
+import { getLocale } from "@/lib/locale";
 
 // Thrown for any non-2xx response from the backend admin API, carrying
 // the {error, code} envelope every perchly-backend endpoint returns
@@ -50,7 +51,10 @@ export async function adminLogin(
 ): Promise<AdminSession> {
   const res = await fetch(`${BACKEND_URL}/admin/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Accept-Language": await getLocale(),
+    },
     body: JSON.stringify({ email, password }),
     cache: "no-store",
   });
@@ -82,6 +86,7 @@ async function authedFetch<T>(
     headers: {
       ...init?.headers,
       Authorization: `Bearer ${sessionToken}`,
+      "Accept-Language": await getLocale(),
     },
     cache: "no-store",
   });

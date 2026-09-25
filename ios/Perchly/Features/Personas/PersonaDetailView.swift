@@ -260,14 +260,14 @@ struct PersonaDetailView: View {
         .task { await traitsViewModel.loadIfNeeded() }
     }
 
-    private func traitSlider(key: String, title: String, systemImage: String, value: Binding<Int>) -> some View {
+    private func traitSlider(key: String, title: LocalizedStringKey, systemImage: String, value: Binding<Int>) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Label(title, systemImage: systemImage)
                     .font(PerchlyTypography.Discover.labelMD)
                     .foregroundStyle(PerchlyPalette.Discover.onSurface)
                 Spacer()
-                Text("%\(value.wrappedValue)")
+                Text(verbatim: "%\(value.wrappedValue)")
                     .font(PerchlyTypography.Discover.labelMD.weight(.semibold))
                     .foregroundStyle(persona.accent)
                     .monospacedDigit()
@@ -298,7 +298,7 @@ struct PersonaDetailView: View {
                     .font(PerchlyTypography.Discover.labelLG)
                     .foregroundStyle(PerchlyPalette.Discover.onSurface)
                 Spacer()
-                Text("\(persona.detailTraits.count) Aktif Nitelik")
+                Text("\(String(persona.detailTraits.count)) Aktif Nitelik")
                     .font(PerchlyTypography.Discover.labelSM)
                     .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
             }
@@ -346,7 +346,7 @@ struct PersonaDetailView: View {
                 symbol: "sparkles",
                 tint: PerchlyPalette.Discover.primary,
                 title: "Sohbet kaydı",
-                body: "Aynı konuşmada kaldığın sürece mesajların burada durur."
+                body: String(localized: "Aynı konuşmada kaldığın sürece mesajların burada durur.")
             )
             privacyCard(
                 symbol: "moon.stars.fill",
@@ -357,7 +357,7 @@ struct PersonaDetailView: View {
         }
     }
 
-    private func privacyCard(symbol: String, tint: Color, title: String, body: String) -> some View {
+    private func privacyCard(symbol: String, tint: Color, title: LocalizedStringKey, body: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Image(systemName: symbol)
                 .font(.system(size: 16))

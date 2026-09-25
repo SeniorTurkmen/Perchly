@@ -60,7 +60,7 @@ type adminLoginRequest struct {
 func (h *AdminAuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var req adminLoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -73,9 +73,9 @@ func (h *AdminAuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 			Admin:        adminMeResponse{ID: admin.ID, Email: admin.Email},
 		})
 	case errors.Is(err, service.ErrInvalidAdminCredentials):
-		writeError(w, http.StatusUnauthorized, ErrCodeAdminInvalidCredentials, "e-posta veya şifre hatalı")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeAdminInvalidCredentials, "e-posta veya şifre hatalı")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLoginFailed, "giriş yapılamadı")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLoginFailed, "giriş yapılamadı")
 	}
 }
 
@@ -88,12 +88,12 @@ type adminLogoutRequest struct {
 func (h *AdminAuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	var req adminLogoutRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
 	if err := h.logout.Logout(r.Context(), req.SessionToken); err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLogoutFailed, "çıkış yapılamadı")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLogoutFailed, "çıkış yapılamadı")
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]bool{"success": true})
@@ -108,13 +108,13 @@ func (h *AdminAuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 func (h *AdminAuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	adminUserID, ok := auth.AdminUserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeAdminUnauthorized, "admin girişi gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeAdminUnauthorized, "admin girişi gerekli")
 		return
 	}
 
 	admin, err := h.get.CurrentAdmin(r.Context(), adminUserID)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminMeFailed, "admin bilgisi alınamadı")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminMeFailed, "admin bilgisi alınamadı")
 		return
 	}
 

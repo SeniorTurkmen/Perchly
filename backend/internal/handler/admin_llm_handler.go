@@ -128,7 +128,7 @@ func toAdminLLMModelResponse(m model.LLMModel) adminLLMModelResponse {
 func (h *AdminLLMHandler) ListCredentials(w http.ResponseWriter, r *http.Request) {
 	credentials, err := h.listCredentials.ListCredentials(r.Context())
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLLMCredentialsListFailed, "sağlayıcı kimlik bilgileri listelenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLLMCredentialsListFailed, "sağlayıcı kimlik bilgileri listelenemedi")
 		return
 	}
 
@@ -144,17 +144,17 @@ func (h *AdminLLMHandler) ListCredentials(w http.ResponseWriter, r *http.Request
 func (h *AdminLLMHandler) GetCredential(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeLLMCredentialNotFound, "geçersiz kimlik bilgisi id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeLLMCredentialNotFound, "geçersiz kimlik bilgisi id")
 		return
 	}
 
 	credential, err := h.getCredential.GetCredential(r.Context(), id)
 	if err != nil {
 		if errors.Is(err, repository.ErrLLMCredentialNotFound) {
-			writeError(w, http.StatusNotFound, ErrCodeLLMCredentialNotFound, "kimlik bilgisi bulunamadı")
+			writeError(w, r, http.StatusNotFound, ErrCodeLLMCredentialNotFound, "kimlik bilgisi bulunamadı")
 			return
 		}
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLLMCredentialFetchFailed, "kimlik bilgisi getirilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLLMCredentialFetchFailed, "kimlik bilgisi getirilemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, toAdminLLMCredentialResponse(credential))
@@ -173,7 +173,7 @@ type adminCreateLLMCredentialRequest struct {
 func (h *AdminLLMHandler) CreateCredential(w http.ResponseWriter, r *http.Request) {
 	var req adminCreateLLMCredentialRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -186,9 +186,9 @@ func (h *AdminLLMHandler) CreateCredential(w http.ResponseWriter, r *http.Reques
 	case err == nil:
 		writeJSON(w, http.StatusCreated, toAdminLLMCredentialResponse(created))
 	case errors.Is(err, service.ErrInvalidLLMCredentialInput):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidLLMCredentialInput, "geçersiz kimlik bilgisi girdisi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidLLMCredentialInput, "geçersiz kimlik bilgisi girdisi")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLLMCredentialCreateFailed, "kimlik bilgisi oluşturulamadı")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLLMCredentialCreateFailed, "kimlik bilgisi oluşturulamadı")
 	}
 }
 
@@ -204,13 +204,13 @@ type adminUpdateLLMCredentialRequest struct {
 func (h *AdminLLMHandler) UpdateCredential(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeLLMCredentialNotFound, "geçersiz kimlik bilgisi id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeLLMCredentialNotFound, "geçersiz kimlik bilgisi id")
 		return
 	}
 
 	var req adminUpdateLLMCredentialRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -223,11 +223,11 @@ func (h *AdminLLMHandler) UpdateCredential(w http.ResponseWriter, r *http.Reques
 	case err == nil:
 		writeJSON(w, http.StatusOK, toAdminLLMCredentialResponse(updated))
 	case errors.Is(err, service.ErrInvalidLLMCredentialInput):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidLLMCredentialInput, "geçersiz kimlik bilgisi girdisi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidLLMCredentialInput, "geçersiz kimlik bilgisi girdisi")
 	case errors.Is(err, repository.ErrLLMCredentialNotFound):
-		writeError(w, http.StatusNotFound, ErrCodeLLMCredentialNotFound, "kimlik bilgisi bulunamadı")
+		writeError(w, r, http.StatusNotFound, ErrCodeLLMCredentialNotFound, "kimlik bilgisi bulunamadı")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLLMCredentialUpdateFailed, "kimlik bilgisi güncellenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLLMCredentialUpdateFailed, "kimlik bilgisi güncellenemedi")
 	}
 }
 
@@ -236,7 +236,7 @@ func (h *AdminLLMHandler) UpdateCredential(w http.ResponseWriter, r *http.Reques
 func (h *AdminLLMHandler) DeleteCredential(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeLLMCredentialNotFound, "geçersiz kimlik bilgisi id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeLLMCredentialNotFound, "geçersiz kimlik bilgisi id")
 		return
 	}
 
@@ -247,11 +247,11 @@ func (h *AdminLLMHandler) DeleteCredential(w http.ResponseWriter, r *http.Reques
 	case err == nil:
 		writeJSON(w, http.StatusOK, map[string]bool{"success": true})
 	case errors.Is(err, repository.ErrLLMCredentialNotFound):
-		writeError(w, http.StatusNotFound, ErrCodeLLMCredentialNotFound, "kimlik bilgisi bulunamadı")
+		writeError(w, r, http.StatusNotFound, ErrCodeLLMCredentialNotFound, "kimlik bilgisi bulunamadı")
 	case errors.Is(err, repository.ErrLLMCredentialInUse):
-		writeError(w, http.StatusConflict, ErrCodeLLMCredentialInUse, "önce bu kimlik bilgisine bağlı modelleri silin")
+		writeError(w, r, http.StatusConflict, ErrCodeLLMCredentialInUse, "önce bu kimlik bilgisine bağlı modelleri silin")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLLMCredentialDeleteFailed, "kimlik bilgisi silinemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLLMCredentialDeleteFailed, "kimlik bilgisi silinemedi")
 	}
 }
 
@@ -261,7 +261,7 @@ func (h *AdminLLMHandler) ListModels(w http.ResponseWriter, r *http.Request) {
 	var credentialID *string
 	if v := r.URL.Query().Get("credential_id"); v != "" {
 		if _, err := uuid.Parse(v); err != nil {
-			writeError(w, http.StatusBadRequest, ErrCodeLLMCredentialNotFound, "geçersiz kimlik bilgisi id")
+			writeError(w, r, http.StatusBadRequest, ErrCodeLLMCredentialNotFound, "geçersiz kimlik bilgisi id")
 			return
 		}
 		credentialID = &v
@@ -269,7 +269,7 @@ func (h *AdminLLMHandler) ListModels(w http.ResponseWriter, r *http.Request) {
 
 	models, err := h.listModels.ListModels(r.Context(), credentialID)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLLMModelsListFailed, "modeller listelenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLLMModelsListFailed, "modeller listelenemedi")
 		return
 	}
 
@@ -293,11 +293,11 @@ type adminCreateLLMModelRequest struct {
 func (h *AdminLLMHandler) CreateModel(w http.ResponseWriter, r *http.Request) {
 	var req adminCreateLLMModelRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 	if _, err := uuid.Parse(req.CredentialID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeLLMCredentialNotFound, "geçersiz kimlik bilgisi id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeLLMCredentialNotFound, "geçersiz kimlik bilgisi id")
 		return
 	}
 
@@ -311,13 +311,13 @@ func (h *AdminLLMHandler) CreateModel(w http.ResponseWriter, r *http.Request) {
 	case err == nil:
 		writeJSON(w, http.StatusCreated, toAdminLLMModelResponse(created))
 	case errors.Is(err, service.ErrInvalidLLMModelInput):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidLLMModelInput, "geçersiz model girdisi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidLLMModelInput, "geçersiz model girdisi")
 	case errors.Is(err, repository.ErrLLMCredentialNotFound):
-		writeError(w, http.StatusNotFound, ErrCodeLLMCredentialNotFound, "kimlik bilgisi bulunamadı")
+		writeError(w, r, http.StatusNotFound, ErrCodeLLMCredentialNotFound, "kimlik bilgisi bulunamadı")
 	case errors.Is(err, service.ErrLLMCredentialInactive):
-		writeError(w, http.StatusBadRequest, ErrCodeLLMCredentialInactive, "kimlik bilgisi pasif durumda")
+		writeError(w, r, http.StatusBadRequest, ErrCodeLLMCredentialInactive, "kimlik bilgisi pasif durumda")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLLMModelCreateFailed, "model oluşturulamadı")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLLMModelCreateFailed, "model oluşturulamadı")
 	}
 }
 
@@ -332,13 +332,13 @@ type adminUpdateLLMModelRequest struct {
 func (h *AdminLLMHandler) UpdateModel(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeLLMModelNotFound, "geçersiz model id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeLLMModelNotFound, "geçersiz model id")
 		return
 	}
 
 	var req adminUpdateLLMModelRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 
@@ -351,11 +351,11 @@ func (h *AdminLLMHandler) UpdateModel(w http.ResponseWriter, r *http.Request) {
 	case err == nil:
 		writeJSON(w, http.StatusOK, toAdminLLMModelResponse(updated))
 	case errors.Is(err, service.ErrInvalidLLMModelInput):
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidLLMModelInput, "geçersiz model girdisi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidLLMModelInput, "geçersiz model girdisi")
 	case errors.Is(err, repository.ErrLLMModelNotFound):
-		writeError(w, http.StatusNotFound, ErrCodeLLMModelNotFound, "model bulunamadı")
+		writeError(w, r, http.StatusNotFound, ErrCodeLLMModelNotFound, "model bulunamadı")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLLMModelUpdateFailed, "model güncellenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLLMModelUpdateFailed, "model güncellenemedi")
 	}
 }
 
@@ -364,7 +364,7 @@ func (h *AdminLLMHandler) UpdateModel(w http.ResponseWriter, r *http.Request) {
 func (h *AdminLLMHandler) DeleteModel(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(id); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeLLMModelNotFound, "geçersiz model id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeLLMModelNotFound, "geçersiz model id")
 		return
 	}
 
@@ -375,8 +375,8 @@ func (h *AdminLLMHandler) DeleteModel(w http.ResponseWriter, r *http.Request) {
 	case err == nil:
 		writeJSON(w, http.StatusOK, map[string]bool{"success": true})
 	case errors.Is(err, repository.ErrLLMModelNotFound):
-		writeError(w, http.StatusNotFound, ErrCodeLLMModelNotFound, "model bulunamadı")
+		writeError(w, r, http.StatusNotFound, ErrCodeLLMModelNotFound, "model bulunamadı")
 	default:
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminLLMModelDeleteFailed, "model silinemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminLLMModelDeleteFailed, "model silinemedi")
 	}
 }

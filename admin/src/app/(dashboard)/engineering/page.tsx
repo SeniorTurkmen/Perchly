@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { LocalDateTime } from "@/components/local-date-time";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -20,28 +22,29 @@ import {
 } from "@/lib/github";
 
 async function BackendHealthCard() {
+  const t = await getTranslations("engineering");
   let health: { status: string; database: string } | null = null;
   let error: string | null = null;
   try {
     health = await checkBackendHealth();
   } catch {
-    error = "Backend'e ulaşılamadı.";
+    error = t("backendUnreachable");
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Backend durumu</CardTitle>
+        <CardTitle>{t("backendStatus")}</CardTitle>
       </CardHeader>
       <CardContent className="flex items-center gap-2 text-sm">
         {health ? (
           <>
-            <Badge>Ayakta</Badge>
+            <Badge>{t("up")}</Badge>
             <span className="text-muted-foreground">database: {health.database}</span>
           </>
         ) : (
           <>
-            <Badge variant="destructive">Erişilemiyor</Badge>
+            <Badge variant="destructive">{t("unreachable")}</Badge>
             <span className="text-muted-foreground">{error}</span>
           </>
         )}
@@ -51,21 +54,25 @@ async function BackendHealthCard() {
 }
 
 export default async function EngineeringPage() {
+  const t = await getTranslations("engineering");
+
   if (!isGitHubConfigured) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold">Mühendislik</h1>
-          <p className="text-muted-foreground">GitHub issue/PR&apos;ları ve backend durumu.</p>
+          <h1 className="text-2xl font-semibold">{t("title")}</h1>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <BackendHealthCard />
         <Card>
           <CardHeader>
-            <CardTitle>GitHub bağlı değil</CardTitle>
+            <CardTitle>{t("githubNotConnected")}</CardTitle>
             <CardDescription>
-              admin/.env.local dosyasına <code>GITHUB_TOKEN</code> (repo&apos;ya en az okuma
-              erişimi olan bir personal access token) ve <code>GITHUB_REPO</code> (örn.{" "}
-              <code>SeniorTurkmen/Perchly</code>) ekleyip admin panelini yeniden başlat.
+              {t.rich("githubSetupHint", {
+                token: () => <code>GITHUB_TOKEN</code>,
+                repo: () => <code>GITHUB_REPO</code>,
+                example: () => <code>SeniorTurkmen/Perchly</code>,
+              })}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -85,13 +92,13 @@ export default async function EngineeringPage() {
       listRecentPullRequests(),
     ]);
   } catch (err) {
-    githubError = err instanceof GitHubApiError ? err.message : "GitHub'dan veri alınamadı.";
+    githubError = err instanceof GitHubApiError ? err.message : t("githubFetchFailed");
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Mühendislik</h1>
+        <h1 className="text-2xl font-semibold">{t("title")}</h1>
         {repo && (
           <p className="text-muted-foreground">
             <a
@@ -102,7 +109,7 @@ export default async function EngineeringPage() {
             >
               {repo.full_name}
             </a>{" "}
-            — {repo.open_issues_count} açık issue/PR · varsayılan dal: {repo.default_branch}
+            — {t("repoSummary", { count: repo.open_issues_count, branch: repo.default_branch })}
           </p>
         )}
       </div>
@@ -112,7 +119,7 @@ export default async function EngineeringPage() {
       {githubError && (
         <Card>
           <CardHeader>
-            <CardTitle>GitHub&apos;a ulaşılamadı</CardTitle>
+            <CardTitle>{t("githubUnreachable")}</CardTitle>
             <CardDescription>{githubError}</CardDescription>
           </CardHeader>
         </Card>
@@ -121,12 +128,12 @@ export default async function EngineeringPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Açık issue&apos;lar</CardTitle>
-            <CardDescription>{issues.length} açık issue.</CardDescription>
+            <CardTitle>{t("openIssues")}</CardTitle>
+            <CardDescription>{t("openIssuesCount", { count: issues.length })}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {issues.length === 0 && (
-              <p className="text-sm text-muted-foreground">Açık issue yok.</p>
+              <p className="text-sm text-muted-foreground">{t("noOpenIssues")}</p>
             )}
             {issues.map((issue) => (
               <a
@@ -164,12 +171,12 @@ export default async function EngineeringPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Son pull request&apos;ler</CardTitle>
-            <CardDescription>Açık ve son güncellenen kapalı PR&apos;lar.</CardDescription>
+            <CardTitle>{t("recentPRs")}</CardTitle>
+            <CardDescription>{t("recentPRsSubtitle")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {pullRequests.length === 0 && (
-              <p className="text-sm text-muted-foreground">PR yok.</p>
+              <p className="text-sm text-muted-foreground">{t("noPRs")}</p>
             )}
             {pullRequests.map((pr) => (
               <a
@@ -188,7 +195,7 @@ export default async function EngineeringPage() {
                       pr.merged_at ? "default" : pr.state === "open" ? "secondary" : "destructive"
                     }
                   >
-                    {pr.merged_at ? "Merged" : pr.state === "open" ? "Açık" : "Kapalı"}
+                    {pr.merged_at ? t("merged") : pr.state === "open" ? t("open") : t("closed")}
                   </Badge>
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground">

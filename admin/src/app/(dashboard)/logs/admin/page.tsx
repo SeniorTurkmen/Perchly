@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
 import { LocalDateTime } from "@/components/local-date-time";
@@ -30,6 +31,8 @@ export default async function AdminActivityPage({
 }) {
   const params = await searchParams;
   const token = await requireSessionToken();
+  const t = await getTranslations("logs");
+  const tc = await getTranslations("common");
 
   const adminUserId = params.admin_user_id;
   const offset = Math.max(0, Number(params.offset) || 0);
@@ -52,9 +55,9 @@ export default async function AdminActivityPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Loglar</h1>
+        <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="text-muted-foreground">
-          {total} admin işlemi{adminUserId ? " — bu admine göre filtrelendi" : ""}.
+          {t("subtitleAdmin", { count: total })}{adminUserId ? ` — ${t("filteredByAdmin")}` : ""}
         </p>
       </div>
 
@@ -62,7 +65,7 @@ export default async function AdminActivityPage({
 
       {adminUserId && (
         <Button render={<Link href="/logs/admin" />} variant="ghost" size="sm">
-          Admin filtresini kaldır
+          {t("clearAdminFilter")}
         </Button>
       )}
 
@@ -70,17 +73,17 @@ export default async function AdminActivityPage({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Admin</TableHead>
-              <TableHead>İşlem</TableHead>
-              <TableHead>Hedef</TableHead>
-              <TableHead>Zaman</TableHead>
+              <TableHead>{t("admin")}</TableHead>
+              <TableHead>{t("action")}</TableHead>
+              <TableHead>{t("target")}</TableHead>
+              <TableHead>{t("time")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {entries.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-center text-muted-foreground">
-                  Sonuç bulunamadı.
+                  {tc("noResults")}
                 </TableCell>
               </TableRow>
             )}
@@ -102,7 +105,7 @@ export default async function AdminActivityPage({
                   {entry.detail && (
                     <details className="mt-1">
                       <summary className="cursor-pointer text-xs text-muted-foreground">
-                        Detay
+                        {tc("detail")}
                       </summary>
                       <pre className="mt-1 max-h-72 w-full max-w-xl overflow-y-auto rounded border bg-muted/30 p-2 text-xs whitespace-pre-wrap break-all">
                         {JSON.stringify(entry.detail, null, 2)}
@@ -122,7 +125,7 @@ export default async function AdminActivityPage({
       <div className="flex items-center justify-between">
         {offset === 0 ? (
           <Button variant="outline" size="sm" disabled>
-            Önceki
+            {tc("previous")}
           </Button>
         ) : (
           <Button
@@ -130,7 +133,7 @@ export default async function AdminActivityPage({
             variant="outline"
             size="sm"
           >
-            Önceki
+            {tc("previous")}
           </Button>
         )}
         <span className="text-sm text-muted-foreground">
@@ -138,7 +141,7 @@ export default async function AdminActivityPage({
         </span>
         {offset + PAGE_SIZE >= total ? (
           <Button variant="outline" size="sm" disabled>
-            Sonraki
+            {tc("next")}
           </Button>
         ) : (
           <Button
@@ -146,7 +149,7 @@ export default async function AdminActivityPage({
             variant="outline"
             size="sm"
           >
-            Sonraki
+            {tc("next")}
           </Button>
         )}
       </div>

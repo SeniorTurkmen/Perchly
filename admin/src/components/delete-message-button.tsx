@@ -1,10 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { MouseEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 
 export function DeleteMessageButton() {
+  const t = useTranslations("conversations");
+  const tc = useTranslations("common");
   return (
     <Button
       type="submit"
@@ -12,12 +15,12 @@ export function DeleteMessageButton() {
       size="sm"
       className="text-destructive hover:text-destructive"
       onClick={(e: MouseEvent<HTMLButtonElement>) => {
-        if (!confirm("Bu mesajı kalıcı olarak silmek istediğine emin misin?")) {
+        if (!confirm(t("confirmDeleteMessage"))) {
           e.preventDefault();
         }
       }}
     >
-      Sil
+      {tc("delete")}
     </Button>
   );
 }
