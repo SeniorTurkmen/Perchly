@@ -23,13 +23,13 @@ func AdminMiddleware(sessions adminSessionVerifier) func(http.Handler) http.Hand
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token, ok := adminBearerToken(r)
 			if !ok {
-				writeError(w, http.StatusUnauthorized, ErrCodeAdminUnauthorized, "admin girişi gerekli")
+				writeError(w, r, http.StatusUnauthorized, ErrCodeAdminUnauthorized, "admin girişi gerekli")
 				return
 			}
 
 			admin, err := sessions.VerifySession(r.Context(), token)
 			if err != nil {
-				writeError(w, http.StatusUnauthorized, ErrCodeAdminUnauthorized, "admin girişi gerekli")
+				writeError(w, r, http.StatusUnauthorized, ErrCodeAdminUnauthorized, "admin girişi gerekli")
 				return
 			}
 

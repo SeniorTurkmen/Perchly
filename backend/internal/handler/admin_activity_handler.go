@@ -41,7 +41,7 @@ func (h *AdminActivityHandler) List(w http.ResponseWriter, r *http.Request) {
 	var adminUserID *string
 	if raw := q.Get("admin_user_id"); raw != "" {
 		if _, err := uuid.Parse(raw); err != nil {
-			writeError(w, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz admin id")
+			writeError(w, r, http.StatusBadRequest, ErrCodeInvalidUserID, "geçersiz admin id")
 			return
 		}
 		adminUserID = &raw
@@ -49,7 +49,7 @@ func (h *AdminActivityHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	entries, total, err := h.list.List(r.Context(), adminUserID, limit, offset)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeAdminActivityListFailed, "admin işlem geçmişi listelenemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminActivityListFailed, "admin işlem geçmişi listelenemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, adminActivityListResponse{Entries: entries, Total: total})

@@ -40,13 +40,13 @@ type chatEnergyResponse struct {
 func (h *ChatEnergyHandler) Get(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	energy, err := h.quotas.ChatEnergy(r.Context(), userID)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeChatEnergyFailed, "sohbet enerjisi getirilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeChatEnergyFailed, "sohbet enerjisi getirilemedi")
 		return
 	}
 

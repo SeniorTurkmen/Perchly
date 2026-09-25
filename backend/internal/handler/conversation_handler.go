@@ -53,17 +53,17 @@ type createConversationRequest struct {
 func (h *ConversationHandler) Create(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	var req createConversationRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
 		return
 	}
 	if _, err := uuid.Parse(req.PersonaID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona_id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona_id")
 		return
 	}
 
@@ -71,11 +71,11 @@ func (h *ConversationHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrPersonaNotFound):
-			writeError(w, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
+			writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
 		case errors.Is(err, service.ErrPersonaNotAgeAppropriate):
-			writeError(w, http.StatusForbidden, ErrCodePersonaNotAgeAppropriate, "bu persona yaş grubun için uygun değil")
+			writeError(w, r, http.StatusForbidden, ErrCodePersonaNotAgeAppropriate, "bu persona yaş grubun için uygun değil")
 		default:
-			writeError(w, http.StatusInternalServerError, ErrCodeConversationCreateFailed, "konuşma oluşturulamadı")
+			writeError(w, r, http.StatusInternalServerError, ErrCodeConversationCreateFailed, "konuşma oluşturulamadı")
 		}
 		return
 	}
@@ -95,13 +95,13 @@ func (h *ConversationHandler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *ConversationHandler) List(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	previews, err := h.conversations.List(r.Context(), userID)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, ErrCodeConversationsListFailed, "konuşmalar getirilemedi")
+		writeError(w, r, http.StatusInternalServerError, ErrCodeConversationsListFailed, "konuşmalar getirilemedi")
 		return
 	}
 	writeJSON(w, http.StatusOK, previews)
@@ -124,13 +124,13 @@ func (h *ConversationHandler) List(w http.ResponseWriter, r *http.Request) {
 func (h *ConversationHandler) ListMessages(w http.ResponseWriter, r *http.Request) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	conversationID := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(conversationID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz conversation id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz conversation id")
 		return
 	}
 
@@ -138,11 +138,11 @@ func (h *ConversationHandler) ListMessages(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrConversationNotFound):
-			writeError(w, http.StatusNotFound, ErrCodeConversationNotFound, "konuşma bulunamadı")
+			writeError(w, r, http.StatusNotFound, ErrCodeConversationNotFound, "konuşma bulunamadı")
 		case errors.Is(err, service.ErrConversationForbidden):
-			writeError(w, http.StatusForbidden, ErrCodeConversationForbidden, "bu konuşmaya erişiminiz yok")
+			writeError(w, r, http.StatusForbidden, ErrCodeConversationForbidden, "bu konuşmaya erişiminiz yok")
 		default:
-			writeError(w, http.StatusInternalServerError, ErrCodeMessagesListFailed, "mesajlar getirilemedi")
+			writeError(w, r, http.StatusInternalServerError, ErrCodeMessagesListFailed, "mesajlar getirilemedi")
 		}
 		return
 	}
@@ -173,7 +173,7 @@ type setReactionRequest struct {
 func (h *ConversationHandler) SetReaction(w http.ResponseWriter, r *http.Request) {
 	var req setReactionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || strings.TrimSpace(req.Emoji) == "" {
-		writeError(w, http.StatusBadRequest, ErrCodeReactionEmojiRequired, "emoji alanı zorunludur")
+		writeError(w, r, http.StatusBadRequest, ErrCodeReactionEmojiRequired, "emoji alanı zorunludur")
 		return
 	}
 	h.setReaction(w, r, &req.Emoji)
@@ -200,18 +200,18 @@ func (h *ConversationHandler) ClearReaction(w http.ResponseWriter, r *http.Reque
 func (h *ConversationHandler) setReaction(w http.ResponseWriter, r *http.Request, emoji *string) {
 	userID, ok := auth.UserIDFromContext(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
+		writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 		return
 	}
 
 	conversationID := chi.URLParam(r, "id")
 	if _, err := uuid.Parse(conversationID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz conversation id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidConversationID, "geçersiz conversation id")
 		return
 	}
 	messageID := chi.URLParam(r, "messageID")
 	if _, err := uuid.Parse(messageID); err != nil {
-		writeError(w, http.StatusBadRequest, ErrCodeInvalidMessageID, "geçersiz message id")
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidMessageID, "geçersiz message id")
 		return
 	}
 
@@ -219,17 +219,17 @@ func (h *ConversationHandler) setReaction(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		switch {
 		case errors.Is(err, repository.ErrConversationNotFound):
-			writeError(w, http.StatusNotFound, ErrCodeConversationNotFound, "konuşma bulunamadı")
+			writeError(w, r, http.StatusNotFound, ErrCodeConversationNotFound, "konuşma bulunamadı")
 		case errors.Is(err, repository.ErrMessageNotFound):
-			writeError(w, http.StatusNotFound, ErrCodeMessageNotFound, "mesaj bulunamadı")
+			writeError(w, r, http.StatusNotFound, ErrCodeMessageNotFound, "mesaj bulunamadı")
 		case errors.Is(err, service.ErrConversationForbidden):
-			writeError(w, http.StatusForbidden, ErrCodeConversationForbidden, "bu konuşmaya erişiminiz yok")
+			writeError(w, r, http.StatusForbidden, ErrCodeConversationForbidden, "bu konuşmaya erişiminiz yok")
 		case errors.Is(err, service.ErrCannotReactToOwnRoleMessage):
-			writeError(w, http.StatusForbidden, ErrCodeCannotReactToOwnMessage, "bu mesaja tepki bırakamazsınız")
+			writeError(w, r, http.StatusForbidden, ErrCodeCannotReactToOwnMessage, "bu mesaja tepki bırakamazsınız")
 		case errors.Is(err, service.ErrInvalidReactionEmoji):
-			writeError(w, http.StatusBadRequest, ErrCodeInvalidReactionEmoji, "desteklenmeyen emoji")
+			writeError(w, r, http.StatusBadRequest, ErrCodeInvalidReactionEmoji, "desteklenmeyen emoji")
 		default:
-			writeError(w, http.StatusInternalServerError, ErrCodeReactionFailed, "tepki kaydedilemedi")
+			writeError(w, r, http.StatusInternalServerError, ErrCodeReactionFailed, "tepki kaydedilemedi")
 		}
 		return
 	}
