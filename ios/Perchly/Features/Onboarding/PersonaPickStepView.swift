@@ -30,7 +30,9 @@ struct PersonaPickStepView: View {
         }
     }
 
-    private var matchCopy: String {
+    // LocalizedStringKey, not String: Text(String) is verbatim and
+    // skips the string catalog.
+    private var matchCopy: LocalizedStringKey {
         if let reason = featuredPersona?.matchReason, !reason.isEmpty {
             return "\(reason) İstersen başka birini seçebilirsin."
         }

@@ -298,7 +298,7 @@ struct PersonaDetailView: View {
                     .font(PerchlyTypography.Discover.labelLG)
                     .foregroundStyle(PerchlyPalette.Discover.onSurface)
                 Spacer()
-                Text("\(persona.detailTraits.count) Aktif Nitelik")
+                Text("\(String(persona.detailTraits.count)) Aktif Nitelik")
                     .font(PerchlyTypography.Discover.labelSM)
                     .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
             }

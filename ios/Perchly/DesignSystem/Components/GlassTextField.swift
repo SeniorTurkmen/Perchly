@@ -3,7 +3,9 @@ import SwiftUI
 /// A single-line Liquid Glass text field, for auth screens (email,
 /// display name) and anywhere else a plain glass input is needed.
 struct GlassTextField: View {
-    let placeholder: String
+    // LocalizedStringKey, not String: TextField(String, text:) is
+    // verbatim and skips the string catalog.
+    let placeholder: LocalizedStringKey
     @Binding var text: String
     var keyboardType: UIKeyboardType = .default
     var textContentType: UITextContentType?

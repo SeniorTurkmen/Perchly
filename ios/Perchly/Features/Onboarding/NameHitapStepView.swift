@@ -100,7 +100,7 @@ struct NameHitapStepView: View {
             .background(PerchlyPalette.Discover.surfaceLow, in: Capsule())
 
             if trimmedName.count > PreferredNameRules.maxLength {
-                Text("Hitap en fazla \(PreferredNameRules.maxLength) karakter olabilir.")
+                Text("Hitap en fazla \(String(PreferredNameRules.maxLength)) karakter olabilir.")
                     .font(PerchlyTypography.Discover.bodySM)
                     .foregroundStyle(PerchlyPalette.Discover.secondary)
             }
