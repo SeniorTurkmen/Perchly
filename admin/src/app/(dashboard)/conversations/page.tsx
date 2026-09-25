@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { LocalDateTime } from "@/components/local-date-time";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,8 @@ export default async function ConversationsPage({
 }) {
   const params = await searchParams;
   const token = await requireSessionToken();
+  const t = await getTranslations("conversations");
+  const tc = await getTranslations("common");
 
   const search = params.search ?? "";
   const userId = params.user_id;
@@ -50,34 +53,33 @@ export default async function ConversationsPage({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Konuşmalar</h1>
+        <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="text-muted-foreground">
-          {total} konuşma{userId ? " — bu kullanıcıya göre filtrelendi" : ""} — mesaj
-          içeriğine göre ara.
+          {t("subtitle", { count: total })}{userId ? ` — ${t("filteredByUser")}` : ""}
         </p>
       </div>
 
       <form className="flex max-w-sm gap-2">
-        <Input name="search" defaultValue={search} placeholder="Mesaj içeriğinde ara..." />
+        <Input name="search" defaultValue={search} placeholder={t("searchPlaceholder")} />
         {userId && <input type="hidden" name="user_id" value={userId} />}
-        <Button type="submit">Ara</Button>
+        <Button type="submit">{tc("search")}</Button>
       </form>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Persona</TableHead>
-              <TableHead>Son mesaj</TableHead>
-              <TableHead>Zaman</TableHead>
-              <TableHead className="text-right">Detay</TableHead>
+              <TableHead>{t("persona")}</TableHead>
+              <TableHead>{t("lastMessage")}</TableHead>
+              <TableHead>{t("time")}</TableHead>
+              <TableHead className="text-right">{tc("detail")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {conversations.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-center text-muted-foreground">
-                  Sonuç bulunamadı.
+                  {tc("noResults")}
                 </TableCell>
               </TableRow>
             )}
@@ -89,14 +91,14 @@ export default async function ConversationsPage({
                     href={`/users/${conv.user_id}`}
                     className="text-sm text-muted-foreground hover:underline"
                   >
-                    Kullanıcıyı görüntüle
+                    {t("viewUser")}
                   </Link>
                 </TableCell>
                 <TableCell className="max-w-md">
                   {conv.last_message ? (
                     <span className="text-sm">
                       <span className="text-muted-foreground">
-                        {conv.last_message.role === "user" ? "Kullanıcı: " : "Persona: "}
+                        {conv.last_message.role === "user" ? `${t("userRole")}: ` : `${t("personaRole")}: `}
                       </span>
                       {truncate(conv.last_message.content, 80)}
                     </span>
@@ -113,7 +115,7 @@ export default async function ConversationsPage({
                     variant="ghost"
                     size="sm"
                   >
-                    Görüntüle
+                    {tc("view")}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -125,7 +127,7 @@ export default async function ConversationsPage({
       <div className="flex items-center justify-between">
         {offset === 0 ? (
           <Button variant="outline" size="sm" disabled>
-            Önceki
+            {tc("previous")}
           </Button>
         ) : (
           <Button
@@ -133,7 +135,7 @@ export default async function ConversationsPage({
             variant="outline"
             size="sm"
           >
-            Önceki
+            {tc("previous")}
           </Button>
         )}
         <span className="text-sm text-muted-foreground">
@@ -141,7 +143,7 @@ export default async function ConversationsPage({
         </span>
         {offset + PAGE_SIZE >= total ? (
           <Button variant="outline" size="sm" disabled>
-            Sonraki
+            {tc("next")}
           </Button>
         ) : (
           <Button
@@ -149,7 +151,7 @@ export default async function ConversationsPage({
             variant="outline"
             size="sm"
           >
-            Sonraki
+            {tc("next")}
           </Button>
         )}
       </div>
