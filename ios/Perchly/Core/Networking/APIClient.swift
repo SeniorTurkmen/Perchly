@@ -236,6 +236,13 @@ final class APIClient: @unchecked Sendable {
         urlRequest.httpMethod = request.method.rawValue
         urlRequest.httpBody = request.body
 
+        // Lets the backend's own LocaleMiddleware (see
+        // backend/internal/handler/locale_middleware.go) translate
+        // error text into the language currently in effect — see
+        // LanguagePreference — instead of this client needing its own
+        // separate code-to-message translation table.
+        urlRequest.setValue(LanguagePreference.currentLanguageCode, forHTTPHeaderField: "Accept-Language")
+
         for (key, value) in request.headers {
             urlRequest.setValue(value, forHTTPHeaderField: key)
         }
