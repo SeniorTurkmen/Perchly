@@ -11,31 +11,33 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Panel", icon: LayoutDashboard },
-  { href: "/users", label: "Kullanıcılar", icon: Users },
-  { href: "/personas", label: "Personalar", icon: Sparkles },
-  { href: "/conversations", label: "Konuşmalar", icon: MessagesSquare },
-  { href: "/quotas", label: "Kota & Kredi", icon: Gauge },
-  { href: "/providers", label: "AI Sağlayıcıları", icon: KeyRound },
-  { href: "/onboarding", label: "Onboarding", icon: ClipboardList },
-  { href: "/logs", label: "Loglar", icon: ScrollText },
-  { href: "/engineering", label: "Mühendislik", icon: GitBranch },
+  { href: "/", key: "dashboard", icon: LayoutDashboard },
+  { href: "/users", key: "users", icon: Users },
+  { href: "/personas", key: "personas", icon: Sparkles },
+  { href: "/conversations", key: "conversations", icon: MessagesSquare },
+  { href: "/quotas", key: "quotas", icon: Gauge },
+  { href: "/providers", key: "providers", icon: KeyRound },
+  { href: "/onboarding", key: "onboarding", icon: ClipboardList },
+  { href: "/logs", key: "logs", icon: ScrollText },
+  { href: "/engineering", key: "engineering", icon: GitBranch },
 ] as const;
 
 export function NavSidebar() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   return (
     <nav className="hidden w-56 shrink-0 border-r bg-muted/20 p-4 sm:block">
       <div className="mb-6 px-2 text-lg font-semibold">Perchly</div>
       <ul className="space-y-1">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+        {NAV_ITEMS.map(({ href, key, icon: Icon }) => {
           const isActive =
             href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (
@@ -50,7 +52,7 @@ export function NavSidebar() {
                 )}
               >
                 <Icon className="size-4" />
-                {label}
+                {t(key)}
               </Link>
             </li>
           );
