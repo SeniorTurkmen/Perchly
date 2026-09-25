@@ -67,6 +67,18 @@ export function PersonaForm({
   submitLabel: string;
   error?: string;
 }) {
+  // Base UI renders the raw value in the closed trigger unless `items`
+  // maps each value to a label. Without this, a selected model shows as its id.
+  const modelItems: Record<string, string> = {
+    [DEFAULT_MODEL_VALUE]: "Varsayılan (sunucu ayarları)",
+  };
+  for (const option of modelOptions) {
+    modelItems[option.id] = option.label;
+  }
+  if (persona?.llm_model_id && modelItems[persona.llm_model_id] == null) {
+    modelItems[persona.llm_model_id] = "bilinmeyen model";
+  }
+
   return (
     <form action={action} className="max-w-2xl space-y-6">
       {error && <p className="text-sm text-destructive">{error}</p>}
@@ -150,6 +162,7 @@ export function PersonaForm({
         <Select
           name="llm_model_id"
           defaultValue={persona?.llm_model_id ?? DEFAULT_MODEL_VALUE}
+          items={modelItems}
         >
           <SelectTrigger id="llm_model_id" className="w-full">
             <SelectValue placeholder="Model seç" />
