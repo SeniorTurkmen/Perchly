@@ -1,3 +1,5 @@
+import { getLocale, getTranslations } from "next-intl/server";
+
 import {
   Card,
   CardContent,
@@ -9,32 +11,11 @@ import { DistributionBar } from "@/components/distribution-bar";
 import { requireSessionToken } from "@/lib/auth";
 import { adminGetOnboardingInsights } from "@/lib/backend";
 
-const AGE_RANGE_LABELS: Record<string, string> = {
-  under18: "18 yaş altı",
-  age18to24: "18-24",
-  age25to34: "25-34",
-  age35plus: "35+",
-};
-
 const AGE_RANGE_ORDER = ["under18", "age18to24", "age25to34", "age35plus"];
-
-const MOOD_PREFERENCE_LABELS: Record<string, string> = {
-  motivation: "Motivasyon",
-  dailyChat: "Günlük sohbet",
-  hobbyTalk: "Hobi / kitap",
-  skipped: "Atlandı",
-  none: "Cevaplanmadı",
-};
-
 const MOOD_PREFERENCE_ORDER = ["motivation", "dailyChat", "hobbyTalk", "skipped", "none"];
 
-const percentFormatter = new Intl.NumberFormat("tr-TR", {
-  style: "percent",
-  maximumFractionDigits: 1,
-});
-
-function rate(count: number, total: number): string {
-  return total > 0 ? percentFormatter.format(count / total) : "—";
+function rate(count: number, total: number, formatter: Intl.NumberFormat): string {
+  return total > 0 ? formatter.format(count / total) : "—";
 }
 
 function sortByKnownOrder(counts: Record<string, number>, order: string[]) {
@@ -50,6 +31,26 @@ function sortByKnownOrder(counts: Record<string, number>, order: string[]) {
 export default async function OnboardingPage() {
   const token = await requireSessionToken();
   const insights = await adminGetOnboardingInsights(token);
+  const t = await getTranslations("onboarding");
+  const locale = await getLocale();
+  const percentFormatter = new Intl.NumberFormat(locale, {
+    style: "percent",
+    maximumFractionDigits: 1,
+  });
+
+  const AGE_RANGE_LABELS: Record<string, string> = {
+    under18: t("ageRange.under18"),
+    age18to24: t("ageRange.age18to24"),
+    age25to34: t("ageRange.age25to34"),
+    age35plus: t("ageRange.age35plus"),
+  };
+  const MOOD_PREFERENCE_LABELS: Record<string, string> = {
+    motivation: t("moodPreference.motivation"),
+    dailyChat: t("moodPreference.dailyChat"),
+    hobbyTalk: t("moodPreference.hobbyTalk"),
+    skipped: t("moodPreference.skipped"),
+    none: t("moodPreference.none"),
+  };
 
   const {
     total_users: totalUsers,
@@ -65,34 +66,34 @@ export default async function OnboardingPage() {
 
   const stats = [
     {
-      label: "Onboarding tamamlayan",
+      label: t("stats.completed"),
       value: `${completed} / ${totalUsers}`,
-      hint: rate(completed, totalUsers),
+      hint: rate(completed, totalUsers, percentFormatter),
     },
-    { label: "Reşit olmayan", value: String(minorCount), hint: rate(minorCount, completed) },
+    { label: t("stats.minors"), value: String(minorCount), hint: rate(minorCount, completed, percentFormatter) },
     {
-      label: "Bildirim izni veren",
+      label: t("stats.notifications"),
       value: String(notificationsCount),
-      hint: rate(notificationsCount, completed),
+      hint: rate(notificationsCount, completed, percentFormatter),
     },
     {
-      label: "Hitap belirleyen",
+      label: t("stats.preferredName"),
       value: String(preferredNameCount),
-      hint: rate(preferredNameCount, completed),
+      hint: rate(preferredNameCount, completed, percentFormatter),
     },
     {
-      label: "Hitabı atlayan",
+      label: t("stats.skipHitap"),
       value: String(skipHitapCount),
-      hint: rate(skipHitapCount, completed),
+      hint: rate(skipHitapCount, completed, percentFormatter),
     },
   ];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Onboarding</h1>
+        <h1 className="text-2xl font-semibold">{t("title")}</h1>
         <p className="text-muted-foreground">
-          Kullanıcıların onboarding akışında verdiği cevapların özeti.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -111,12 +112,12 @@ export default async function OnboardingPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Yaş aralığı</CardTitle>
-            <CardDescription>Onboarding&apos;i tamamlayanlar arasında.</CardDescription>
+            <CardTitle>{t("ageRangeTitle")}</CardTitle>
+            <CardDescription>{t("ageRangeDescription")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {completed === 0 && (
-              <p className="text-sm text-muted-foreground">Henüz veri yok.</p>
+              <p className="text-sm text-muted-foreground">{t("noDataYet")}</p>
             )}
             {sortByKnownOrder(ageRangeCounts, AGE_RANGE_ORDER).map(({ key, count }) => (
               <DistributionBar
@@ -131,12 +132,12 @@ export default async function OnboardingPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Ruh hali tercihi</CardTitle>
-            <CardDescription>Onboarding&apos;de seçilen ilgi alanı.</CardDescription>
+            <CardTitle>{t("moodPreferenceTitle")}</CardTitle>
+            <CardDescription>{t("moodPreferenceDescription")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {completed === 0 && (
-              <p className="text-sm text-muted-foreground">Henüz veri yok.</p>
+              <p className="text-sm text-muted-foreground">{t("noDataYet")}</p>
             )}
             {sortByKnownOrder(moodPreferenceCounts, MOOD_PREFERENCE_ORDER).map(
               ({ key, count }) => (
@@ -154,12 +155,12 @@ export default async function OnboardingPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>En çok seçilen personalar</CardTitle>
-          <CardDescription>Onboarding&apos;de ilk seçim olarak.</CardDescription>
+          <CardTitle>{t("topPersonasTitle")}</CardTitle>
+          <CardDescription>{t("topPersonasDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {topPersonas.length === 0 && (
-            <p className="text-sm text-muted-foreground">Henüz veri yok.</p>
+            <p className="text-sm text-muted-foreground">{t("noDataYet")}</p>
           )}
           {topPersonas.map((persona) => (
             <DistributionBar

@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import { useSyncExternalStore } from "react";
 
 // Every timestamp from the backend is UTC (Postgres TIMESTAMPTZ, server
@@ -8,9 +9,9 @@ import { useSyncExternalStore } from "react";
 // on the SERVER (as a plain server component would) uses the Next.js
 // server's own timezone, not the admin's — wrong the moment server and
 // viewer aren't in the same timezone. This must run client-side.
-const FORMATTERS = {
-  short: new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium", timeStyle: "short" }),
-  medium: new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium", timeStyle: "medium" }),
+const STYLES = {
+  short: { dateStyle: "medium", timeStyle: "short" },
+  medium: { dateStyle: "medium", timeStyle: "medium" },
 } as const;
 
 // This value never changes after mount (for a given value/style), so
@@ -34,11 +35,12 @@ export function LocalDateTime({
   style = "short",
 }: {
   value: string;
-  style?: keyof typeof FORMATTERS;
+  style?: keyof typeof STYLES;
 }) {
+  const locale = useLocale();
   const formatted = useSyncExternalStore(
     subscribe,
-    () => FORMATTERS[style].format(new Date(value)),
+    () => new Intl.DateTimeFormat(locale, STYLES[style]).format(new Date(value)),
     () => null,
   );
 
