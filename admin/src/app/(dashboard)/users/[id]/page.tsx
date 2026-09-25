@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { LocalDateTime } from "@/components/local-date-time";
@@ -40,6 +41,7 @@ export default async function UserDetailPage({
   const { id } = await params;
   const { error } = await searchParams;
   const token = await requireSessionToken();
+  const t = await getTranslations("users");
 
   let detail;
   try {
@@ -69,16 +71,16 @@ export default async function UserDetailPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">
-            {detail.user.display_name ?? detail.user.email ?? "İsimsiz kullanıcı"}
+            {detail.user.display_name ?? detail.user.email ?? t("unnamedUser")}
           </h1>
           <p className="text-muted-foreground">{detail.user.id}</p>
         </div>
         <div className="flex gap-2">
           <Button render={<Link href={`/conversations?user_id=${detail.user.id}`} />} variant="outline">
-            Konuşmaları görüntüle
+            {t("viewConversations")}
           </Button>
           <Button render={<Link href={`/logs?user_id=${detail.user.id}`} />} variant="outline">
-            İstek loglarını görüntüle
+            {t("viewLogs")}
           </Button>
         </div>
       </div>
@@ -86,21 +88,21 @@ export default async function UserDetailPage({
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Hesap</CardTitle>
+            <CardTitle>{t("accountTitle")}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">E-posta</span>
+              <span className="text-muted-foreground">{t("emailLabel")}</span>
               <span>{detail.user.email ?? "—"}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Tür</span>
+              <span className="text-muted-foreground">{t("colType")}</span>
               <Badge variant={detail.user.is_anonymous ? "secondary" : "default"}>
-                {detail.user.is_anonymous ? "Anonim" : "Kayıtlı"}
+                {detail.user.is_anonymous ? t("anonymous") : t("registered")}
               </Badge>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Oluşturulma</span>
+              <span className="text-muted-foreground">{t("colCreated")}</span>
               <span>
                 <LocalDateTime value={detail.user.created_at} />
               </span>
@@ -110,13 +112,13 @@ export default async function UserDetailPage({
 
         <Card>
           <CardHeader>
-            <CardTitle>Kredi</CardTitle>
-            <CardDescription>Mevcut bakiye: {detail.credits}</CardDescription>
+            <CardTitle>{t("creditTitle")}</CardTitle>
+            <CardDescription>{t("currentBalance", { amount: detail.credits })}</CardDescription>
           </CardHeader>
           <CardContent>
             <form action={boundSetCredits} className="flex items-end gap-2">
               <div className="space-y-2">
-                <Label htmlFor="amount">Yeni bakiye</Label>
+                <Label htmlFor="amount">{t("newBalance")}</Label>
                 <Input
                   id="amount"
                   name="amount"
@@ -126,7 +128,7 @@ export default async function UserDetailPage({
                   className="w-32"
                 />
               </div>
-              <Button type="submit">Güncelle</Button>
+              <Button type="submit">{t("update")}</Button>
             </form>
           </CardContent>
         </Card>
@@ -134,24 +136,24 @@ export default async function UserDetailPage({
 
       <Card>
         <CardHeader>
-          <CardTitle>Kota</CardTitle>
-          <CardDescription>Persona başına günlük mesaj limiti.</CardDescription>
+          <CardTitle>{t("quotaTitle")}</CardTitle>
+          <CardDescription>{t("quotaDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Persona</TableHead>
-                <TableHead>Bugün kullanılan</TableHead>
-                <TableHead>Günlük limit</TableHead>
-                <TableHead>Son sıfırlama</TableHead>
+                <TableHead>{t("persona")}</TableHead>
+                <TableHead>{t("usedToday")}</TableHead>
+                <TableHead>{t("dailyLimit")}</TableHead>
+                <TableHead>{t("lastReset")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {detail.quotas.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center text-muted-foreground">
-                    Bu kullanıcı henüz hiçbir personaya mesaj göndermedi.
+                    {t("noQuotaYet")}
                   </TableCell>
                 </TableRow>
               )}
@@ -172,7 +174,7 @@ export default async function UserDetailPage({
                         className="w-20"
                       />
                       <Button type="submit" size="sm" variant="outline">
-                        Kaydet
+                        {t("save")}
                       </Button>
                     </form>
                   </TableCell>
@@ -187,11 +189,11 @@ export default async function UserDetailPage({
           {personasWithoutQuota.length > 0 && (
             <div className="border-t pt-4">
               <p className="mb-2 text-sm font-medium">
-                Yeni persona için özel limit ekle
+                {t("addCustomLimit")}
               </p>
               <form action={boundSetQuota} className="flex items-end gap-2">
                 <div className="space-y-2">
-                  <Label htmlFor="new-persona">Persona</Label>
+                  <Label htmlFor="new-persona">{t("persona")}</Label>
                   <select
                     id="new-persona"
                     name="persona_id"
@@ -205,7 +207,7 @@ export default async function UserDetailPage({
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="new-limit">Günlük limit</Label>
+                  <Label htmlFor="new-limit">{t("dailyLimit")}</Label>
                   <Input
                     id="new-limit"
                     name="daily_limit"
@@ -216,7 +218,7 @@ export default async function UserDetailPage({
                   />
                 </div>
                 <Button type="submit" variant="outline">
-                  Ekle
+                  {t("add")}
                 </Button>
               </form>
             </div>
