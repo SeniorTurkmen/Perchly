@@ -11,12 +11,12 @@ import { getLocale } from "@/lib/locale";
 export default getRequestConfig(async () => {
   const locale = await getLocale();
 
-  // A locale with no messages/<locale>.json yet (Faz 1/2 fills these
-  // in) falls back to Turkish — defaultLocale, the always-complete
-  // source language every string was originally written in — the same
-  // fallback target the backend's apierror.Message uses, so both
-  // clients degrade the same, predictable way for an untranslated
-  // locale.
+  // All 8 locales have message files now; this fallback to Turkish
+  // (defaultLocale, the always-complete source language) only matters
+  // if a future locale is added to `locales` before its
+  // messages/<locale>.json exists — the same fallback target the
+  // backend's apierror.Message uses, so both clients degrade the same,
+  // predictable way for an untranslated locale.
   const messagesLocale = translatedLocales.has(locale) ? locale : defaultLocale;
 
   return {

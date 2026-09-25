@@ -14,12 +14,8 @@ export function isLocale(value: string): value is Locale {
   return (locales as readonly string[]).includes(value);
 }
 
-// Faz 0 (i18n altyapısı): only tr/en have translated message files —
-// see admin/messages/. The rest are valid, selectable locales (and are
-// already accepted end-to-end by the backend's Accept-Language
-// handling) but fall back to English strings until Faz 1's translation
-// pass fills in their messages/<locale>.json.
-export const translatedLocales: ReadonlySet<Locale> = new Set(["tr", "en"]);
+// All 8 locales now have translated message files — see admin/messages/.
+export const translatedLocales: ReadonlySet<Locale> = new Set(locales);
 
 export const localeLabels: Record<Locale, string> = {
   tr: "Türkçe",
