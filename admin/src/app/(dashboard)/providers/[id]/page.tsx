@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -34,6 +35,8 @@ export default async function CredentialDetailPage({
   const { id } = await params;
   const { error } = await searchParams;
   const token = await requireSessionToken();
+  const t = await getTranslations("providers");
+  const tc = await getTranslations("common");
 
   let credential;
   try {
@@ -61,16 +64,16 @@ export default async function CredentialDetailPage({
         <div>
           <h1 className="text-2xl font-semibold">{credential.label}</h1>
           <Link href="/providers" className="text-sm text-muted-foreground hover:underline">
-            AI Sağlayıcıları listesine dön
+            {t("backToList")}
           </Link>
         </div>
         <form action={boundDeleteCredential}>
           <ConfirmSubmitButton
-            confirmMessage="Bu kimlik bilgisini silmek istediğine emin misin? Önce bağlı modelleri silmen gerekir."
+            confirmMessage={t("confirmDeleteCredential")}
             variant="outline"
             className="text-destructive hover:text-destructive"
           >
-            Kimlik bilgisini sil
+            {t("deleteCredential")}
           </ConfirmSubmitButton>
         </form>
       </div>
@@ -78,22 +81,21 @@ export default async function CredentialDetailPage({
       <CredentialForm
         credential={credential}
         action={boundUpdateCredential}
-        submitLabel="Kaydet"
+        submitLabel={t("save")}
       />
 
       <Separator />
 
       <div className="space-y-4">
         <div>
-          <h2 className="text-lg font-semibold">Modeller</h2>
+          <h2 className="text-lg font-semibold">{t("modelsTitle")}</h2>
           <p className="text-muted-foreground">
-            Bu kimlik bilgisi üzerinden çağrılabilecek modeller — personalar ileride
-            bunlardan birini seçebilecek.
+            {t("modelsSubtitle")}
           </p>
         </div>
 
         {models.length === 0 && (
-          <p className="text-sm text-muted-foreground">Henüz model eklenmedi.</p>
+          <p className="text-sm text-muted-foreground">{t("noModelsYet")}</p>
         )}
 
         <div className="space-y-3">
@@ -105,7 +107,7 @@ export default async function CredentialDetailPage({
                 <form action={boundUpdateModel} className="space-y-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 space-y-2">
-                      <Label htmlFor={`display_name-${m.id}`}>Görünen ad</Label>
+                      <Label htmlFor={`display_name-${m.id}`}>{t("displayName")}</Label>
                       <Input
                         id={`display_name-${m.id}`}
                         name="display_name"
@@ -113,14 +115,14 @@ export default async function CredentialDetailPage({
                         required
                       />
                       <p className="text-xs text-muted-foreground">
-                        Model adı: <span className="font-mono">{m.model_name}</span>{" "}
-                        (değiştirilemez)
+                        {t("modelNameLabel")} <span className="font-mono">{m.model_name}</span>{" "}
+                        {t("immutable")}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      {m.is_default && <Badge>Varsayılan</Badge>}
+                      {m.is_default && <Badge>{t("default")}</Badge>}
                       <Badge variant={m.is_active ? "default" : "secondary"}>
-                        {m.is_active ? "Aktif" : "Pasif"}
+                        {m.is_active ? tc("active") : tc("inactive")}
                       </Badge>
                     </div>
                   </div>
@@ -132,7 +134,7 @@ export default async function CredentialDetailPage({
                         name="is_default"
                         defaultChecked={m.is_default}
                       />
-                      <Label htmlFor={`is_default-${m.id}`}>Bu kimlik bilgisi için varsayılan</Label>
+                      <Label htmlFor={`is_default-${m.id}`}>{t("defaultForCredential")}</Label>
                     </div>
                     <div className="flex items-center gap-2">
                       <Switch
@@ -140,22 +142,22 @@ export default async function CredentialDetailPage({
                         name="is_active"
                         defaultChecked={m.is_active}
                       />
-                      <Label htmlFor={`is_active-${m.id}`}>Aktif</Label>
+                      <Label htmlFor={`is_active-${m.id}`}>{tc("active")}</Label>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Button type="submit" size="sm">
-                      Kaydet
+                      {t("save")}
                     </Button>
                   </div>
                 </form>
                 <form action={boundDeleteModel} className="mt-2">
                   <ConfirmSubmitButton
-                    confirmMessage={`"${m.display_name}" modelini silmek istediğine emin misin?`}
+                    confirmMessage={t("confirmDeleteModel", { name: m.display_name })}
                     className="text-destructive hover:text-destructive"
                   >
-                    Modeli sil
+                    {t("deleteModel")}
                   </ConfirmSubmitButton>
                 </form>
               </div>
@@ -166,35 +168,35 @@ export default async function CredentialDetailPage({
         <Separator />
 
         <div className="max-w-md space-y-4">
-          <h3 className="font-medium">Yeni model ekle</h3>
+          <h3 className="font-medium">{t("addModel")}</h3>
           <form action={boundCreateModel} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="model_name">Model adı</Label>
+              <Label htmlFor="model_name">{t("modelName")}</Label>
               <Input
                 id="model_name"
                 name="model_name"
-                placeholder="ör. gpt-4.1, gemini-2.5-flash"
+                placeholder={t("modelNamePlaceholder")}
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Sağlayıcının API&apos;sinin beklediği tam model kimliği.
+                {t("modelNameHint")}
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="display_name">Görünen ad</Label>
-              <Input id="display_name" name="display_name" placeholder="ör. GPT-4.1" required />
+              <Label htmlFor="display_name">{t("displayName")}</Label>
+              <Input id="display_name" name="display_name" placeholder={t("displayNamePlaceholder")} required />
             </div>
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2">
                 <Switch id="is_default" name="is_default" />
-                <Label htmlFor="is_default">Varsayılan yap</Label>
+                <Label htmlFor="is_default">{t("makeDefault")}</Label>
               </div>
               <div className="flex items-center gap-2">
                 <Switch id="is_active" name="is_active" defaultChecked />
-                <Label htmlFor="is_active">Aktif</Label>
+                <Label htmlFor="is_active">{tc("active")}</Label>
               </div>
             </div>
-            <Button type="submit">Model ekle</Button>
+            <Button type="submit">{t("addModel")}</Button>
           </form>
         </div>
       </div>
