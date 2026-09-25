@@ -272,9 +272,12 @@ struct ChatView: View {
     private static func sessionStamp(for date: Date) -> String {
         let time = ChatBubble.timeString(from: date)
         if Calendar.current.isDateInToday(date) {
-            return "Bugün \(time)"
+            return String(localized: "Bugün \(time)")
         }
-        let day = date.formatted(.dateTime.day().month(.wide).locale(Locale(identifier: "tr_TR")))
+        // Was hardcoded to Locale(identifier: "tr_TR") — forced Turkish
+        // day/month word order (and month names) regardless of the
+        // device's actual language.
+        let day = date.formatted(.dateTime.day().month(.wide).locale(.autoupdatingCurrent))
         return "\(day) \(time)"
     }
 }
