@@ -191,6 +191,12 @@ func main() {
 	adminLLMHandler := handler.NewAdminLLMHandler(adminLLMService)
 
 	r := chi.NewRouter()
+	// handler.LocaleMiddleware is mounted first, before even
+	// requestlog/Recoverer — every writeError call anywhere downstream
+	// (auth.Middleware's 401s included) reads the resolved locale back
+	// out of the request context, so it must already be there before
+	// any of those can run.
+	r.Use(handler.LocaleMiddleware)
 	// requestlog.Middleware is mounted before Recoverer deliberately —
 	// see its doc comment for why that's required for it to log
 	// panicking (500) requests too, not just normal ones.
