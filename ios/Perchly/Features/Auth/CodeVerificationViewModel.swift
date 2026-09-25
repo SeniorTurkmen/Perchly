@@ -84,7 +84,7 @@ final class CodeVerificationViewModel: ObservableObject {
             phase = .entering
             startCountdown()
         } catch {
-            errorMessage = "Bir şeyler ters gitti, birazdan tekrar dene."
+            errorMessage = String(localized: "Bir şeyler ters gitti, birazdan tekrar dene.")
         }
     }
 
@@ -114,18 +114,18 @@ final class CodeVerificationViewModel: ObservableObject {
     /// directly without a real network round trip.
     func classify(_ error: Error) -> (Phase, String) {
         guard let apiError = error as? APIError else {
-            return (.entering, "Bir şeyler ters gitti, birazdan tekrar dene.")
+            return (.entering, String(localized: "Bir şeyler ters gitti, birazdan tekrar dene."))
         }
 
         switch apiError.code {
         case .tooManyAttempts:
-            return (.expired, "Çok fazla hatalı deneme yaptın. Yeni bir kod istemen gerekiyor.")
+            return (.expired, String(localized: "Çok fazla hatalı deneme yaptın. Yeni bir kod istemen gerekiyor."))
         case .verificationCodeExpired:
-            return (.expired, "Kodun süresi doldu. Yeni bir kod isteyebilirsin.")
+            return (.expired, String(localized: "Kodun süresi doldu. Yeni bir kod isteyebilirsin."))
         case .invalidVerificationCode:
-            return (.entering, "Kod geçersiz. Tekrar dener misin?")
+            return (.entering, String(localized: "Kod geçersiz. Tekrar dener misin?"))
         default:
-            return (.entering, "Bir şeyler ters gitti, birazdan tekrar dene.")
+            return (.entering, String(localized: "Bir şeyler ters gitti, birazdan tekrar dene."))
         }
     }
 }

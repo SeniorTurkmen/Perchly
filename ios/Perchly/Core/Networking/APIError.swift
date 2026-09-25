@@ -17,13 +17,13 @@ enum APIError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "Geçersiz URL."
+            return String(localized: "Geçersiz URL.")
         case .invalidResponse:
-            return "Sunucudan geçersiz yanıt alındı."
+            return String(localized: "Sunucudan geçersiz yanıt alındı.")
         case .server(let statusCode, _):
-            return "Sunucu hatası (\(statusCode))."
+            return String(localized: "Sunucu hatası (\(String(statusCode))).")
         case .decoding:
-            return "Yanıt çözümlenemedi."
+            return String(localized: "Yanıt çözümlenemedi.")
         case .transport(let error):
             return error.localizedDescription
         case .message(_, _, let text):

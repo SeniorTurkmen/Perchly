@@ -28,9 +28,9 @@ final class RegisterCompleteViewModel: ObservableObject {
             )
         } catch {
             if let apiError = error as? APIError, apiError.code == .invalidDisplayName {
-                errorMessage = "Bu görünen ad kullanılamıyor. Farklı bir ad dener misin?"
+                errorMessage = String(localized: "Bu görünen ad kullanılamıyor. Farklı bir ad dener misin?")
             } else {
-                errorMessage = "Bir şeyler ters gitti, birazdan tekrar dene."
+                errorMessage = String(localized: "Bir şeyler ters gitti, birazdan tekrar dene.")
             }
         }
     }

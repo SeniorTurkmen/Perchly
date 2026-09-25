@@ -49,8 +49,8 @@ final class EmailEntryViewModel: ObservableObject {
         // registered. This branch is kept ready in case that policy ever
         // changes, but today it's effectively unreachable.
         if let apiError = error as? APIError, apiError.code == .tooManyAttempts {
-            return "Çok fazla deneme yaptın, biraz sonra tekrar dene."
+            return String(localized: "Çok fazla deneme yaptın, biraz sonra tekrar dene.")
         }
-        return "Bir şeyler ters gitti, birazdan tekrar dene."
+        return String(localized: "Bir şeyler ters gitti, birazdan tekrar dene.")
     }
 }
