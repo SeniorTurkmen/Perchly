@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 
 import { requireSessionToken } from "@/lib/auth";
@@ -56,8 +57,8 @@ export async function createPersonaAction(formData: FormData) {
   try {
     created = await adminCreatePersona(token, input);
   } catch (err) {
-    const message =
-      err instanceof AdminApiError ? err.message : "Persona oluşturulamadı.";
+    const t = await getTranslations("personas");
+    const message = err instanceof AdminApiError ? err.message : t("errors.createFailed");
     redirect(`/personas/new?error=${encodeURIComponent(message)}`);
   }
 
@@ -72,8 +73,8 @@ export async function updatePersonaAction(personaId: string, formData: FormData)
   try {
     await adminUpdatePersona(token, personaId, input);
   } catch (err) {
-    const message =
-      err instanceof AdminApiError ? err.message : "Persona güncellenemedi.";
+    const t = await getTranslations("personas");
+    const message = err instanceof AdminApiError ? err.message : t("errors.updateFailed");
     redirect(`/personas/${personaId}?error=${encodeURIComponent(message)}`);
   }
 

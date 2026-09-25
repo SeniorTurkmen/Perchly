@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 import { requireSessionToken } from "@/lib/auth";
@@ -21,6 +22,7 @@ export default async function EditPersonaPage({
   const { id } = await params;
   const { error } = await searchParams;
   const token = await requireSessionToken();
+  const t = await getTranslations("personas");
 
   let persona;
   try {
@@ -45,9 +47,9 @@ export default async function EditPersonaPage({
       </div>
       <PersonaForm
         persona={persona}
-        modelOptions={buildModelOptions(models, credentials)}
+        modelOptions={await buildModelOptions(models, credentials)}
         action={boundUpdate}
-        submitLabel="Kaydet"
+        submitLabel={t("save")}
         error={error}
       />
     </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,29 +21,31 @@ export default async function PersonasPage() {
     adminListLLMModels(token),
   ]);
   const modelNameById = new Map(models.map((m) => [m.id, m.display_name]));
+  const t = await getTranslations("personas");
+  const tc = await getTranslations("common");
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Personalar</h1>
+          <h1 className="text-2xl font-semibold">{t("title")}</h1>
           <p className="text-muted-foreground">
-            {personas.length} persona — sistem promptu dahil tam düzenleme.
+            {t("subtitle", { count: personas.length })}
           </p>
         </div>
-        <Button render={<Link href="/personas/new" />}>Yeni persona</Button>
+        <Button render={<Link href="/personas/new" />}>{t("newPersona")}</Button>
       </div>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Persona</TableHead>
-              <TableHead>Kategori</TableHead>
-              <TableHead>Model</TableHead>
-              <TableHead>Durum</TableHead>
-              <TableHead>Sıra</TableHead>
-              <TableHead className="text-right">Düzenle</TableHead>
+              <TableHead>{t("fields.name")}</TableHead>
+              <TableHead>{t("fields.category")}</TableHead>
+              <TableHead>{t("fields.model")}</TableHead>
+              <TableHead>{tc("status")}</TableHead>
+              <TableHead>{t("fields.sortOrder")}</TableHead>
+              <TableHead className="text-right">{tc("edit")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -55,12 +58,12 @@ export default async function PersonasPage() {
                 <TableCell>{persona.category}</TableCell>
                 <TableCell className="text-muted-foreground">
                   {persona.llm_model_id
-                    ? (modelNameById.get(persona.llm_model_id) ?? "bilinmeyen model")
-                    : "Varsayılan"}
+                    ? (modelNameById.get(persona.llm_model_id) ?? t("unknownModel"))
+                    : t("defaultModel")}
                 </TableCell>
                 <TableCell>
                   <Badge variant={persona.is_active ? "default" : "secondary"}>
-                    {persona.is_active ? "Aktif" : "Pasif"}
+                    {persona.is_active ? tc("active") : tc("inactive")}
                   </Badge>
                 </TableCell>
                 <TableCell>{persona.sort_order}</TableCell>
@@ -70,7 +73,7 @@ export default async function PersonasPage() {
                     variant="ghost"
                     size="sm"
                   >
-                    Düzenle
+                    {tc("edit")}
                   </Button>
                 </TableCell>
               </TableRow>
