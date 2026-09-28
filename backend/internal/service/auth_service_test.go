@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"perchly-backend/internal/apierror"
 	"perchly-backend/internal/auth"
 	"perchly-backend/internal/model"
 	"perchly-backend/internal/repository"
@@ -253,12 +254,16 @@ func (r *fakeRefreshTokenRepo) expire(rawToken string) {
 type fakeEmailSender struct {
 	mu   sync.Mutex
 	sent []struct{ To, Code string }
+	// lastLocale records the locale the most recent send was called
+	// with, so tests can confirm RequestEmailCode threads it through.
+	lastLocale apierror.Locale
 }
 
-func (s *fakeEmailSender) SendVerificationCode(_ context.Context, toEmail, code string) error {
+func (s *fakeEmailSender) SendVerificationCode(_ context.Context, toEmail, code string, locale apierror.Locale) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.sent = append(s.sent, struct{ To, Code string }{toEmail, code})
+	s.lastLocale = locale
 	return nil
 }
 
@@ -390,7 +395,7 @@ func TestAuthService_VerifyEmailCode_DurumA_ExistingVerifiedAccountWins(t *testi
 		t.Fatalf("create anonymous session: %v", err)
 	}
 
-	if err := h.service.RequestEmailCode(ctx, "a@example.com"); err != nil {
+	if err := h.service.RequestEmailCode(ctx, "a@example.com", apierror.LocaleTR); err != nil {
 		t.Fatalf("RequestEmailCode: %v", err)
 	}
 	code := h.sender.lastCode()
@@ -428,7 +433,7 @@ func TestAuthService_VerifyEmailCode_DurumB_WithAnonymousToken_UpgradesInPlace(t
 		t.Fatalf("create anonymous session: %v", err)
 	}
 
-	if err := h.service.RequestEmailCode(ctx, "b@example.com"); err != nil {
+	if err := h.service.RequestEmailCode(ctx, "b@example.com", apierror.LocaleTR); err != nil {
 		t.Fatalf("RequestEmailCode: %v", err)
 	}
 	code := h.sender.lastCode()
@@ -465,7 +470,7 @@ func TestAuthService_VerifyEmailCode_DurumB_WithoutAnonymousToken_CreatesNewUser
 	h := newAuthServiceHarness()
 	ctx := context.Background()
 
-	if err := h.service.RequestEmailCode(ctx, "c@example.com"); err != nil {
+	if err := h.service.RequestEmailCode(ctx, "c@example.com", apierror.LocaleTR); err != nil {
 		t.Fatalf("RequestEmailCode: %v", err)
 	}
 	code := h.sender.lastCode()
@@ -529,7 +534,7 @@ func TestAuthService_RequestEmailCode_RateLimitsSilently(t *testing.T) {
 	h := newAuthServiceHarness()
 	ctx := context.Background()
 
-	if err := h.service.RequestEmailCode(ctx, "f@example.com"); err != nil {
+	if err := h.service.RequestEmailCode(ctx, "f@example.com", apierror.LocaleTR); err != nil {
 		t.Fatalf("first request: %v", err)
 	}
 	if got := h.sender.sentCount(); got != 1 {
@@ -538,7 +543,7 @@ func TestAuthService_RequestEmailCode_RateLimitsSilently(t *testing.T) {
 
 	// Second request within the same minute must be silently dropped —
 	// no error, but no second email either.
-	if err := h.service.RequestEmailCode(ctx, "f@example.com"); err != nil {
+	if err := h.service.RequestEmailCode(ctx, "f@example.com", apierror.LocaleTR); err != nil {
 		t.Fatalf("second (rate-limited) request returned an error, want nil: %v", err)
 	}
 	if got := h.sender.sentCount(); got != 1 {
@@ -548,7 +553,7 @@ func TestAuthService_RequestEmailCode_RateLimitsSilently(t *testing.T) {
 
 func TestAuthService_RequestEmailCode_InvalidEmailFormat(t *testing.T) {
 	h := newAuthServiceHarness()
-	err := h.service.RequestEmailCode(context.Background(), "not-an-email")
+	err := h.service.RequestEmailCode(context.Background(), "not-an-email", apierror.LocaleTR)
 	if !errors.Is(err, ErrInvalidEmail) {
 		t.Fatalf("error = %v, want ErrInvalidEmail", err)
 	}

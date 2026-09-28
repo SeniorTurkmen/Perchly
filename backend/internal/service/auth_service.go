@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"perchly-backend/internal/apierror"
 	"perchly-backend/internal/auth"
 	"perchly-backend/internal/email"
 	"perchly-backend/internal/model"
@@ -160,7 +161,7 @@ func (s *AuthService) resolveAnonymousUser(ctx context.Context, deviceID, timezo
 // address (ErrInvalidEmail, a 400 — rejecting garbage input isn't an
 // enumeration leak) or an infrastructure failure (DB/SMTP down, which
 // fails identically no matter which email was requested).
-func (s *AuthService) RequestEmailCode(ctx context.Context, rawEmail string) error {
+func (s *AuthService) RequestEmailCode(ctx context.Context, rawEmail string, locale apierror.Locale) error {
 	emailAddr := normalizeEmail(rawEmail)
 	if !isValidEmailFormat(emailAddr) {
 		return ErrInvalidEmail
@@ -193,7 +194,7 @@ func (s *AuthService) RequestEmailCode(ctx context.Context, rawEmail string) err
 		return fmt.Errorf("store verification code: %w", err)
 	}
 
-	if err := s.emailSender.SendVerificationCode(ctx, emailAddr, code); err != nil {
+	if err := s.emailSender.SendVerificationCode(ctx, emailAddr, code, locale); err != nil {
 		return fmt.Errorf("send verification email: %w", err)
 	}
 

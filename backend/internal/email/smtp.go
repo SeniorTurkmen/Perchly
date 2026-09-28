@@ -6,6 +6,8 @@ import (
 	"log"
 
 	"gopkg.in/gomail.v2"
+
+	"perchly-backend/internal/apierror"
 )
 
 // SMTPSender implements Sender over plain SMTP (e.g. Gmail with an App
@@ -32,14 +34,14 @@ func NewSMTPSender(host string, port int, username, password, fromName string) *
 // (connection, auth, etc.) it logs the real error server-side and
 // returns a generic error — callers must never surface SMTP details to
 // the end user.
-func (s *SMTPSender) SendVerificationCode(ctx context.Context, toEmail, code string) error {
+func (s *SMTPSender) SendVerificationCode(ctx context.Context, toEmail, code string, locale apierror.Locale) error {
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
 	default:
 	}
 
-	subject, htmlBody, err := buildVerificationEmail(code)
+	subject, htmlBody, err := buildVerificationEmail(code, locale)
 	if err != nil {
 		return fmt.Errorf("build verification email: %w", err)
 	}

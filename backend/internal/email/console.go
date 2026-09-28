@@ -3,6 +3,8 @@ package email
 import (
 	"context"
 	"log"
+
+	"perchly-backend/internal/apierror"
 )
 
 // ConsoleSender just logs the code instead of sending real email. Used
@@ -15,7 +17,11 @@ func NewConsoleSender() *ConsoleSender {
 	return &ConsoleSender{}
 }
 
-func (s *ConsoleSender) SendVerificationCode(_ context.Context, toEmail, code string) error {
-	log.Printf("email: [ConsoleSender] verification code for %s: %s", toEmail, code)
+func (s *ConsoleSender) SendVerificationCode(_ context.Context, toEmail, code string, locale apierror.Locale) error {
+	subject, htmlBody, err := buildVerificationEmail(code, locale)
+	if err != nil {
+		return err
+	}
+	log.Printf("email: [ConsoleSender] verification code for %s (locale=%s): %s\nsubject: %s\nbody:\n%s", toEmail, locale, code, subject, htmlBody)
 	return nil
 }

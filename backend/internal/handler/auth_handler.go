@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 
+	"perchly-backend/internal/apierror"
 	"perchly-backend/internal/auth"
 	"perchly-backend/internal/model"
 	"perchly-backend/internal/repository"
@@ -17,7 +18,7 @@ type anonymousSessionCreator interface {
 }
 
 type emailCodeRequester interface {
-	RequestEmailCode(ctx context.Context, email string) error
+	RequestEmailCode(ctx context.Context, email string, locale apierror.Locale) error
 }
 
 type emailCodeVerifier interface {
@@ -145,7 +146,7 @@ func (h *AuthHandler) RequestEmailCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.codeRequests.RequestEmailCode(r.Context(), req.Email)
+	err := h.codeRequests.RequestEmailCode(r.Context(), req.Email, apierror.LocaleFromContext(r.Context()))
 	switch {
 	case err == nil:
 		writeJSON(w, http.StatusOK, map[string]bool{"success": true})
