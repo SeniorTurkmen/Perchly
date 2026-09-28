@@ -176,6 +176,18 @@
     "errors": {
       "createFailed": "人设创建失败。",
       "updateFailed": "人设更新失败。"
+    },
+    "translations": {
+      "title": "翻译",
+      "description": "为该角色添加特定语言的内容。留空的语言将回退到上方的土耳其语内容。",
+      "noneYet": "暂无翻译",
+      "nameLabel": "名称",
+      "shortDescriptionLabel": "简短描述",
+      "toneDescriptionLabel": "语气描述",
+      "resetToTurkish": "重置为土耳其语",
+      "confirmReset": "删除此翻译并回退到土耳其语吗？",
+      "saveFailed": "无法保存翻译。",
+      "deleteFailed": "无法删除翻译。"
     }
   },
   "providers": {

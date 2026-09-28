@@ -176,6 +176,18 @@
     "errors": {
       "createFailed": "Persona oluşturulamadı.",
       "updateFailed": "Persona güncellenemedi."
+    },
+    "translations": {
+      "title": "Çeviriler",
+      "description": "Bu persona için dile özel içerik ekle. Boş bırakılan bir dil, yukarıdaki Türkçe içeriğe döner.",
+      "noneYet": "Henüz çeviri yok",
+      "nameLabel": "Ad",
+      "shortDescriptionLabel": "Kısa açıklama",
+      "toneDescriptionLabel": "Ton açıklaması",
+      "resetToTurkish": "Türkçeye döndür",
+      "confirmReset": "Bu çeviri silinsin ve Türkçeye dönülsün mü?",
+      "saveFailed": "Çeviri kaydedilemedi.",
+      "deleteFailed": "Çeviri silinemedi."
     }
   },
   "providers": {
