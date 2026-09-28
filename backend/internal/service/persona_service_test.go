@@ -12,11 +12,11 @@ type fakePersonaRepoForRecommendation struct {
 	personas []model.Persona
 }
 
-func (r fakePersonaRepoForRecommendation) List(context.Context) ([]model.Persona, error) {
+func (r fakePersonaRepoForRecommendation) ListLocalized(context.Context, string) ([]model.Persona, error) {
 	return r.personas, nil
 }
 
-func (r fakePersonaRepoForRecommendation) GetByID(_ context.Context, id string) (model.Persona, error) {
+func (r fakePersonaRepoForRecommendation) GetByIDLocalized(_ context.Context, id, _ string) (model.Persona, error) {
 	for _, p := range r.personas {
 		if p.ID == id {
 			return p, nil
@@ -50,7 +50,7 @@ func TestPersonaService_ListWithRecommendation(t *testing.T) {
 		profiles := newFakeOnboardingProfileRepo()
 		profiles.profiles["u1"] = model.OnboardingProfile{UserID: "u1", MoodPreference: ptr("hobbyTalk")}
 
-		recs, err := newService(profiles).ListWithRecommendation(context.Background(), "u1")
+		recs, err := newService(profiles).ListWithRecommendation(context.Background(), "u1", "tr")
 		if err != nil {
 			t.Fatalf("ListWithRecommendation() error = %v", err)
 		}
@@ -70,7 +70,7 @@ func TestPersonaService_ListWithRecommendation(t *testing.T) {
 			UserID: "u2", IsMinor: true, MoodPreference: ptr("hobbyTalk"), // kerem matches the mood but isn't minor-appropriate
 		}
 
-		recs, err := newService(profiles).ListWithRecommendation(context.Background(), "u2")
+		recs, err := newService(profiles).ListWithRecommendation(context.Background(), "u2", "tr")
 		if err != nil {
 			t.Fatalf("ListWithRecommendation() error = %v", err)
 		}
@@ -88,7 +88,7 @@ func TestPersonaService_ListWithRecommendation(t *testing.T) {
 		profiles := newFakeOnboardingProfileRepo()
 		profiles.profiles["u3"] = model.OnboardingProfile{UserID: "u3", MoodPreference: ptr("skipped")}
 
-		recs, err := newService(profiles).ListWithRecommendation(context.Background(), "u3")
+		recs, err := newService(profiles).ListWithRecommendation(context.Background(), "u3", "tr")
 		if err != nil {
 			t.Fatalf("ListWithRecommendation() error = %v", err)
 		}
@@ -106,7 +106,7 @@ func TestPersonaService_ListWithRecommendation(t *testing.T) {
 	t.Run("no onboarding profile at all is permissive, still recommends exactly one", func(t *testing.T) {
 		profiles := newFakeOnboardingProfileRepo()
 
-		recs, err := newService(profiles).ListWithRecommendation(context.Background(), "unknown-user")
+		recs, err := newService(profiles).ListWithRecommendation(context.Background(), "unknown-user", "tr")
 		if err != nil {
 			t.Fatalf("ListWithRecommendation() error = %v", err)
 		}
@@ -114,4 +114,48 @@ func TestPersonaService_ListWithRecommendation(t *testing.T) {
 			t.Fatalf("recommended count = %d, want exactly 1", got)
 		}
 	})
+}
+
+// fakeLocaleRecordingPersonaRepo records the locale it was called with,
+// so tests can confirm PersonaService threads its locale argument through
+// to the repository rather than dropping it.
+type fakeLocaleRecordingPersonaRepo struct {
+	lastListLocale   string
+	lastGetIDLocale  string
+	persona          model.Persona
+	translatedResult []model.Persona
+}
+
+func (r *fakeLocaleRecordingPersonaRepo) ListLocalized(_ context.Context, locale string) ([]model.Persona, error) {
+	r.lastListLocale = locale
+	return r.translatedResult, nil
+}
+
+func (r *fakeLocaleRecordingPersonaRepo) GetByIDLocalized(_ context.Context, _ string, locale string) (model.Persona, error) {
+	r.lastGetIDLocale = locale
+	return r.persona, nil
+}
+
+func TestPersonaService_List_ThreadsLocaleToRepo(t *testing.T) {
+	repo := &fakeLocaleRecordingPersonaRepo{translatedResult: []model.Persona{{ID: "ada", Name: "Ada"}}}
+	svc := NewPersonaService(repo, newFakeOnboardingProfileRepo())
+
+	if _, err := svc.List(context.Background(), "en"); err != nil {
+		t.Fatalf("List() error = %v", err)
+	}
+	if repo.lastListLocale != "en" {
+		t.Fatalf("repo received locale %q, want %q", repo.lastListLocale, "en")
+	}
+}
+
+func TestPersonaService_GetByID_ThreadsLocaleToRepo(t *testing.T) {
+	repo := &fakeLocaleRecordingPersonaRepo{persona: model.Persona{ID: "ada", Name: "Ada"}}
+	svc := NewPersonaService(repo, newFakeOnboardingProfileRepo())
+
+	if _, err := svc.GetByID(context.Background(), "ada", "de"); err != nil {
+		t.Fatalf("GetByID() error = %v", err)
+	}
+	if repo.lastGetIDLocale != "de" {
+		t.Fatalf("repo received locale %q, want %q", repo.lastGetIDLocale, "de")
+	}
 }

@@ -148,6 +148,122 @@ func (r *PersonaRepository) GetByID(ctx context.Context, id string) (model.Perso
 	return p, nil
 }
 
+// localizedPersonaColumns mirrors personaColumns exactly — same order,
+// same set — except name/short_description/tone_description are
+// COALESCEd against a joined persona_translations row. Every query using
+// this must alias personas as p and LEFT JOIN persona_translations as pt,
+// so scanPersona (below) can be reused unmodified.
+const localizedPersonaColumns = `
+	p.id::text, p.slug, COALESCE(pt.name, p.name), p.category,
+	COALESCE(pt.short_description, p.short_description), p.system_prompt,
+	COALESCE(pt.tone_description, p.tone_description), p.avatar_url, p.accent_color,
+	p.is_minor_appropriate, p.is_active, p.sort_order,
+	p.default_warmth, p.default_humor, p.default_wisdom, p.default_directness, p.default_energy,
+	p.llm_model_id::text, p.created_at, p.updated_at`
+
+// ListLocalized is List with name/short_description/tone_description
+// resolved for locale — a persona with no persona_translations row for
+// locale (including "tr", which is never stored there) transparently
+// falls back to its base Turkish columns.
+func (r *PersonaRepository) ListLocalized(ctx context.Context, locale string) ([]model.Persona, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT `+localizedPersonaColumns+`
+		FROM personas p
+		LEFT JOIN persona_translations pt ON pt.persona_id = p.id AND pt.locale = $1
+		WHERE p.is_active = true
+		ORDER BY p.sort_order ASC, p.created_at ASC
+	`, locale)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	personas := make([]model.Persona, 0)
+	for rows.Next() {
+		p, err := scanPersona(rows)
+		if err != nil {
+			return nil, err
+		}
+		personas = append(personas, p)
+	}
+	return personas, rows.Err()
+}
+
+// GetByIDLocalized is GetByID with the same locale-fallback behavior as
+// ListLocalized.
+func (r *PersonaRepository) GetByIDLocalized(ctx context.Context, id, locale string) (model.Persona, error) {
+	row := r.pool.QueryRow(ctx, `
+		SELECT `+localizedPersonaColumns+`
+		FROM personas p
+		LEFT JOIN persona_translations pt ON pt.persona_id = p.id AND pt.locale = $2
+		WHERE p.id = $1::uuid
+	`, id, locale)
+
+	p, err := scanPersona(row)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return model.Persona{}, ErrPersonaNotFound
+		}
+		return model.Persona{}, err
+	}
+	return p, nil
+}
+
+// ListTranslations returns every stored translation for personaID, across
+// whichever locales an admin has filled in — never "tr" (see
+// model.PersonaTranslation's doc comment).
+func (r *PersonaRepository) ListTranslations(ctx context.Context, personaID string) ([]model.PersonaTranslation, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT persona_id::text, locale, name, short_description, tone_description, created_at, updated_at
+		FROM persona_translations
+		WHERE persona_id = $1::uuid
+		ORDER BY locale ASC
+	`, personaID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	translations := make([]model.PersonaTranslation, 0)
+	for rows.Next() {
+		var t model.PersonaTranslation
+		if err := rows.Scan(&t.PersonaID, &t.Locale, &t.Name, &t.ShortDescription, &t.ToneDescription, &t.CreatedAt, &t.UpdatedAt); err != nil {
+			return nil, err
+		}
+		translations = append(translations, t)
+	}
+	return translations, rows.Err()
+}
+
+// UpsertTranslation creates or overwrites t.PersonaID's translation for
+// t.Locale.
+func (r *PersonaRepository) UpsertTranslation(ctx context.Context, t model.PersonaTranslation) (model.PersonaTranslation, error) {
+	row := r.pool.QueryRow(ctx, `
+		INSERT INTO persona_translations (persona_id, locale, name, short_description, tone_description)
+		VALUES ($1::uuid, $2, $3, $4, $5)
+		ON CONFLICT (persona_id, locale) DO UPDATE SET
+			name = EXCLUDED.name,
+			short_description = EXCLUDED.short_description,
+			tone_description = EXCLUDED.tone_description
+		RETURNING persona_id::text, locale, name, short_description, tone_description, created_at, updated_at
+	`, t.PersonaID, t.Locale, t.Name, t.ShortDescription, t.ToneDescription)
+
+	var result model.PersonaTranslation
+	err := row.Scan(&result.PersonaID, &result.Locale, &result.Name, &result.ShortDescription, &result.ToneDescription, &result.CreatedAt, &result.UpdatedAt)
+	return result, err
+}
+
+// DeleteTranslation removes personaID's translation for locale, if any —
+// idempotent, since deleting an already-absent translation just means
+// that locale keeps falling back to the base Turkish content, which is
+// already the case.
+func (r *PersonaRepository) DeleteTranslation(ctx context.Context, personaID, locale string) error {
+	_, err := r.pool.Exec(ctx, `
+		DELETE FROM persona_translations WHERE persona_id = $1::uuid AND locale = $2
+	`, personaID, locale)
+	return err
+}
+
 type rowScanner interface {
 	Scan(dest ...any) error
 }

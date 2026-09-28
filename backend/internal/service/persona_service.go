@@ -14,6 +14,17 @@ type PersonaRepo interface {
 	GetByID(ctx context.Context, id string) (model.Persona, error)
 }
 
+// PersonaLocalizedRepo is PersonaService's own dependency for
+// locale-aware reads (GET /personas, GET /personas/{id}) — kept as a
+// separate interface from PersonaRepo (shared with ConversationService
+// and others that only ever need the canonical Turkish record, e.g. for
+// system_prompt) so adding it doesn't require every other service's test
+// double to grow new methods.
+type PersonaLocalizedRepo interface {
+	ListLocalized(ctx context.Context, locale string) ([]model.Persona, error)
+	GetByIDLocalized(ctx context.Context, id, locale string) (model.Persona, error)
+}
+
 // moodToCategory mirrors the iOS client's own mood -> persona category
 // mapping (see OnboardingProfile.MoodPreference.personaCategory) — kept
 // server-side too so GET /personas?recommend=true agrees with it
@@ -44,20 +55,20 @@ func moodMatchReason(mood string) *string {
 }
 
 type PersonaService struct {
-	repo               PersonaRepo
+	repo               PersonaLocalizedRepo
 	onboardingProfiles OnboardingProfileRepo
 }
 
-func NewPersonaService(repo PersonaRepo, onboardingProfiles OnboardingProfileRepo) *PersonaService {
+func NewPersonaService(repo PersonaLocalizedRepo, onboardingProfiles OnboardingProfileRepo) *PersonaService {
 	return &PersonaService{repo: repo, onboardingProfiles: onboardingProfiles}
 }
 
-func (s *PersonaService) List(ctx context.Context) ([]model.Persona, error) {
-	return s.repo.List(ctx)
+func (s *PersonaService) List(ctx context.Context, locale string) ([]model.Persona, error) {
+	return s.repo.ListLocalized(ctx, locale)
 }
 
-func (s *PersonaService) GetByID(ctx context.Context, id string) (model.Persona, error) {
-	return s.repo.GetByID(ctx, id)
+func (s *PersonaService) GetByID(ctx context.Context, id, locale string) (model.Persona, error) {
+	return s.repo.GetByIDLocalized(ctx, id, locale)
 }
 
 // ListWithRecommendation is GET /personas?recommend=true's data: every
@@ -69,8 +80,8 @@ func (s *PersonaService) GetByID(ctx context.Context, id string) (model.Persona,
 // gate ConversationService.Create enforces when actually starting a
 // chat — this is presentation only, so the full list is still
 // returned either way.
-func (s *PersonaService) ListWithRecommendation(ctx context.Context, userID string) ([]model.PersonaRecommendation, error) {
-	personas, err := s.repo.List(ctx)
+func (s *PersonaService) ListWithRecommendation(ctx context.Context, userID, locale string) ([]model.PersonaRecommendation, error) {
+	personas, err := s.repo.ListLocalized(ctx, locale)
 	if err != nil {
 		return nil, err
 	}
