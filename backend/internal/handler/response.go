@@ -95,6 +95,12 @@ const (
 	ErrCodePersonaLLMModelNotFound  = apierror.CodePersonaLLMModelNotFound
 	ErrCodePersonaLLMModelInactive  = apierror.CodePersonaLLMModelInactive
 
+	ErrCodeInvalidPersonaTranslationLocale     = apierror.CodeInvalidPersonaTranslationLocale
+	ErrCodeInvalidPersonaTranslationInput      = apierror.CodeInvalidPersonaTranslationInput
+	ErrCodeAdminPersonaTranslationsListFailed  = apierror.CodeAdminPersonaTranslationsListFailed
+	ErrCodeAdminPersonaTranslationUpsertFailed = apierror.CodeAdminPersonaTranslationUpsertFailed
+	ErrCodeAdminPersonaTranslationDeleteFailed = apierror.CodeAdminPersonaTranslationDeleteFailed
+
 	ErrCodeAdminMetricsFailed = apierror.CodeAdminMetricsFailed
 
 	ErrCodeAdminConversationsListFailed = apierror.CodeAdminConversationsListFailed

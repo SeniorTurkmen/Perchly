@@ -102,6 +102,13 @@ const (
 	CodePersonaLLMModelNotFound  Code = "persona_llm_model_not_found"
 	CodePersonaLLMModelInactive  Code = "persona_llm_model_inactive"
 
+	// Admin dashboard — persona translations.
+	CodeInvalidPersonaTranslationLocale     Code = "invalid_persona_translation_locale"
+	CodeInvalidPersonaTranslationInput      Code = "invalid_persona_translation_input"
+	CodeAdminPersonaTranslationsListFailed  Code = "admin_persona_translations_list_failed"
+	CodeAdminPersonaTranslationUpsertFailed Code = "admin_persona_translation_upsert_failed"
+	CodeAdminPersonaTranslationDeleteFailed Code = "admin_persona_translation_delete_failed"
+
 	// Admin dashboard — home metrics.
 	CodeAdminMetricsFailed Code = "admin_metrics_failed"
 

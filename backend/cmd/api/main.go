@@ -167,7 +167,7 @@ func main() {
 	adminUserService := service.NewAdminUserService(userRepo, quotaRepo, creditRepo, adminAuditLogRepo)
 	adminUserHandler := handler.NewAdminUserHandler(adminUserService)
 
-	adminPersonaService := service.NewAdminPersonaService(personaRepo, llmModelRepo, llmCredentialRepo, adminAuditLogRepo)
+	adminPersonaService := service.NewAdminPersonaService(personaRepo, personaRepo, llmModelRepo, llmCredentialRepo, adminAuditLogRepo)
 	adminPersonaHandler := handler.NewAdminPersonaHandler(adminPersonaService)
 
 	adminMetricsRepo := repository.NewAdminMetricsRepository(pool)
@@ -277,6 +277,9 @@ func main() {
 				r.Get("/{id}", adminPersonaHandler.Get)
 				r.Post("/", adminPersonaHandler.Create)
 				r.Put("/{id}", adminPersonaHandler.Update)
+				r.Get("/{id}/translations", adminPersonaHandler.ListTranslations)
+				r.Put("/{id}/translations/{locale}", adminPersonaHandler.PutTranslation)
+				r.Delete("/{id}/translations/{locale}", adminPersonaHandler.DeleteTranslation)
 			})
 
 			r.Get("/dashboard/metrics", adminDashboardHandler.Metrics)

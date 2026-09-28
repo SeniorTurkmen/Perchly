@@ -12,6 +12,192 @@
     },
     "basePath": "/",
     "paths": {
+        "/admin/personas/{id}/translations": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Bir persona için kayıtlı tüm çevirileri döner (tr hariç — Türkçe hiçbir zaman ayrı bir satır olarak saklanmaz).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-personas"
+                ],
+                "summary": "Persona çevirilerini listele",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Persona ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_handler.adminPersonaTranslationResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/personas/{id}/translations/{locale}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "name/short_description/tone_description için upsert yapar. locale \"tr\" olamaz — Türkçe her zaman personas tablosundaki temel sütunlardan okunur.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-personas"
+                ],
+                "summary": "Persona çevirisini oluştur veya güncelle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Persona ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Çeviri dili (tr hariç desteklenen bir dil: en, de, es, fr, ru, zh, ar)",
+                        "name": "locale",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "name, short_description, tone_description",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.adminPersonaTranslationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.adminPersonaTranslationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Belirtilen dildeki çeviriyi kaldırır — persona o dilde tekrar Türkçe içeriğe döner. Çeviri zaten yoksa da başarıyla döner (idempotent).",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin-personas"
+                ],
+                "summary": "Persona çevirisini sil",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Persona ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Çeviri dili (tr hariç desteklenen bir dil)",
+                        "name": "locale",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/anonymous": {
             "post": {
                 "description": "device_id'ye göre yeni bir anonim kullanıcı oluşturur veya var olanı döner. Gövde opsiyoneldir.",
@@ -1146,6 +1332,46 @@
         }
     },
     "definitions": {
+        "internal_handler.adminPersonaTranslationRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "short_description": {
+                    "type": "string"
+                },
+                "tone_description": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_handler.adminPersonaTranslationResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "locale": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "persona_id": {
+                    "type": "string"
+                },
+                "short_description": {
+                    "type": "string"
+                },
+                "tone_description": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
         "internal_handler.chatEnergyResponse": {
             "type": "object",
             "properties": {
@@ -1419,7 +1645,53 @@
                 "onboarding_profile_not_found",
                 "quota_check_failed",
                 "quota_exceeded",
-                "chat_energy_failed"
+                "chat_energy_failed",
+                "admin_invalid_credentials",
+                "admin_login_failed",
+                "admin_unauthorized",
+                "admin_logout_failed",
+                "admin_me_failed",
+                "invalid_user_id",
+                "admin_users_list_failed",
+                "admin_user_fetch_failed",
+                "invalid_daily_limit",
+                "admin_quota_update_failed",
+                "invalid_credit_amount",
+                "admin_credits_update_failed",
+                "invalid_persona_input",
+                "admin_personas_list_failed",
+                "admin_persona_create_failed",
+                "admin_persona_update_failed",
+                "invalid_persona_llm_model_id",
+                "persona_llm_model_not_found",
+                "persona_llm_model_inactive",
+                "invalid_persona_translation_locale",
+                "invalid_persona_translation_input",
+                "admin_persona_translations_list_failed",
+                "admin_persona_translation_upsert_failed",
+                "admin_persona_translation_delete_failed",
+                "admin_metrics_failed",
+                "admin_conversations_list_failed",
+                "admin_conversation_fetch_failed",
+                "admin_message_delete_failed",
+                "admin_logs_list_failed",
+                "admin_activity_list_failed",
+                "admin_onboarding_insights_failed",
+                "invalid_llm_credential_input",
+                "llm_credential_not_found",
+                "llm_credential_in_use",
+                "admin_llm_credentials_list_failed",
+                "admin_llm_credential_fetch_failed",
+                "admin_llm_credential_create_failed",
+                "admin_llm_credential_update_failed",
+                "admin_llm_credential_delete_failed",
+                "invalid_llm_model_input",
+                "llm_model_not_found",
+                "llm_credential_inactive",
+                "admin_llm_models_list_failed",
+                "admin_llm_model_create_failed",
+                "admin_llm_model_update_failed",
+                "admin_llm_model_delete_failed"
             ],
             "x-enum-varnames": [
                 "CodeInvalidRequestBody",
@@ -1472,7 +1744,53 @@
                 "CodeOnboardingProfileNotFound",
                 "CodeQuotaCheckFailed",
                 "CodeQuotaExceeded",
-                "CodeChatEnergyFailed"
+                "CodeChatEnergyFailed",
+                "CodeAdminInvalidCredentials",
+                "CodeAdminLoginFailed",
+                "CodeAdminUnauthorized",
+                "CodeAdminLogoutFailed",
+                "CodeAdminMeFailed",
+                "CodeInvalidUserID",
+                "CodeAdminUsersListFailed",
+                "CodeAdminUserFetchFailed",
+                "CodeInvalidDailyLimit",
+                "CodeAdminQuotaUpdateFailed",
+                "CodeInvalidCreditAmount",
+                "CodeAdminCreditsUpdateFailed",
+                "CodeInvalidPersonaInput",
+                "CodeAdminPersonasListFailed",
+                "CodeAdminPersonaCreateFailed",
+                "CodeAdminPersonaUpdateFailed",
+                "CodeInvalidPersonaLLMModelID",
+                "CodePersonaLLMModelNotFound",
+                "CodePersonaLLMModelInactive",
+                "CodeInvalidPersonaTranslationLocale",
+                "CodeInvalidPersonaTranslationInput",
+                "CodeAdminPersonaTranslationsListFailed",
+                "CodeAdminPersonaTranslationUpsertFailed",
+                "CodeAdminPersonaTranslationDeleteFailed",
+                "CodeAdminMetricsFailed",
+                "CodeAdminConversationsListFailed",
+                "CodeAdminConversationFetchFailed",
+                "CodeAdminMessageDeleteFailed",
+                "CodeAdminLogsListFailed",
+                "CodeAdminActivityListFailed",
+                "CodeAdminOnboardingInsightsFailed",
+                "CodeInvalidLLMCredentialInput",
+                "CodeLLMCredentialNotFound",
+                "CodeLLMCredentialInUse",
+                "CodeAdminLLMCredentialsListFailed",
+                "CodeAdminLLMCredentialFetchFailed",
+                "CodeAdminLLMCredentialCreateFailed",
+                "CodeAdminLLMCredentialUpdateFailed",
+                "CodeAdminLLMCredentialDeleteFailed",
+                "CodeInvalidLLMModelInput",
+                "CodeLLMModelNotFound",
+                "CodeLLMCredentialInactive",
+                "CodeAdminLLMModelsListFailed",
+                "CodeAdminLLMModelCreateFailed",
+                "CodeAdminLLMModelUpdateFailed",
+                "CodeAdminLLMModelDeleteFailed"
             ]
         },
         "perchly-backend_internal_model.Conversation": {
