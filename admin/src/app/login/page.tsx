@@ -28,7 +28,7 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-muted/40 px-4">
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 end-4">
         <LanguageSwitcher />
       </div>
       <Card className="w-full max-w-sm">

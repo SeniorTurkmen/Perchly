@@ -69,7 +69,7 @@ export default async function UsersPage({
               <TableHead>{t("colUser")}</TableHead>
               <TableHead>{t("colType")}</TableHead>
               <TableHead>{t("colCreated")}</TableHead>
-              <TableHead className="text-right">{t("colDetail")}</TableHead>
+              <TableHead className="text-end">{t("colDetail")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -98,7 +98,7 @@ export default async function UsersPage({
                 <TableCell>
                   <LocalDateTime value={user.created_at} />
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-end">
                   <Button
                     render={<Link href={`/users/${user.id}`} />}
                     variant="ghost"

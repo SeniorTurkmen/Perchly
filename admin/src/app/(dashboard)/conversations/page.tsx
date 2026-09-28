@@ -72,7 +72,7 @@ export default async function ConversationsPage({
               <TableHead>{t("persona")}</TableHead>
               <TableHead>{t("lastMessage")}</TableHead>
               <TableHead>{t("time")}</TableHead>
-              <TableHead className="text-right">{tc("detail")}</TableHead>
+              <TableHead className="text-end">{tc("detail")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -109,7 +109,7 @@ export default async function ConversationsPage({
                 <TableCell>
                   <LocalDateTime value={conv.last_message?.created_at ?? conv.created_at} />
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-end">
                   <Button
                     render={<Link href={`/conversations/${conv.id}`} />}
                     variant="ghost"
