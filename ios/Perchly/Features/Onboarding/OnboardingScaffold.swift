@@ -48,7 +48,7 @@ struct OnboardingScaffold<Content: View, Footer: View>: View {
             HStack {
                 if let onBack {
                     Button(action: onBack) {
-                        Image(systemName: "chevron.left")
+                        Image(systemName: "chevron.backward")
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundStyle(PerchlyPalette.Discover.onSurface)
                             .frame(width: 40, height: 40)
@@ -123,7 +123,7 @@ struct OnboardingPrimaryButton: View {
                         .tint(PerchlyPalette.Discover.onPrimary)
                 } else {
                     Text(title)
-                    Image(systemName: "arrow.right")
+                    Image(systemName: "arrow.forward")
                         .font(.system(size: 13, weight: .semibold))
                 }
             }

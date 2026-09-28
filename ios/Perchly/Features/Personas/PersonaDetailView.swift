@@ -180,7 +180,7 @@ struct PersonaDetailView: View {
                     .font(.system(size: 16, weight: .semibold))
                 Text("\(persona.name) ile Sohbete Başla")
                     .font(PerchlyTypography.Discover.labelLG)
-                Image(systemName: "arrow.right")
+                Image(systemName: "arrow.forward")
                     .font(.system(size: 13, weight: .semibold))
             }
             .foregroundStyle(PerchlyPalette.Discover.onPrimary)

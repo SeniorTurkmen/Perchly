@@ -46,7 +46,7 @@ struct MoodPreferenceStepView: View {
                                         .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
                                 }
                                 Spacer(minLength: 0)
-                                Image(systemName: "chevron.right")
+                                Image(systemName: "chevron.forward")
                                     .font(.system(size: 12, weight: .semibold))
                                     .foregroundStyle(PerchlyPalette.Discover.onSurfaceVariant)
                             }
