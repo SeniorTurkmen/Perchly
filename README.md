@@ -98,8 +98,11 @@ flowchart LR
   not-minor-appropriate personas from users who report being under 18.
   Collected even for anonymous users and never lost if the account is
   later linked.
-- 🌍 **i18n / l10n** — locale-aware persona content and transactional
-  email, resolved from `Accept-Language`, with Turkish always as the
+- 🌍 **i18n / l10n** — the iOS app and admin dashboard are both fully
+  localized into Turkish, English, German, Arabic, Spanish, French,
+  Russian, and Chinese, including right-to-left layout for Arabic.
+  Persona content and transactional email are locale-aware too,
+  resolved from `Accept-Language` with Turkish as the
   zero-duplication fallback.
 - 📊 **Quotas & credits** — a free daily message allowance per user, with
   a credit system for going beyond it.
