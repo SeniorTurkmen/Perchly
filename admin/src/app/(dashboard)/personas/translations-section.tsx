@@ -105,7 +105,11 @@ export function TranslationsSection({
       <div className="flex flex-wrap gap-2">
         {TRANSLATABLE_LOCALES.map((locale) => {
           const isSelected = locale === selected;
-          const dotVisible = needsAttention(locale);
+          // Only shown on the other tabs — while a tab is selected its
+          // fields are right there on screen, so the reminder dot would
+          // be redundant (and, in the selected pill's own color, easy to
+          // mistake for a rendering glitch).
+          const dotVisible = !isSelected && needsAttention(locale);
           return (
             <button
               key={locale}
@@ -122,9 +126,7 @@ export function TranslationsSection({
               {dotVisible && (
                 <span
                   title={t("translations.needsAttention")}
-                  className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-                    isSelected ? "bg-primary-foreground" : "bg-destructive"
-                  }`}
+                  className="h-1.5 w-1.5 shrink-0 rounded-full bg-destructive"
                 />
               )}
             </button>
