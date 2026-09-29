@@ -187,7 +187,8 @@
       "resetToTurkish": "Auf Türkisch zurücksetzen",
       "confirmReset": "Diese Übersetzung entfernen und auf Türkisch zurückfallen?",
       "saveFailed": "Übersetzung konnte nicht gespeichert werden.",
-      "deleteFailed": "Übersetzung konnte nicht gelöscht werden."
+      "deleteFailed": "Übersetzung konnte nicht gelöscht werden.",
+      "needsAttention": "Es gibt ungespeicherte Änderungen oder ein fehlendes Feld."
     }
   },
   "providers": {

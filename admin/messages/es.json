@@ -187,7 +187,8 @@
       "resetToTurkish": "Restablecer al turco",
       "confirmReset": "¿Eliminar esta traducción y volver al turco?",
       "saveFailed": "No se pudo guardar la traducción.",
-      "deleteFailed": "No se pudo eliminar la traducción."
+      "deleteFailed": "No se pudo eliminar la traducción.",
+      "needsAttention": "Hay cambios sin guardar o falta un campo."
     }
   },
   "providers": {

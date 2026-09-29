@@ -2,14 +2,14 @@
 
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { type MouseEvent, useState } from "react";
+import { type MouseEvent, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import type { Locale } from "@/i18n/locales";
-import { localeLabels, locales } from "@/i18n/locales";
+import { localeFlags, localeLabels, locales } from "@/i18n/locales";
 import type { PersonaTranslation } from "@/lib/backend";
 
 import { deletePersonaTranslationAction, savePersonaTranslationAction } from "./translation-actions";
@@ -39,6 +39,41 @@ export function TranslationsSection({
   const byLocale = new Map(translations.map((tr) => [tr.locale, tr]));
   const current = byLocale.get(selected);
 
+  // Tracks fields edited but not yet saved, per locale — reset below
+  // whenever the saved content for `selected` changes (a successful
+  // save) or the admin switches to a locale (a fresh, unedited view).
+  // Adjusted during render rather than in an effect, per
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  const [dirty, setDirty] = useState<Partial<Record<Locale, boolean>>>({});
+  const nameRef = useRef<HTMLInputElement>(null);
+  const shortRef = useRef<HTMLTextAreaElement>(null);
+  const toneRef = useRef<HTMLTextAreaElement>(null);
+
+  const savedSignature = `${selected}:${current?.name ?? ""}:${current?.short_description ?? ""}:${current?.tone_description ?? ""}`;
+  const [lastSavedSignature, setLastSavedSignature] = useState(savedSignature);
+  if (savedSignature !== lastSavedSignature) {
+    setLastSavedSignature(savedSignature);
+    setDirty((d) => ({ ...d, [selected]: false }));
+  }
+
+  function isIncomplete(locale: (typeof TRANSLATABLE_LOCALES)[number]) {
+    const tr = byLocale.get(locale);
+    if (!tr) return true;
+    return !tr.name.trim() || !tr.short_description.trim() || !tr.tone_description.trim();
+  }
+
+  function needsAttention(locale: (typeof TRANSLATABLE_LOCALES)[number]) {
+    return Boolean(dirty[locale]) || isIncomplete(locale);
+  }
+
+  function handleFieldChange() {
+    const isDirty =
+      (nameRef.current?.value ?? "").trim() !== (current?.name ?? "").trim() ||
+      (shortRef.current?.value ?? "").trim() !== (current?.short_description ?? "").trim() ||
+      (toneRef.current?.value ?? "").trim() !== (current?.tone_description ?? "").trim();
+    setDirty((d) => ({ ...d, [selected]: isDirty }));
+  }
+
   const boundSave = savePersonaTranslationAction.bind(null, personaId, selected);
   const boundDelete = deletePersonaTranslationAction.bind(null, personaId, selected);
 
@@ -53,8 +88,8 @@ export function TranslationsSection({
 
       <div className="flex flex-wrap gap-2">
         {TRANSLATABLE_LOCALES.map((locale) => {
-          const hasTranslation = byLocale.has(locale);
           const isSelected = locale === selected;
+          const dotVisible = needsAttention(locale);
           return (
             <button
               key={locale}
@@ -66,16 +101,16 @@ export function TranslationsSection({
                   : "border-input bg-background"
               }`}
             >
+              <span className="text-base leading-none">{localeFlags[locale]}</span>
               {localeLabels[locale]}
-              <span
-                className={`h-1.5 w-1.5 rounded-full ${
-                  hasTranslation
-                    ? isSelected
-                      ? "bg-primary-foreground"
-                      : "bg-primary"
-                    : "bg-transparent border border-current opacity-40"
-                }`}
-              />
+              {dotVisible && (
+                <span
+                  title={t("translations.needsAttention")}
+                  className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                    isSelected ? "bg-primary-foreground" : "bg-destructive"
+                  }`}
+                />
+              )}
             </button>
           );
         })}
@@ -91,7 +126,9 @@ export function TranslationsSection({
           <Input
             id={`tr_name_${selected}`}
             name="name"
+            ref={nameRef}
             defaultValue={current?.name ?? ""}
+            onChange={handleFieldChange}
             required
           />
         </div>
@@ -102,7 +139,9 @@ export function TranslationsSection({
           <Textarea
             id={`tr_short_${selected}`}
             name="short_description"
+            ref={shortRef}
             defaultValue={current?.short_description ?? ""}
+            onChange={handleFieldChange}
             required
             rows={2}
           />
@@ -114,7 +153,9 @@ export function TranslationsSection({
           <Textarea
             id={`tr_tone_${selected}`}
             name="tone_description"
+            ref={toneRef}
             defaultValue={current?.tone_description ?? ""}
+            onChange={handleFieldChange}
             required
             rows={2}
           />

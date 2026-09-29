@@ -187,7 +187,8 @@
       "resetToTurkish": "重置为土耳其语",
       "confirmReset": "删除此翻译并回退到土耳其语吗？",
       "saveFailed": "无法保存翻译。",
-      "deleteFailed": "无法删除翻译。"
+      "deleteFailed": "无法删除翻译。",
+      "needsAttention": "存在未保存的更改或缺失字段。"
     }
   },
   "providers": {
