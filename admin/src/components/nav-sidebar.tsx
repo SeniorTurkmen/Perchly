@@ -34,9 +34,16 @@ export function NavSidebar() {
   const t = useTranslations("nav");
 
   return (
-    <nav className="hidden w-56 shrink-0 border-e bg-muted/20 p-4 sm:block">
-      <div className="mb-6 px-2 text-lg font-semibold">Perchly</div>
-      <ul className="space-y-1">
+    <nav className="hidden w-56 shrink-0 border-e border-sidebar-border bg-sidebar p-3 sm:block">
+      <div className="mb-6 flex items-center gap-2 px-2 pt-1">
+        <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground">
+          P
+        </span>
+        <span className="text-[15px] font-semibold text-sidebar-foreground">
+          Perchly
+        </span>
+      </div>
+      <ul className="space-y-0.5">
         {NAV_ITEMS.map(({ href, key, icon: Icon }) => {
           const isActive =
             href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -45,13 +52,18 @@ export function NavSidebar() {
               <Link
                 href={href}
                 className={cn(
-                  "flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors",
+                  "flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-colors",
                   isActive
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
                 )}
               >
-                <Icon className="size-4" />
+                <Icon
+                  className={cn(
+                    "size-4",
+                    isActive ? "text-sidebar-accent-foreground" : "text-sidebar-foreground/50",
+                  )}
+                />
                 {t(key)}
               </Link>
             </li>

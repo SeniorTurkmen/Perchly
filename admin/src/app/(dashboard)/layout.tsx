@@ -16,14 +16,14 @@ export default async function DashboardLayout({
     <div className="flex min-h-screen">
       <NavSidebar />
       <div className="flex flex-1 flex-col">
-        <header className="flex items-center justify-between border-b px-6 py-3">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b bg-background/80 px-6 py-3 backdrop-blur-md">
           <span className="text-sm text-muted-foreground">{admin.email}</span>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <LogoutButton />
           </div>
         </header>
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 bg-muted/30 p-6">{children}</main>
       </div>
     </div>
   );

@@ -28,14 +28,19 @@ the conversation.
 ## Screenshots
 
 <p align="center">
-  <img src="docs/screenshots/persona-detail.png" width="280" alt="Persona detail & compatibility screen for Ada, a motivational coach persona, showing personality sliders for warmth, humor, and wisdom" />
+  <img src="docs/screenshots/persona-detail.png" width="260" alt="Persona detail & compatibility screen for Ada, a motivational coach persona, showing personality sliders for warmth, humor, and wisdom" />
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/admin-dashboard.png" width="440" alt="Admin dashboard home, styled after Apple App Store Connect — light sidebar with a blue active state and metric cards on a soft gray canvas" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/admin-personas.png" width="440" alt="Admin personas table, styled after App Store Connect — blue status pills, a light bordered table, and a blue primary action button" />
 </p>
 
-<p align="center"><sub>Persona detail & compatibility — pick a companion, tune how it talks to you, and jump straight into chat.</sub></p>
+<p align="center"><sub>iOS persona detail, and the admin dashboard restyled after Apple's App Store Connect (light sidebar, blue accent, bordered cards on a soft gray canvas).</sub></p>
 
 > More screens are on the way — drop additional PNGs into
 > `docs/screenshots/` and reference them here as the UI fills out
-> (onboarding, chat with streaming + reactions, the admin dashboard).
+> (onboarding, chat with streaming + reactions).
 
 ## Repository layout
 
