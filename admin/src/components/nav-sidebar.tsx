@@ -34,7 +34,7 @@ export function NavSidebar() {
   const t = useTranslations("nav");
 
   return (
-    <nav className="hidden w-56 shrink-0 border-r bg-muted/20 p-4 sm:block">
+    <nav className="hidden w-56 shrink-0 border-e bg-muted/20 p-4 sm:block">
       <div className="mb-6 px-2 text-lg font-semibold">Perchly</div>
       <ul className="space-y-1">
         {NAV_ITEMS.map(({ href, key, icon: Icon }) => {

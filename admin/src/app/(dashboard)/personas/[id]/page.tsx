@@ -7,10 +7,12 @@ import {
   adminGetPersona,
   adminListLLMCredentials,
   adminListLLMModels,
+  adminListPersonaTranslations,
 } from "@/lib/backend";
 
 import { updatePersonaAction } from "../actions";
 import { buildModelOptions, PersonaForm } from "../persona-form";
+import { TranslationsSection } from "../translations-section";
 
 export default async function EditPersonaPage({
   params,
@@ -32,9 +34,10 @@ export default async function EditPersonaPage({
     throw err;
   }
 
-  const [models, credentials] = await Promise.all([
+  const [models, credentials, translations] = await Promise.all([
     adminListLLMModels(token),
     adminListLLMCredentials(token),
+    adminListPersonaTranslations(token, id),
   ]);
 
   const boundUpdate = updatePersonaAction.bind(null, id);
@@ -52,6 +55,7 @@ export default async function EditPersonaPage({
         submitLabel={t("save")}
         error={error}
       />
+      <TranslationsSection personaId={id} translations={translations} />
     </div>
   );
 }

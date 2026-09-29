@@ -263,6 +263,64 @@ export async function adminUpdatePersona(
   });
 }
 
+// --- Persona translations ---
+// Per-locale overrides of name/short_description/tone_description. A
+// locale with no row here falls back to the Turkish columns on Persona
+// itself — mirrors backend/internal/apierror's "tr is the
+// zero-duplication fallback" pattern, just at the content layer instead
+// of the error-message layer.
+
+export type PersonaTranslation = {
+  persona_id: string;
+  locale: string;
+  name: string;
+  short_description: string;
+  tone_description: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PersonaTranslationInput = {
+  name: string;
+  short_description: string;
+  tone_description: string;
+};
+
+export async function adminListPersonaTranslations(
+  sessionToken: string,
+  personaId: string,
+): Promise<PersonaTranslation[]> {
+  return authedFetch<PersonaTranslation[]>(
+    `/admin/personas/${personaId}/translations`,
+    sessionToken,
+  );
+}
+
+export async function adminUpsertPersonaTranslation(
+  sessionToken: string,
+  personaId: string,
+  locale: string,
+  input: PersonaTranslationInput,
+): Promise<PersonaTranslation> {
+  return authedFetch<PersonaTranslation>(
+    `/admin/personas/${personaId}/translations/${locale}`,
+    sessionToken,
+    { method: "PUT", ...jsonBody(input) },
+  );
+}
+
+export async function adminDeletePersonaTranslation(
+  sessionToken: string,
+  personaId: string,
+  locale: string,
+): Promise<void> {
+  await authedFetch<{ success: boolean }>(
+    `/admin/personas/${personaId}/translations/${locale}`,
+    sessionToken,
+    { method: "DELETE" },
+  );
+}
+
 // --- Conversations & moderation ---
 
 export type Message = {

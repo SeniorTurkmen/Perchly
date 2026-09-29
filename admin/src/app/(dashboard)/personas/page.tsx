@@ -45,7 +45,7 @@ export default async function PersonasPage() {
               <TableHead>{t("fields.model")}</TableHead>
               <TableHead>{tc("status")}</TableHead>
               <TableHead>{t("fields.sortOrder")}</TableHead>
-              <TableHead className="text-right">{tc("edit")}</TableHead>
+              <TableHead className="text-end">{tc("edit")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -67,7 +67,7 @@ export default async function PersonasPage() {
                   </Badge>
                 </TableCell>
                 <TableCell>{persona.sort_order}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-end">
                   <Button
                     render={<Link href={`/personas/${persona.id}`} />}
                     variant="ghost"

@@ -176,6 +176,18 @@
     "errors": {
       "createFailed": "Impossible de créer la persona.",
       "updateFailed": "Impossible de mettre à jour la persona."
+    },
+    "translations": {
+      "title": "Traductions",
+      "description": "Ajoutez du contenu localisé pour cette persona. Une langue laissée vide utilisera le contenu turc ci-dessus.",
+      "noneYet": "Pas encore de traduction",
+      "nameLabel": "Nom",
+      "shortDescriptionLabel": "Description courte",
+      "toneDescriptionLabel": "Description du ton",
+      "resetToTurkish": "Revenir au turc",
+      "confirmReset": "Supprimer cette traduction et revenir au turc ?",
+      "saveFailed": "Impossible d'enregistrer la traduction.",
+      "deleteFailed": "Impossible de supprimer la traduction."
     }
   },
   "providers": {

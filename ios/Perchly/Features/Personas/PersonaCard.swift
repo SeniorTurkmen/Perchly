@@ -109,7 +109,7 @@ struct PersonaCard: View {
     private var talkPill: some View {
         HStack(spacing: 6) {
             Text("Konuş")
-            Image(systemName: "arrow.right")
+            Image(systemName: "arrow.forward")
                 .font(.system(size: 12, weight: .semibold))
         }
         .font(PerchlyTypography.Discover.labelMD.weight(.semibold))

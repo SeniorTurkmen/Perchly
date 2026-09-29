@@ -8,15 +8,16 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
+	"perchly-backend/internal/apierror"
 	"perchly-backend/internal/auth"
 	"perchly-backend/internal/model"
 	"perchly-backend/internal/repository"
 )
 
 type personaFinder interface {
-	List(ctx context.Context) ([]model.Persona, error)
-	GetByID(ctx context.Context, id string) (model.Persona, error)
-	ListWithRecommendation(ctx context.Context, userID string) ([]model.PersonaRecommendation, error)
+	List(ctx context.Context, locale string) ([]model.Persona, error)
+	GetByID(ctx context.Context, id, locale string) (model.Persona, error)
+	ListWithRecommendation(ctx context.Context, userID, locale string) ([]model.PersonaRecommendation, error)
 }
 
 type PersonaHandler struct {
@@ -45,13 +46,15 @@ func NewPersonaHandler(personas personaFinder) *PersonaHandler {
 // @Failure 500 {object} errorResponse
 // @Router /personas [get]
 func (h *PersonaHandler) List(w http.ResponseWriter, r *http.Request) {
+	locale := string(apierror.LocaleFromContext(r.Context()))
+
 	if r.URL.Query().Get("recommend") == "true" {
 		userID, ok := auth.UserIDFromContext(r.Context())
 		if !ok {
 			writeError(w, r, http.StatusUnauthorized, ErrCodeUnauthorized, "giriş gerekli")
 			return
 		}
-		recommended, err := h.personas.ListWithRecommendation(r.Context(), userID)
+		recommended, err := h.personas.ListWithRecommendation(r.Context(), userID, locale)
 		if err != nil {
 			writeError(w, r, http.StatusInternalServerError, ErrCodePersonasListFailed, "personas listelenemedi")
 			return
@@ -60,7 +63,7 @@ func (h *PersonaHandler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	personas, err := h.personas.List(r.Context())
+	personas, err := h.personas.List(r.Context(), locale)
 	if err != nil {
 		writeError(w, r, http.StatusInternalServerError, ErrCodePersonasListFailed, "personas listelenemedi")
 		return
@@ -86,7 +89,7 @@ func (h *PersonaHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	persona, err := h.personas.GetByID(r.Context(), id)
+	persona, err := h.personas.GetByID(r.Context(), id, string(apierror.LocaleFromContext(r.Context())))
 	if err != nil {
 		if errors.Is(err, repository.ErrPersonaNotFound) {
 			writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")

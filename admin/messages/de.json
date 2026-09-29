@@ -176,6 +176,18 @@
     "errors": {
       "createFailed": "Persona konnte nicht erstellt werden.",
       "updateFailed": "Persona konnte nicht aktualisiert werden."
+    },
+    "translations": {
+      "title": "Übersetzungen",
+      "description": "Füge sprachspezifische Inhalte für diese Persona hinzu. Eine leer gelassene Sprache greift auf den türkischen Inhalt oben zurück.",
+      "noneYet": "Noch keine Übersetzung",
+      "nameLabel": "Name",
+      "shortDescriptionLabel": "Kurzbeschreibung",
+      "toneDescriptionLabel": "Tonbeschreibung",
+      "resetToTurkish": "Auf Türkisch zurücksetzen",
+      "confirmReset": "Diese Übersetzung entfernen und auf Türkisch zurückfallen?",
+      "saveFailed": "Übersetzung konnte nicht gespeichert werden.",
+      "deleteFailed": "Übersetzung konnte nicht gelöscht werden."
     }
   },
   "providers": {

@@ -1,5 +1,31 @@
 basePath: /
 definitions:
+  internal_handler.adminPersonaTranslationRequest:
+    properties:
+      name:
+        type: string
+      short_description:
+        type: string
+      tone_description:
+        type: string
+    type: object
+  internal_handler.adminPersonaTranslationResponse:
+    properties:
+      created_at:
+        type: string
+      locale:
+        type: string
+      name:
+        type: string
+      persona_id:
+        type: string
+      short_description:
+        type: string
+      tone_description:
+        type: string
+      updated_at:
+        type: string
+    type: object
   internal_handler.chatEnergyResponse:
     properties:
       limit:
@@ -217,6 +243,52 @@ definitions:
     - quota_check_failed
     - quota_exceeded
     - chat_energy_failed
+    - admin_invalid_credentials
+    - admin_login_failed
+    - admin_unauthorized
+    - admin_logout_failed
+    - admin_me_failed
+    - invalid_user_id
+    - admin_users_list_failed
+    - admin_user_fetch_failed
+    - invalid_daily_limit
+    - admin_quota_update_failed
+    - invalid_credit_amount
+    - admin_credits_update_failed
+    - invalid_persona_input
+    - admin_personas_list_failed
+    - admin_persona_create_failed
+    - admin_persona_update_failed
+    - invalid_persona_llm_model_id
+    - persona_llm_model_not_found
+    - persona_llm_model_inactive
+    - invalid_persona_translation_locale
+    - invalid_persona_translation_input
+    - admin_persona_translations_list_failed
+    - admin_persona_translation_upsert_failed
+    - admin_persona_translation_delete_failed
+    - admin_metrics_failed
+    - admin_conversations_list_failed
+    - admin_conversation_fetch_failed
+    - admin_message_delete_failed
+    - admin_logs_list_failed
+    - admin_activity_list_failed
+    - admin_onboarding_insights_failed
+    - invalid_llm_credential_input
+    - llm_credential_not_found
+    - llm_credential_in_use
+    - admin_llm_credentials_list_failed
+    - admin_llm_credential_fetch_failed
+    - admin_llm_credential_create_failed
+    - admin_llm_credential_update_failed
+    - admin_llm_credential_delete_failed
+    - invalid_llm_model_input
+    - llm_model_not_found
+    - llm_credential_inactive
+    - admin_llm_models_list_failed
+    - admin_llm_model_create_failed
+    - admin_llm_model_update_failed
+    - admin_llm_model_delete_failed
     type: string
     x-enum-varnames:
     - CodeInvalidRequestBody
@@ -270,6 +342,52 @@ definitions:
     - CodeQuotaCheckFailed
     - CodeQuotaExceeded
     - CodeChatEnergyFailed
+    - CodeAdminInvalidCredentials
+    - CodeAdminLoginFailed
+    - CodeAdminUnauthorized
+    - CodeAdminLogoutFailed
+    - CodeAdminMeFailed
+    - CodeInvalidUserID
+    - CodeAdminUsersListFailed
+    - CodeAdminUserFetchFailed
+    - CodeInvalidDailyLimit
+    - CodeAdminQuotaUpdateFailed
+    - CodeInvalidCreditAmount
+    - CodeAdminCreditsUpdateFailed
+    - CodeInvalidPersonaInput
+    - CodeAdminPersonasListFailed
+    - CodeAdminPersonaCreateFailed
+    - CodeAdminPersonaUpdateFailed
+    - CodeInvalidPersonaLLMModelID
+    - CodePersonaLLMModelNotFound
+    - CodePersonaLLMModelInactive
+    - CodeInvalidPersonaTranslationLocale
+    - CodeInvalidPersonaTranslationInput
+    - CodeAdminPersonaTranslationsListFailed
+    - CodeAdminPersonaTranslationUpsertFailed
+    - CodeAdminPersonaTranslationDeleteFailed
+    - CodeAdminMetricsFailed
+    - CodeAdminConversationsListFailed
+    - CodeAdminConversationFetchFailed
+    - CodeAdminMessageDeleteFailed
+    - CodeAdminLogsListFailed
+    - CodeAdminActivityListFailed
+    - CodeAdminOnboardingInsightsFailed
+    - CodeInvalidLLMCredentialInput
+    - CodeLLMCredentialNotFound
+    - CodeLLMCredentialInUse
+    - CodeAdminLLMCredentialsListFailed
+    - CodeAdminLLMCredentialFetchFailed
+    - CodeAdminLLMCredentialCreateFailed
+    - CodeAdminLLMCredentialUpdateFailed
+    - CodeAdminLLMCredentialDeleteFailed
+    - CodeInvalidLLMModelInput
+    - CodeLLMModelNotFound
+    - CodeLLMCredentialInactive
+    - CodeAdminLLMModelsListFailed
+    - CodeAdminLLMModelCreateFailed
+    - CodeAdminLLMModelUpdateFailed
+    - CodeAdminLLMModelDeleteFailed
   perchly-backend_internal_model.Conversation:
     properties:
       created_at:
@@ -449,6 +567,130 @@ info:
   title: Perchly Backend API
   version: "1.0"
 paths:
+  /admin/personas/{id}/translations:
+    get:
+      description: Bir persona için kayıtlı tüm çevirileri döner (tr hariç — Türkçe
+        hiçbir zaman ayrı bir satır olarak saklanmaz).
+      parameters:
+      - description: Persona ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handler.adminPersonaTranslationResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Persona çevirilerini listele
+      tags:
+      - admin-personas
+  /admin/personas/{id}/translations/{locale}:
+    delete:
+      description: Belirtilen dildeki çeviriyi kaldırır — persona o dilde tekrar Türkçe
+        içeriğe döner. Çeviri zaten yoksa da başarıyla döner (idempotent).
+      parameters:
+      - description: Persona ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Çeviri dili (tr hariç desteklenen bir dil)
+        in: path
+        name: locale
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Persona çevirisini sil
+      tags:
+      - admin-personas
+    put:
+      consumes:
+      - application/json
+      description: name/short_description/tone_description için upsert yapar. locale
+        "tr" olamaz — Türkçe her zaman personas tablosundaki temel sütunlardan okunur.
+      parameters:
+      - description: Persona ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'Çeviri dili (tr hariç desteklenen bir dil: en, de, es, fr, ru,
+          zh, ar)'
+        in: path
+        name: locale
+        required: true
+        type: string
+      - description: name, short_description, tone_description
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.adminPersonaTranslationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.adminPersonaTranslationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Persona çevirisini oluştur veya güncelle
+      tags:
+      - admin-personas
   /auth/anonymous:
     post:
       consumes:

@@ -176,6 +176,18 @@
     "errors": {
       "createFailed": "تعذّر إنشاء الشخصية.",
       "updateFailed": "تعذّر تحديث الشخصية."
+    },
+    "translations": {
+      "title": "الترجمات",
+      "description": "أضف محتوى خاصًا بكل لغة لهذه الشخصية. أي لغة تُترك فارغة ستعود إلى المحتوى التركي أعلاه.",
+      "noneYet": "لا توجد ترجمة بعد",
+      "nameLabel": "الاسم",
+      "shortDescriptionLabel": "وصف مختصر",
+      "toneDescriptionLabel": "وصف النبرة",
+      "resetToTurkish": "إعادة التعيين إلى التركية",
+      "confirmReset": "هل تريد حذف هذه الترجمة والعودة إلى التركية؟",
+      "saveFailed": "تعذر حفظ الترجمة.",
+      "deleteFailed": "تعذر حذف الترجمة."
     }
   },
   "providers": {

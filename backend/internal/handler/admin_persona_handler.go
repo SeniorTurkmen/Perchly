@@ -33,18 +33,36 @@ type adminPersonaUpdater interface {
 	Update(ctx context.Context, adminUserID string, p model.Persona) (model.Persona, error)
 }
 
+type adminPersonaTranslationLister interface {
+	ListTranslations(ctx context.Context, personaID string) ([]model.PersonaTranslation, error)
+}
+
+type adminPersonaTranslationUpserter interface {
+	UpsertTranslation(ctx context.Context, adminUserID, personaID, locale string, t model.PersonaTranslation) (model.PersonaTranslation, error)
+}
+
+type adminPersonaTranslationDeleter interface {
+	DeleteTranslation(ctx context.Context, adminUserID, personaID, locale string) error
+}
+
 // AdminPersonaHandler exposes the admin dashboard's full persona CRUD —
 // unlike PersonaHandler (public, read-only, active-only, no
 // system_prompt), this can see and write everything.
 type AdminPersonaHandler struct {
-	list   adminPersonaLister
-	get    adminPersonaGetter
-	create adminPersonaCreator
-	update adminPersonaUpdater
+	list              adminPersonaLister
+	get               adminPersonaGetter
+	create            adminPersonaCreator
+	update            adminPersonaUpdater
+	listTranslations  adminPersonaTranslationLister
+	upsertTranslation adminPersonaTranslationUpserter
+	deleteTranslation adminPersonaTranslationDeleter
 }
 
 func NewAdminPersonaHandler(personas *service.AdminPersonaService) *AdminPersonaHandler {
-	return &AdminPersonaHandler{list: personas, get: personas, create: personas, update: personas}
+	return &AdminPersonaHandler{
+		list: personas, get: personas, create: personas, update: personas,
+		listTranslations: personas, upsertTranslation: personas, deleteTranslation: personas,
+	}
 }
 
 // adminPersonaResponse mirrors model.Persona but with SystemPrompt
@@ -247,5 +265,159 @@ func (h *AdminPersonaHandler) Update(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
 	default:
 		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminPersonaUpdateFailed, "persona güncellenemedi")
+	}
+}
+
+// adminPersonaTranslationResponse mirrors model.PersonaTranslation.
+type adminPersonaTranslationResponse struct {
+	PersonaID        string    `json:"persona_id"`
+	Locale           string    `json:"locale"`
+	Name             string    `json:"name"`
+	ShortDescription string    `json:"short_description"`
+	ToneDescription  string    `json:"tone_description"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+}
+
+func toAdminPersonaTranslationResponse(t model.PersonaTranslation) adminPersonaTranslationResponse {
+	return adminPersonaTranslationResponse{
+		PersonaID: t.PersonaID, Locale: t.Locale, Name: t.Name,
+		ShortDescription: t.ShortDescription, ToneDescription: t.ToneDescription,
+		CreatedAt: t.CreatedAt, UpdatedAt: t.UpdatedAt,
+	}
+}
+
+// --- GET /admin/personas/{id}/translations ---
+
+// ListTranslations godoc
+// @Summary Persona çevirilerini listele
+// @Description Bir persona için kayıtlı tüm çevirileri döner (tr hariç — Türkçe hiçbir zaman ayrı bir satır olarak saklanmaz).
+// @Tags admin-personas
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Persona ID (UUID)"
+// @Success 200 {array} adminPersonaTranslationResponse
+// @Failure 400 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /admin/personas/{id}/translations [get]
+func (h *AdminPersonaHandler) ListTranslations(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if _, err := uuid.Parse(id); err != nil {
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+		return
+	}
+
+	translations, err := h.listTranslations.ListTranslations(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, repository.ErrPersonaNotFound) {
+			writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
+			return
+		}
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminPersonaTranslationsListFailed, "persona çevirileri listelenemedi")
+		return
+	}
+
+	response := make([]adminPersonaTranslationResponse, len(translations))
+	for i, t := range translations {
+		response[i] = toAdminPersonaTranslationResponse(t)
+	}
+	writeJSON(w, http.StatusOK, response)
+}
+
+// adminPersonaTranslationRequest is the editable translation shape for
+// PUT /admin/personas/{id}/translations/{locale} — persona_id/locale
+// come from the URL, not the body.
+type adminPersonaTranslationRequest struct {
+	Name             string `json:"name"`
+	ShortDescription string `json:"short_description"`
+	ToneDescription  string `json:"tone_description"`
+}
+
+// --- PUT /admin/personas/{id}/translations/{locale} ---
+
+// PutTranslation godoc
+// @Summary Persona çevirisini oluştur veya güncelle
+// @Description name/short_description/tone_description için upsert yapar. locale "tr" olamaz — Türkçe her zaman personas tablosundaki temel sütunlardan okunur.
+// @Tags admin-personas
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Persona ID (UUID)"
+// @Param locale path string true "Çeviri dili (tr hariç desteklenen bir dil: en, de, es, fr, ru, zh, ar)"
+// @Param body body adminPersonaTranslationRequest true "name, short_description, tone_description"
+// @Success 200 {object} adminPersonaTranslationResponse
+// @Failure 400 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /admin/personas/{id}/translations/{locale} [put]
+func (h *AdminPersonaHandler) PutTranslation(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if _, err := uuid.Parse(id); err != nil {
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+		return
+	}
+	locale := chi.URLParam(r, "locale")
+
+	var req adminPersonaTranslationRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidRequestBody, "geçersiz istek gövdesi")
+		return
+	}
+
+	adminUserID, _ := auth.AdminUserIDFromContext(r.Context())
+
+	result, err := h.upsertTranslation.UpsertTranslation(r.Context(), adminUserID, id, locale, model.PersonaTranslation{
+		Name: req.Name, ShortDescription: req.ShortDescription, ToneDescription: req.ToneDescription,
+	})
+	switch {
+	case err == nil:
+		writeJSON(w, http.StatusOK, toAdminPersonaTranslationResponse(result))
+	case errors.Is(err, service.ErrInvalidPersonaTranslationLocale):
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaTranslationLocale, "geçersiz veya desteklenmeyen çeviri dili (tr çeviri olarak saklanamaz)")
+	case errors.Is(err, service.ErrInvalidPersonaTranslationInput):
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaTranslationInput, "geçersiz çeviri girdisi")
+	case errors.Is(err, repository.ErrPersonaNotFound):
+		writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
+	default:
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminPersonaTranslationUpsertFailed, "persona çevirisi kaydedilemedi")
+	}
+}
+
+// --- DELETE /admin/personas/{id}/translations/{locale} ---
+
+// DeleteTranslation godoc
+// @Summary Persona çevirisini sil
+// @Description Belirtilen dildeki çeviriyi kaldırır — persona o dilde tekrar Türkçe içeriğe döner. Çeviri zaten yoksa da başarıyla döner (idempotent).
+// @Tags admin-personas
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Persona ID (UUID)"
+// @Param locale path string true "Çeviri dili (tr hariç desteklenen bir dil)"
+// @Success 200 {object} map[string]bool
+// @Failure 400 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /admin/personas/{id}/translations/{locale} [delete]
+func (h *AdminPersonaHandler) DeleteTranslation(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	if _, err := uuid.Parse(id); err != nil {
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaID, "geçersiz persona id")
+		return
+	}
+	locale := chi.URLParam(r, "locale")
+
+	adminUserID, _ := auth.AdminUserIDFromContext(r.Context())
+
+	err := h.deleteTranslation.DeleteTranslation(r.Context(), adminUserID, id, locale)
+	switch {
+	case err == nil:
+		writeJSON(w, http.StatusOK, map[string]bool{"success": true})
+	case errors.Is(err, service.ErrInvalidPersonaTranslationLocale):
+		writeError(w, r, http.StatusBadRequest, ErrCodeInvalidPersonaTranslationLocale, "geçersiz veya desteklenmeyen çeviri dili (tr çeviri olarak saklanamaz)")
+	case errors.Is(err, repository.ErrPersonaNotFound):
+		writeError(w, r, http.StatusNotFound, ErrCodePersonaNotFound, "persona bulunamadı")
+	default:
+		writeError(w, r, http.StatusInternalServerError, ErrCodeAdminPersonaTranslationDeleteFailed, "persona çevirisi silinemedi")
 	}
 }

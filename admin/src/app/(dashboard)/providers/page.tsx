@@ -49,7 +49,7 @@ export default async function ProvidersPage() {
               <TableHead>{t("label")}</TableHead>
               <TableHead>{t("token")}</TableHead>
               <TableHead>{tc("status")}</TableHead>
-              <TableHead className="text-right">{t("manage")}</TableHead>
+              <TableHead className="text-end">{t("manage")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -74,7 +74,7 @@ export default async function ProvidersPage() {
                     {credential.is_active ? tc("active") : tc("inactive")}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-end">
                   <Button
                     render={<Link href={`/providers/${credential.id}`} />}
                     variant="ghost"

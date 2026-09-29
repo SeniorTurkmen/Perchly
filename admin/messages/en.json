@@ -176,6 +176,18 @@
     "errors": {
       "createFailed": "Could not create persona.",
       "updateFailed": "Could not update persona."
+    },
+    "translations": {
+      "title": "Translations",
+      "description": "Add locale-specific content for this persona. A locale left blank falls back to the Turkish content above.",
+      "noneYet": "No translation yet",
+      "nameLabel": "Name",
+      "shortDescriptionLabel": "Short description",
+      "toneDescriptionLabel": "Tone description",
+      "resetToTurkish": "Reset to Turkish",
+      "confirmReset": "Remove this translation and fall back to Turkish?",
+      "saveFailed": "Could not save translation.",
+      "deleteFailed": "Could not delete translation."
     }
   },
   "providers": {

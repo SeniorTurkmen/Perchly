@@ -101,6 +101,13 @@ var messages = map[Code]map[Locale]string{
 	CodePersonaLLMModelNotFound:  {LocaleEN: "the selected model wasn't found"},
 	CodePersonaLLMModelInactive:  {LocaleEN: "the selected model or its credential is inactive"},
 
+	// Admin dashboard — persona translations.
+	CodeInvalidPersonaTranslationLocale:     {LocaleEN: "invalid or unsupported translation locale"},
+	CodeInvalidPersonaTranslationInput:      {LocaleEN: "invalid translation input"},
+	CodeAdminPersonaTranslationsListFailed:  {LocaleEN: "could not list persona translations"},
+	CodeAdminPersonaTranslationUpsertFailed: {LocaleEN: "could not save persona translation"},
+	CodeAdminPersonaTranslationDeleteFailed: {LocaleEN: "could not delete persona translation"},
+
 	// Admin dashboard — home metrics.
 	CodeAdminMetricsFailed: {LocaleEN: "could not load dashboard metrics"},
 
