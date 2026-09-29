@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { type MouseEvent, useRef, useState } from "react";
+import { type MouseEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,10 @@ const TRANSLATABLE_LOCALES = locales.filter((locale) => locale !== "tr") as Excl
   "tr"
 >[];
 
+type TranslatableLocale = (typeof TRANSLATABLE_LOCALES)[number];
+
+type Draft = { name: string; short_description: string; tone_description: string };
+
 export function TranslationsSection({
   personaId,
   translations,
@@ -31,7 +35,7 @@ export function TranslationsSection({
   const t = useTranslations("personas");
   const searchParams = useSearchParams();
   const initialLocale = searchParams.get("t_locale");
-  const [selected, setSelected] = useState<(typeof TRANSLATABLE_LOCALES)[number]>(
+  const [selected, setSelected] = useState<TranslatableLocale>(
     (TRANSLATABLE_LOCALES.find((l) => l === initialLocale) ?? TRANSLATABLE_LOCALES[0]),
   );
   const error = searchParams.get("t_error");
@@ -39,39 +43,51 @@ export function TranslationsSection({
   const byLocale = new Map(translations.map((tr) => [tr.locale, tr]));
   const current = byLocale.get(selected);
 
-  // Tracks fields edited but not yet saved, per locale — reset below
-  // whenever the saved content for `selected` changes (a successful
-  // save) or the admin switches to a locale (a fresh, unedited view).
-  // Adjusted during render rather than in an effect, per
-  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
-  const [dirty, setDirty] = useState<Partial<Record<Locale, boolean>>>({});
-  const nameRef = useRef<HTMLInputElement>(null);
-  const shortRef = useRef<HTMLTextAreaElement>(null);
-  const toneRef = useRef<HTMLTextAreaElement>(null);
+  // Per-locale edit buffers that survive switching tabs — switching to
+  // another locale and back used to remount the form with defaultValue
+  // from the *saved* row, silently discarding whatever was typed but
+  // not yet saved. Only onChange writes here now; a locale with no
+  // buffer yet just falls back to its saved content.
+  const [drafts, setDrafts] = useState<Partial<Record<Locale, Draft>>>({});
 
-  const savedSignature = `${selected}:${current?.name ?? ""}:${current?.short_description ?? ""}:${current?.tone_description ?? ""}`;
-  const [lastSavedSignature, setLastSavedSignature] = useState(savedSignature);
-  if (savedSignature !== lastSavedSignature) {
-    setLastSavedSignature(savedSignature);
-    setDirty((d) => ({ ...d, [selected]: false }));
+  function savedValues(locale: TranslatableLocale): Draft {
+    const tr = byLocale.get(locale);
+    return {
+      name: tr?.name ?? "",
+      short_description: tr?.short_description ?? "",
+      tone_description: tr?.tone_description ?? "",
+    };
   }
 
-  function isIncomplete(locale: (typeof TRANSLATABLE_LOCALES)[number]) {
+  function fieldValues(locale: TranslatableLocale): Draft {
+    return drafts[locale] ?? savedValues(locale);
+  }
+
+  const values = fieldValues(selected);
+
+  function updateField(field: keyof Draft, value: string) {
+    setDrafts((d) => ({ ...d, [selected]: { ...fieldValues(selected), [field]: value } }));
+  }
+
+  function isIncomplete(locale: TranslatableLocale) {
     const tr = byLocale.get(locale);
     if (!tr) return true;
     return !tr.name.trim() || !tr.short_description.trim() || !tr.tone_description.trim();
   }
 
-  function needsAttention(locale: (typeof TRANSLATABLE_LOCALES)[number]) {
-    return Boolean(dirty[locale]) || isIncomplete(locale);
+  function isDirty(locale: TranslatableLocale) {
+    const draft = drafts[locale];
+    if (!draft) return false;
+    const saved = savedValues(locale);
+    return (
+      draft.name.trim() !== saved.name.trim() ||
+      draft.short_description.trim() !== saved.short_description.trim() ||
+      draft.tone_description.trim() !== saved.tone_description.trim()
+    );
   }
 
-  function handleFieldChange() {
-    const isDirty =
-      (nameRef.current?.value ?? "").trim() !== (current?.name ?? "").trim() ||
-      (shortRef.current?.value ?? "").trim() !== (current?.short_description ?? "").trim() ||
-      (toneRef.current?.value ?? "").trim() !== (current?.tone_description ?? "").trim();
-    setDirty((d) => ({ ...d, [selected]: isDirty }));
+  function needsAttention(locale: TranslatableLocale) {
+    return isDirty(locale) || isIncomplete(locale);
   }
 
   const boundSave = savePersonaTranslationAction.bind(null, personaId, selected);
@@ -120,15 +136,14 @@ export function TranslationsSection({
         <p className="text-sm text-muted-foreground">{t("translations.noneYet")}</p>
       )}
 
-      <form key={selected} action={boundSave} className="space-y-4">
+      <form action={boundSave} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor={`tr_name_${selected}`}>{t("translations.nameLabel")}</Label>
           <Input
             id={`tr_name_${selected}`}
             name="name"
-            ref={nameRef}
-            defaultValue={current?.name ?? ""}
-            onChange={handleFieldChange}
+            value={values.name}
+            onChange={(e) => updateField("name", e.target.value)}
             required
           />
         </div>
@@ -139,9 +154,8 @@ export function TranslationsSection({
           <Textarea
             id={`tr_short_${selected}`}
             name="short_description"
-            ref={shortRef}
-            defaultValue={current?.short_description ?? ""}
-            onChange={handleFieldChange}
+            value={values.short_description}
+            onChange={(e) => updateField("short_description", e.target.value)}
             required
             rows={2}
           />
@@ -153,9 +167,8 @@ export function TranslationsSection({
           <Textarea
             id={`tr_tone_${selected}`}
             name="tone_description"
-            ref={toneRef}
-            defaultValue={current?.tone_description ?? ""}
-            onChange={handleFieldChange}
+            value={values.tone_description}
+            onChange={(e) => updateField("tone_description", e.target.value)}
             required
             rows={2}
           />
