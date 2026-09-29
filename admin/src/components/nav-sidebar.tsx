@@ -12,6 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -36,9 +37,13 @@ export function NavSidebar() {
   return (
     <nav className="hidden w-56 shrink-0 border-e border-sidebar-border bg-sidebar p-3 sm:block">
       <div className="mb-6 flex items-center gap-2 px-2 pt-1">
-        <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground">
-          P
-        </span>
+        <Image
+          src="/app-icon.png"
+          alt=""
+          width={28}
+          height={28}
+          className="size-7 rounded-lg"
+        />
         <span className="text-[15px] font-semibold text-sidebar-foreground">
           Perchly
         </span>

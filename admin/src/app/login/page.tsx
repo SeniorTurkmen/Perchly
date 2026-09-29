@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { useActionState } from "react";
 
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -33,6 +34,13 @@ export default function LoginPage() {
       </div>
       <Card className="w-full max-w-sm">
         <CardHeader>
+          <Image
+            src="/app-icon.png"
+            alt=""
+            width={48}
+            height={48}
+            className="mb-2 size-12 rounded-xl"
+          />
           <CardTitle>{t("title")}</CardTitle>
           <CardDescription>{t("subtitle")}</CardDescription>
         </CardHeader>
