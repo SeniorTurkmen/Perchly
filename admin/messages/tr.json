@@ -187,7 +187,8 @@
       "resetToTurkish": "Türkçeye döndür",
       "confirmReset": "Bu çeviri silinsin ve Türkçeye dönülsün mü?",
       "saveFailed": "Çeviri kaydedilemedi.",
-      "deleteFailed": "Çeviri silinemedi."
+      "deleteFailed": "Çeviri silinemedi.",
+      "needsAttention": "Kaydedilmemiş değişiklik veya eksik alan var."
     }
   },
   "providers": {

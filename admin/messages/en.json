@@ -187,7 +187,8 @@
       "resetToTurkish": "Reset to Turkish",
       "confirmReset": "Remove this translation and fall back to Turkish?",
       "saveFailed": "Could not save translation.",
-      "deleteFailed": "Could not delete translation."
+      "deleteFailed": "Could not delete translation.",
+      "needsAttention": "Has unsaved changes or a missing field."
     }
   },
   "providers": {

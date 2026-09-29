@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: backend (go)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: ankane/pgvector:latest
+        env:
+          POSTGRES_USER: perchly
+          POSTGRES_PASSWORD: perchly
+          POSTGRES_DB: perchly
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U perchly"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://perchly:perchly@localhost:5433/perchly?sslmode=disable
+      DB_HOST: localhost
+      DB_PORT: 5433
+      DB_USER: perchly
+      DB_PASSWORD: perchly
+      DB_NAME: perchly
+      DB_SSLMODE: disable
+      # No external API keys in CI: the echo providers exercise the same
+      # code paths (persona reads, chat streaming, embeddings) without a
+      # network call.
+      LLM_PROVIDER: echo
+      EMBEDDING_PROVIDER: echo
+      JWT_SECRET: ci-test-secret
+      LLM_TOKEN_ENCRYPTION_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go build
+        run: go build ./...
+
+      - name: run migrations
+        run: go run -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.18.1 -path migrations -database "$DATABASE_URL" up
+
+      - name: go test
+        run: go test ./...
+
+  admin:
+    name: admin (next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: admin
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: admin/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+        env:
+          BACKEND_URL: http://localhost:8080
+
+  ios:
+    name: ios (xcodebuild)
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install XcodeGen
+        run: brew install xcodegen
+
+      - name: generate project
+        run: xcodegen generate
+
+      - name: build for testing
+        run: |
+          set -o pipefail
+          xcodebuild build-for-testing \
+            -project Perchly.xcodeproj \
+            -scheme Perchly \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO

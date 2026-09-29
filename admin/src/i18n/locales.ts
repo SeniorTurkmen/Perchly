@@ -27,3 +27,18 @@ export const localeLabels: Record<Locale, string> = {
   ru: "Русский",
   zh: "中文",
 };
+
+// Representative country flag per locale — a language doesn't map to
+// exactly one country (ar and zh especially), so these are a visual
+// shorthand for the switcher, not a claim about where a language is
+// spoken.
+export const localeFlags: Record<Locale, string> = {
+  tr: "🇹🇷",
+  en: "🇺🇸",
+  de: "🇩🇪",
+  ar: "🇸🇦",
+  es: "🇪🇸",
+  fr: "🇫🇷",
+  ru: "🇷🇺",
+  zh: "🇨🇳",
+};

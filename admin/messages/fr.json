@@ -187,7 +187,8 @@
       "resetToTurkish": "Revenir au turc",
       "confirmReset": "Supprimer cette traduction et revenir au turc ?",
       "saveFailed": "Impossible d'enregistrer la traduction.",
-      "deleteFailed": "Impossible de supprimer la traduction."
+      "deleteFailed": "Impossible de supprimer la traduction.",
+      "needsAttention": "Il y a des modifications non enregistrées ou un champ manquant."
     }
   },
   "providers": {

@@ -1,10 +1,46 @@
-# Perchly
+<p align="center">
+  <img src="docs/screenshots/app-icon.png" width="96" alt="Perchly app icon" />
+</p>
+
+<h1 align="center">Perchly</h1>
+
+<p align="center">
+  A platonic AI companion app — pick a persona, keep one ongoing streamed
+  conversation with it, and watch it actually remember you.
+</p>
+
+<p align="center">
+  <a href="https://github.com/SeniorTurkmen/Perchly/actions/workflows/ci.yml"><img src="https://github.com/SeniorTurkmen/Perchly/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
+  <img src="https://img.shields.io/badge/backend-Go-00ADD8?logo=go&logoColor=white" alt="Go" />
+  <img src="https://img.shields.io/badge/iOS-SwiftUI-F05138?logo=swift&logoColor=white" alt="SwiftUI" />
+  <img src="https://img.shields.io/badge/admin-Next.js-000000?logo=nextdotjs&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/db-Postgres%20%2B%20pgvector-336791?logo=postgresql&logoColor=white" alt="PostgreSQL + pgvector" />
+</p>
+
+---
 
 Perchly is a platonic AI companion app: a Go backend and a SwiftUI iOS
 client that let a user pick a persona and have an ongoing, streamed
 chat with it — with onboarding-driven personalization, age-appropriate
 persona gating, and iMessage-style emoji reactions on either side of
 the conversation.
+
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/persona-detail.png" width="260" alt="Persona detail & compatibility screen for Ada, a motivational coach persona, showing personality sliders for warmth, humor, and wisdom" />
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/admin-dashboard.png" width="440" alt="Admin dashboard home, styled after Apple App Store Connect — light sidebar with a blue active state and metric cards on a soft gray canvas" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/admin-personas.png" width="440" alt="Admin personas table, styled after App Store Connect — blue status pills, a light bordered table, and a blue primary action button" />
+</p>
+
+<p align="center"><sub>iOS persona detail, and the admin dashboard restyled after Apple's App Store Connect (light sidebar, blue accent, bordered cards on a soft gray canvas).</sub></p>
+
+> More screens are on the way — drop additional PNGs into
+> `docs/screenshots/` and reference them here as the UI fills out
+> (onboarding, chat with streaming + reactions).
 
 ## Repository layout
 
@@ -19,33 +55,56 @@ over plain HTTP + Server-Sent Events, and the admin dashboard talks to
 the backend's separate `/admin/*` API — nothing shared beyond the wire
 protocol.
 
+```mermaid
+flowchart LR
+    subgraph Clients
+        iOS["iOS app\n(SwiftUI, MVVM)"]
+        Admin["Admin dashboard\n(Next.js)"]
+    end
+    API["Go API\n(chi, handler → service → repository)"]
+    DB[("PostgreSQL + pgvector")]
+    LLM[["LLM / embedding\nprovider (pluggable)"]]
+
+    iOS -- "HTTP + SSE" --> API
+    Admin -- "/admin/* HTTP" --> API
+    API --> DB
+    API -- "chat completions, embeddings" --> LLM
+```
+
 ## Features
 
-- **Auth** — anonymous sessions from first launch (no signup wall),
+- 🔓 **Auth** — anonymous sessions from first launch (no signup wall),
   upgradable in place to an email-linked account via a 6-digit OTP
   code. JWT access tokens + rotating opaque refresh tokens.
-- **Personas** — a fixed set of AI companions (e.g. a motivational
+- 🎭 **Personas** — a fixed set of AI companions (e.g. a motivational
   coach, a daily companion, a hobby/book-club partner), each with its
-  own system prompt, tone, and accent color.
-- **Chat** — one persistent conversation per user/persona pair.
+  own system prompt, tone, and accent color — and now translated
+  content across 8 locales.
+- 💬 **Chat** — one persistent conversation per user/persona pair.
   Replies stream back over SSE, token by token. Context sent to the
   LLM combines the persona's system prompt, a rolling summary of the
   conversation, the most relevant past messages (via pgvector
   similarity search over message embeddings), and the recent raw
   message window.
-- **Emoji reactions** — either side of a conversation can leave a
+- ❤️ **Emoji reactions** — either side of a conversation can leave a
   single emoji reaction on the other's message, iMessage-tapback
   style (❤️ 😂 👍 👎 ‼️ ❓). The user does this via a long-press
   picker in the chat UI; the persona does it by leading its streamed
   reply with a `[[REACT:<emoji>]]` tag the backend parses out before
   the text ever reaches the client.
-- **Onboarding** — a short, skippable data-collection flow (age range,
+- 🧭 **Onboarding** — a short, skippable data-collection flow (age range,
   mood preference, notification permission, persona pick) that
   personalizes which persona is suggested first and gates
   not-minor-appropriate personas from users who report being under 18.
   Collected even for anonymous users and never lost if the account is
   later linked.
-- **Quotas & credits** — a free daily message allowance per user, with
+- 🌍 **i18n / l10n** — the iOS app and admin dashboard are both fully
+  localized into Turkish, English, German, Arabic, Spanish, French,
+  Russian, and Chinese, including right-to-left layout for Arabic.
+  Persona content and transactional email are locale-aware too,
+  resolved from `Accept-Language` with Turkish as the
+  zero-duplication fallback.
+- 📊 **Quotas & credits** — a free daily message allowance per user, with
   a credit system for going beyond it.
 
 ## Backend
@@ -105,6 +164,17 @@ account the first time (or set `ADMIN_EMAIL`/`ADMIN_PASSWORD`), then
 runs both servers until Ctrl+C. Safe to re-run — every step is
 idempotent. See `admin/README.md` for the auth model and current build
 status.
+
+## CI
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every
+push and PR to `main`, in three independent jobs:
+
+| Job       | What it does                                                                 |
+| --------- | ----------------------------------------------------------------------------- |
+| `backend` | `go vet`, `go build`, migrates a real Postgres+pgvector service container, `go test ./...` (LLM/embedding providers stubbed via the built-in `echo` provider — no API keys needed) |
+| `admin`   | `npm ci`, `next lint`, `next build`                                          |
+| `ios`     | `xcodegen generate`, `xcodebuild build-for-testing` for the iOS Simulator, unsigned |
 
 ## Contributing
 

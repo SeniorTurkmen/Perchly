@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import type { Locale } from "@/i18n/locales";
-import { localeLabels, locales } from "@/i18n/locales";
+import { localeFlags, localeLabels, locales } from "@/i18n/locales";
 import type { PersonaTranslation } from "@/lib/backend";
 
 import { deletePersonaTranslationAction, savePersonaTranslationAction } from "./translation-actions";
@@ -21,6 +21,10 @@ const TRANSLATABLE_LOCALES = locales.filter((locale) => locale !== "tr") as Excl
   "tr"
 >[];
 
+type TranslatableLocale = (typeof TRANSLATABLE_LOCALES)[number];
+
+type Draft = { name: string; short_description: string; tone_description: string };
+
 export function TranslationsSection({
   personaId,
   translations,
@@ -31,13 +35,60 @@ export function TranslationsSection({
   const t = useTranslations("personas");
   const searchParams = useSearchParams();
   const initialLocale = searchParams.get("t_locale");
-  const [selected, setSelected] = useState<(typeof TRANSLATABLE_LOCALES)[number]>(
+  const [selected, setSelected] = useState<TranslatableLocale>(
     (TRANSLATABLE_LOCALES.find((l) => l === initialLocale) ?? TRANSLATABLE_LOCALES[0]),
   );
   const error = searchParams.get("t_error");
 
   const byLocale = new Map(translations.map((tr) => [tr.locale, tr]));
   const current = byLocale.get(selected);
+
+  // Per-locale edit buffers that survive switching tabs — switching to
+  // another locale and back used to remount the form with defaultValue
+  // from the *saved* row, silently discarding whatever was typed but
+  // not yet saved. Only onChange writes here now; a locale with no
+  // buffer yet just falls back to its saved content.
+  const [drafts, setDrafts] = useState<Partial<Record<Locale, Draft>>>({});
+
+  function savedValues(locale: TranslatableLocale): Draft {
+    const tr = byLocale.get(locale);
+    return {
+      name: tr?.name ?? "",
+      short_description: tr?.short_description ?? "",
+      tone_description: tr?.tone_description ?? "",
+    };
+  }
+
+  function fieldValues(locale: TranslatableLocale): Draft {
+    return drafts[locale] ?? savedValues(locale);
+  }
+
+  const values = fieldValues(selected);
+
+  function updateField(field: keyof Draft, value: string) {
+    setDrafts((d) => ({ ...d, [selected]: { ...fieldValues(selected), [field]: value } }));
+  }
+
+  function isIncomplete(locale: TranslatableLocale) {
+    const tr = byLocale.get(locale);
+    if (!tr) return true;
+    return !tr.name.trim() || !tr.short_description.trim() || !tr.tone_description.trim();
+  }
+
+  function isDirty(locale: TranslatableLocale) {
+    const draft = drafts[locale];
+    if (!draft) return false;
+    const saved = savedValues(locale);
+    return (
+      draft.name.trim() !== saved.name.trim() ||
+      draft.short_description.trim() !== saved.short_description.trim() ||
+      draft.tone_description.trim() !== saved.tone_description.trim()
+    );
+  }
+
+  function needsAttention(locale: TranslatableLocale) {
+    return isDirty(locale) || isIncomplete(locale);
+  }
 
   const boundSave = savePersonaTranslationAction.bind(null, personaId, selected);
   const boundDelete = deletePersonaTranslationAction.bind(null, personaId, selected);
@@ -53,8 +104,8 @@ export function TranslationsSection({
 
       <div className="flex flex-wrap gap-2">
         {TRANSLATABLE_LOCALES.map((locale) => {
-          const hasTranslation = byLocale.has(locale);
           const isSelected = locale === selected;
+          const dotVisible = needsAttention(locale);
           return (
             <button
               key={locale}
@@ -66,16 +117,16 @@ export function TranslationsSection({
                   : "border-input bg-background"
               }`}
             >
+              <span className="text-base leading-none">{localeFlags[locale]}</span>
               {localeLabels[locale]}
-              <span
-                className={`h-1.5 w-1.5 rounded-full ${
-                  hasTranslation
-                    ? isSelected
-                      ? "bg-primary-foreground"
-                      : "bg-primary"
-                    : "bg-transparent border border-current opacity-40"
-                }`}
-              />
+              {dotVisible && (
+                <span
+                  title={t("translations.needsAttention")}
+                  className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                    isSelected ? "bg-primary-foreground" : "bg-primary"
+                  }`}
+                />
+              )}
             </button>
           );
         })}
@@ -85,13 +136,14 @@ export function TranslationsSection({
         <p className="text-sm text-muted-foreground">{t("translations.noneYet")}</p>
       )}
 
-      <form key={selected} action={boundSave} className="space-y-4">
+      <form action={boundSave} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor={`tr_name_${selected}`}>{t("translations.nameLabel")}</Label>
           <Input
             id={`tr_name_${selected}`}
             name="name"
-            defaultValue={current?.name ?? ""}
+            value={values.name}
+            onChange={(e) => updateField("name", e.target.value)}
             required
           />
         </div>
@@ -102,7 +154,8 @@ export function TranslationsSection({
           <Textarea
             id={`tr_short_${selected}`}
             name="short_description"
-            defaultValue={current?.short_description ?? ""}
+            value={values.short_description}
+            onChange={(e) => updateField("short_description", e.target.value)}
             required
             rows={2}
           />
@@ -114,7 +167,8 @@ export function TranslationsSection({
           <Textarea
             id={`tr_tone_${selected}`}
             name="tone_description"
-            defaultValue={current?.tone_description ?? ""}
+            value={values.tone_description}
+            onChange={(e) => updateField("tone_description", e.target.value)}
             required
             rows={2}
           />
