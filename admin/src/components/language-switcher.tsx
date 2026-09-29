@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { localeLabels, locales, type Locale } from "@/i18n/locales";
+import { localeFlags, localeLabels, locales, type Locale } from "@/i18n/locales";
 
 export function LanguageSwitcher() {
   const t = useTranslations("common");
@@ -29,11 +29,19 @@ export function LanguageSwitcher() {
       }}
     >
       <SelectTrigger aria-label={t("language")} size="sm">
-        <SelectValue />
+        <SelectValue>
+          {(value: Locale) => (
+            <>
+              <span className="text-base leading-none">{localeFlags[value]}</span>
+              <span className="uppercase">{value}</span>
+            </>
+          )}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         {locales.map((l) => (
           <SelectItem key={l} value={l}>
+            <span className="text-base leading-none">{localeFlags[l]}</span>
             {localeLabels[l]}
           </SelectItem>
         ))}
